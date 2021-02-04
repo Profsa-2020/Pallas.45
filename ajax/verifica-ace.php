@@ -73,8 +73,9 @@
                $_SESSION['wrkemausu'] = $reg['usuemail'];
                $_SESSION['wrkstausu'] = $reg['usustatus'];
                $_SESSION['wrkdatini'] = $reg['usuvalidade'];
-               $_SESSION['wrknumace'] = $reg['usuacessos'];   
+               $_SESSION['wrknumace'] = $reg['usuacessos'];  
                $_SESSION['wrkapeusu'] = primeiro_nom($reg['usunome']);
+               $_SESSION['wrknomemp'] = retorna_dad('emprazao', 'tb_empresa', 'idempresa', $reg['usuempresa']);
                if (isset($_REQUEST['lembrete']) == true) {
                     setcookie("k_ent", $_REQUEST['senha'], time() + 3600 * 24 * 30);  // 60 * 60 * 24 * 30 = 30 dias
                     setcookie("k_end", $_REQUEST['email'], time() + 3600 * 24 * 30);  

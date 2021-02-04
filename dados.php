@@ -33,4 +33,21 @@
           return $nro_r;
      }
 
+     function retorna_dad($cpo, $tab, $cha, $cod) {
+          $dad = '';
+          include "lerinformacao.inc";
+          if (is_numeric($cod) == true) {
+               $com = "Select " . $cpo . " as campo from " . $tab . " where " . $cha . " = " . $cod;
+          } else {
+               $com = "Select " . $cpo . " as campo from " . $tab . " where " . $cha . " = '" . $cod . "'";
+          }
+          $sql = mysqli_query($conexao, $com);
+          $nro_r = mysqli_num_rows($sql);
+          $sql = mysqli_query($conexao, $com);
+          while ($lin = mysqli_fetch_assoc($sql)) {        
+               $dad = $lin['campo']; 
+          }
+          return $dad;
+     }
+
 ?>
