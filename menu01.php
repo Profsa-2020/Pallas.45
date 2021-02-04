@@ -71,27 +71,29 @@ $(document).ready(function() {
      <?php include_once "cabecalho-1.php"; ?>
      <div class="container-fluid">
           <div class="row">
+               <!---------- Menu ---------->
                <div class="col-md-2">
-                    <!-- Menu -->
+
                     <?php include_once "cabecalho-2.php"; ?>
+                    
                </div>
 
+               <!---------- Corpo ---------->
                <div class="col-md-10">
-                    <!-- Corpo -->
                     <div class="row">
-                         <div class="col-md-10 text-center">
+
+                         <div class="col-md-10 text-center">                              
                               <span class="lit-3">DashBoard</span> &nbsp; &nbsp; &nbsp; <i
                                    class="fa fa-tachometer fa-3x" aria-hidden="true"></i>
                          </div>
-                         <div class="col-md-2">
-                    </div>
+                         <div class="col-md-2"></div>
 
+                    </div>
                </div>
           </div>
-     </div>
-     <div id="box10">
-          <img class="subir" src="img/subir.png" title="Volta a página para o seu topo." />
-     </div>
+          <div id="box10">
+               <img class="subir" src="img/subir.png" title="Volta a página para o seu topo." />
+          </div>
 </body>
 
 </html>

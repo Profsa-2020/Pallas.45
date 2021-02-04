@@ -65,7 +65,7 @@ $(document).ready(function() {
 <h1 class="cab-0">Login inicial sistema de Análise de Investimentos - Profsa Informática</h1>
      <div class="entrada">
           <div class="qua-1 animated bounceInDown">
-               <form id="frmLogin" name="frmLogin" action="" method="POST">
+               <form class="cpo-0" id="frmLogin" name="frmLogin" action="" method="POST">
                     <br />
                     <div class="row">
                          <a href="http://www.moneyway.com.br/">

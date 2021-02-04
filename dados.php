@@ -50,4 +50,29 @@
           return $dad;
      }
 
+     function acessa_reg($com, &$reg) {
+          $nro_r = 0; $reg = array(); 
+          include "lerinformacao.inc";
+          $sql = mysqli_query($conexao, $com);
+          $nro_r = mysqli_num_rows($sql);
+          if (mysqli_num_rows($sql) == 1) {
+               $reg = mysqli_fetch_array($sql);
+          }
+          return $nro_r;
+     }
+
+     function leitura_reg($com, &$reg) {
+          $nro_r = 0; 
+          $lin = array(); 
+          $reg = array(); 
+          include "lerinformacao.inc";
+          $sql = mysqli_query($conexao, $com);
+          $nro_r = mysqli_num_rows($sql);
+          $sql = mysqli_query($conexao, $com);    // mysqli_fetch_all(MYSQLI_ASSOC)
+          while ($lin = mysqli_fetch_assoc($sql)) {        
+               $reg[] = $lin; 
+          }
+          return $nro_r;
+     }
+
 ?>

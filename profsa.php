@@ -95,11 +95,11 @@ function gravar_log($ope = 0, $obs = "", $cod = "") {
      $ret = curl_exec($end);
      $dad = json_decode($ret);
      curl_close($end);    
-     $_SESSION['wrkcidusu'] = 'niteroi';
-     $_SESSION['wrkestusu'] = 'rj';
+     $_SESSION['wrkcidusu'] = 'sao paulo';
+     $_SESSION['wrkestusu'] = 'sp';
      if (isset($dad->bogon) == true) {
-          $_SESSION['wrkcidusu'] = 'Niteroi';
-          $_SESSION['wrkestusu'] = 'Rj';
+          $_SESSION['wrkcidusu'] = 'Sao Paulo';
+          $_SESSION['wrkestusu'] = 'Sp';
      } else if (isset($dad->city) == true) {
           $_SESSION['wrkcidusu'] = $dad->city;
           $_SESSION['wrkestusu'] = $dad->region;
@@ -131,6 +131,11 @@ function limpa_pro($nom)  {
      return $nom;
  }
 
+ function limpa_nro($string){ 
+     $str = preg_replace('/[^0-9]/','',$string); 
+     return ($str == '' ? 0 : $str);
+ }
+ 
  function primeiro_nom($nom) {
      $pos = strpos($nom," "); 
      if ($pos > 0) {
@@ -180,6 +185,59 @@ function limpa_pro($nom)  {
      $nro += stripos(strtoupper($ema),"WHERE");
      $nro += stripos(strtoupper($sen),"WHERE");
      return $nro;
+ }
+
+ function valida_est($est) {
+     $sta = 0;
+     $lis = array('AC', 'AL', 'AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MG', 'MS', 'PA', 'PB', 'PE', 'PI', 'PR', 'RJ', 'RN', 'RO', 'RR', 'RS', 'SC', 'SE', 'SP', 'TO');
+     $sta = array_search(trim($est), $lis);
+     return $sta;
+ }
+
+ function valida_dat($tes) {
+     $sta = 0;
+     if ($tes == "" || $tes == "//" || $tes == "--") { return 1; }
+     if (substr($tes, 4, 1) == '-') {
+         $dat = explode("-",substr($tes, 0, 10));  
+         $ano = $dat[0]; $mes = $dat[1]; $dia = $dat[2];
+         $dat[0] = $dia; $dat[1] = $mes; $dat[2] = $ano;
+     } else {
+         $dat = explode("/",substr($tes, 0, 10));  
+     }
+ 
+     if (is_numeric($dat[0]) == false || is_numeric($dat[1]) == false || is_numeric($dat[2]) == false) {
+         $sta = 2;
+     }
+     if ($sta == 0) {
+         if (checkdate($dat[1],$dat[0],$dat[2]) == false) {
+             $sta = 3;
+         }
+     }
+     return $sta;
+ }
+ 
+ function valida_cgc ($cgc) {
+     if (strlen($cgc) < 14) { return 1; }
+     $sta = 0;
+     $som = 0;
+     $cgc = preg_replace('/[^0-9]/','',$cgc);    // Troca não numeros por branco.
+     for ($ind = 0, $nro = 5; $ind <= 11 ; $ind++, $nro--) {
+         $som = $som + $cgc[$ind] * $nro;
+          if ($nro == 2) {$nro = 10; }
+     }
+     $res1 = 11 - $som % 11;
+     if ($res1 == 10 || $res1 == 11) { $res1 = 0; }
+     $cgc = $cgc . $res1;
+     $som = 0;
+     for ($ind=0, $nro=6; $ind <= 11 ; $ind++, $nro--) {
+         $som = $som + $cgc[$ind] * $nro;
+          if ($nro == 2) {$nro = 10; }
+     }
+     $som = $som + $res1 * 2;
+     $res2 = 11 - $som % 11;
+     if ($res2 == 10 || $res2 == 11) { $res2 = 0; }
+     if ($res1 != $cgc[12] || $res2 != $cgc[13]) { $sta = 1; }
+     return $sta;
  }
  
 ?>

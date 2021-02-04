@@ -62,7 +62,7 @@ $(document).ready(function() {
 <h1 class="cab-0">Recuperação de Senha - Sistema MoneyWay - Análise de Investimentos</h1>
      <div class="entrada">
           <div class="qua-1 animated bounceInUp">
-               <form id="frmRecupera" name="frmRecupera" action="" method="POST">
+               <form class="cpo-0" id="frmRecupera" name="frmRecupera" action="" method="POST">
                     <br /><br />
                     <div class="row">
                          <a href="http://www.moneyway.com.br/">

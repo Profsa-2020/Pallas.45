@@ -34,7 +34,7 @@
      </script>
 
      <link href="css/pallas45.css" rel="stylesheet" type="text/css" media="screen" />
-     <title>Menu - Análise de Investimentos - Profsa Informátda Ltda</title>
+     <title>Importações - Análise de Investimentos - Profsa Informátda Ltda</title>
 </head>
 
 <script>
@@ -59,7 +59,7 @@ $(document).ready(function() {
 </script>
 
 <body id="box00">
-     <h1 class="cab-0">Menu Principal - MoneyWay Investimentos - Profsa Informática</h1>
+     <h1 class="cab-0">Importações - MoneyWay Investimentos - Profsa Informática</h1>
      <?php include_once "cabecalho-1.php"; ?>
      <div class="container-fluid">
      <div class="row">
