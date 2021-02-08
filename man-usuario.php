@@ -491,7 +491,7 @@ function alterar_usu() {
          $tex .= '</body>';
          $tex .= '</html>';
  
-         $asu = "Acesso ao sistema MoneyWay  - e-Commerce";
+         $asu = "Acesso ao sistema MoneyWay  - Análise de Investimentos";
  
          $sta = envia_email($ema, $asu, $tex, $nom, '', '');
  

@@ -19,6 +19,19 @@
     background-color: transparent;
 }
 
+.bot-3 { visibility: hidden; }
+
+.bot-4 {
+    cursor: pointer;
+    width: 100px;
+    height: 20px;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    background-color: #04d766;
+    border-radius: 5px;
+}
+
 .cor-1 {
     color: #ffffff !important;
 }
@@ -31,6 +44,15 @@
 
 .cpo-0 input[type=text], .cpo-0 input[type=email] , .cpo-0 input[type=password] {
     color: #ffffff !important;
+}
+
+.cpo-1 select {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.cur-1 {
+    cursor: pointer;
 }
 
 .login {
@@ -67,8 +89,19 @@
     font-weight: bold;
 }
 
+.ima-1 {
+    width: 90%;
+}
+
 .ima-2 {
     animation-duration: 5s;
+}
+
+.pre-1 {
+    display: none;
+    position: absolute;
+    top: 40%;
+    left: 35%; 
 }
 
 .qua-1 {
@@ -88,6 +121,15 @@
 }
 
 .qua-3 {
+    padding: 10px 0px;
+    overflow: hidden;
+    border: 0.5px solid #04d766;
+    box-shadow: 10px 15px 5px rgba(0,0,0,.3);
+}
+
+.qua-4 {
+    width: 50%;
+    margin: 10px auto;
     padding: 10px 0px;
     overflow: hidden;
     border: 0.5px solid #04d766;

@@ -171,6 +171,7 @@ $(document).ready(function() {
      date_default_timezone_set("America/Sao_Paulo");
      $_SESSION['wrkdatide'] = date ("d/m/Y H:i:s", getlastmod());
      $_SESSION['wrknomide'] = get_current_user();
+     $_SESSION['wrknumusu'] = getmypid();
      if (isset($_SERVER['HTTP_REFERER']) == true) {
           if (limpa_pro($_SESSION['wrknompro']) != limpa_pro($_SERVER['HTTP_REFERER'])) {
                $_SESSION['wrkproant'] = limpa_pro($_SERVER['HTTP_REFERER']);

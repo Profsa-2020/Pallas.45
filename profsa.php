@@ -6,7 +6,7 @@ function envia_email($end_ema, $asu_ema, $tex_env, $nom_usu, $anexo_1, $anexo_2)
      if ($asu_ema == "") {
           $asu_ema ="Re-envio de login e senha a usuário do sistema !";
      }
-     $headers  = 'From: e-commerce@pdvcontrol.com.br' . "\r\n";
+     $headers  = 'From: suporte@moneyway.com.br' . "\r\n";
      $headers .= 'MIME-Version: 1.0' . "\r\n";
      $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
      $envio = mail($end_ema, $asu_ema, $tex_env, $headers);
@@ -136,6 +136,10 @@ function limpa_pro($nom)  {
      return ($str == '' ? 0 : $str);
  }
  
+ function limpa_cpo($string){
+    return preg_replace(array("/(á|à|ã|â|ä)/","/(Á|À|Ã|Â|Ä)/","/(é|è|ê|ë)/","/(É|È|Ê|Ë)/","/(í|ì|î|ï)/","/(Í|Ì|Î|Ï)/","/(ó|ò|õ|ô|ö)/","/(Ó|Ò|Õ|Ô|Ö)/","/(ú|ù|û|ü)/","/(Ú|Ù|Û|Ü)/","/(ç)/","/(Ç)/"),explode(" ","a A e E i I o O u U c C"),$string);
+}
+
  function primeiro_nom($nom) {
      $pos = strpos($nom," "); 
      if ($pos > 0) {
