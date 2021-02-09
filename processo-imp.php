@@ -386,45 +386,43 @@ $(document).ready(function() {
           $csv = fopen($cam, "r");  
           while (!feof ($csv)) {
                $lin = explode(";", fgets($csv));
-               $nro = acessa_reg("Select idfundo from tb_fundos where funcnpj = '" . limpa_nro($lin[0]) . "'", $reg);            
-               if ($nro == 0 &&  limpa_nro($lin[0]) != "0") {
+               $cha = ler_fundo($lin[0]);
+               if ($cha != 0) {
                     $sql  = "insert into tb_movto_id (";
                     $sql .= "idfundo, ";
                     $sql .= "inffundo, ";
                     $sql .= "infdata, ";
-                    $sql .= "infotal, ";
+                    $sql .= "inftotal, ";
                     $sql .= "infquota, ";
                     $sql .= "infpatrimonio, ";
                     $sql .= "infcapital, ";
                     $sql .= "infresgate, ";
                     $sql .= "infnumcotas, ";
-                    $sql .= "infprocesso, ";
-                    $sql .= "infsequencia, ";
                     $sql .= "infupload, ";
+                    $sql .= "infsequencia, ";
                     $sql .= "infarquivo, ";
                     $sql .= "infordem, ";
+                    $sql .= "infprocesso, ";
                     $sql .= "keyinc, ";
                     $sql .= "datinc ";
                     $sql .= ") value ( ";
+                    $sql .= "'" . $cha . "',";
                     $sql .= "'" . limpa_nro($lin[0]) . "',";
-                    $sql .= "'" . utf8_encode(str_replace("'", "´", substr($lin[1], 0, 75))) . "',";
-                    if (substr($lin[2], 4, 1) == "-" || substr($lin[2], 4, 1) == "/") {
-                         $sql .= "'" . $lin[2] . "',";
+                    if (substr($lin[1], 4, 1) == "-" || substr($lin[1], 4, 1) == "/") {
+                         $sql .= "'" . $lin[1] . "',";
                     } else {
-                         $sql .= "'" . inverte_dat(1, $lin[2]) . "',";
+                         $sql .= "'" . inverte_dat(1, $lin[1]) . "',";
                     }
-                    $sql .= "'" . substr($lin[3], 0, 1) . "',";  // Coluna D
-                    $sql .= "'" . substr($lin[5], 0, 1) . "',";  // Coluna F
-                    $sql .= "'" . substr($lin[8], 0, 1) . "',";  // Coluna I
-                    $sql .= "'" . substr($lin[15], 0, 1) . "',";  // Coluna P
-                    $sql .= "'" . substr($lin[16], 0, 1) . "',";  // Coluna Q
-                    $sql .= "'" . substr($lin[10], 0, 1) . "',";  // Coluna K
-                    $sql .= "'" . $lin[17] . "',";  // Coluna R R$ - Aplicação Mínima
-                    $sql .= "'" . substr($lin[18], 0, 1) . "',";  // Coluna S - Atualização Diária
+                    $sql .= "'" . $lin[2] . "',";  
+                    $sql .= "'" . limpa_nro($lin[3]) . "',";  
+                    $sql .= "'" . $lin[4] . "',";  
+                    $sql .= "'" . $lin[5] . "',";  
+                    $sql .= "'" . $lin[6] . "',";
+                    $sql .= "'" . $lin[7] . "',";  
                     $sql .= "'" . $nom . "',";  
+                    $sql .= "'" . $pro . "',";  
                     $sql .= "'" . $des . "',";  
                     $sql .= "'" . $ord . "',";  
-                    $sql .= "'" . $pro . "',";  
                     $sql .= "'" .  $_SESSION['wrknumusu'] . "',";  
                     $sql .= "'" . $_SESSION['wrkideusu'] . "',";
                     $sql .= "'" . date("Y-m-d H:i:s") . "')";
@@ -434,11 +432,21 @@ $(document).ready(function() {
                          $men = "Erro na gravação do registro solicitado no banco de dados !";
                     }               
                     $gra = $gra + 1;
-               } 
+               }
                $pro = $pro + 1;
           } 
           fclose($csv);     
           return $ret; 
+     }
+
+     function ler_fundo ($cgc) {
+          $cha = 0; 
+          include_once "dados.php";
+          $nro = acessa_reg("Select idfundo from tb_fundos where funcnpj = '" . limpa_nro($cgc) . "'", $reg);            
+          if ($nro == 1) {
+               $cha = $reg['idfundo'];
+          }
+          return $cha;
      }
 
 ?>
