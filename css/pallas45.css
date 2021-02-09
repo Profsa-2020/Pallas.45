@@ -98,7 +98,6 @@
 }
 
 .pre-1 {
-    display: none;
     position: absolute;
     top: 40%;
     left: 35%; 
@@ -229,7 +228,7 @@
 }
 
 .men-1 ul li:hover::before {
-    background-color: #00D965;
+    background-color: #ff0000;
 }
 
 .men-1 ul li a {

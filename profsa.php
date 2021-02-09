@@ -243,5 +243,56 @@ function limpa_pro($nom)  {
      if ($res1 != $cgc[12] || $res2 != $cgc[13]) { $sta = 1; }
      return $sta;
  }
+
+ function inverte_dat($tip, $dat) {
+    $bar = strpos($dat,'/');
+    $tra = strpos($dat,'-');
+    if ($bar > 0) {
+         if ($bar == 2) {
+              $dat = substr($dat,6,4) . '/' . substr($dat,3,2) . '/' . substr($dat,0,2);
+         }
+         if ($bar == 4) {
+              $dat = substr($dat,8,2) . '/' . substr($dat,5,2) . '/' . substr($dat,0,4);
+         }
+    }
+    if ($tra > 0) {
+         if ($tra == 2) {
+              $dat = substr($dat,6,4) . '-' . substr($dat,3,2) . '-' . substr($dat,0,2);
+         }
+         if ($tra == 4) {
+              $dat = substr($dat,8,2) . '-' . substr($dat,5,2) . '-' . substr($dat,0,4);
+         }
+    }
+    if ($tip == 1) {
+         $dat = str_replace("/", "-", $dat);   
+    }
+    if ($tip == 2) {
+         if ($dat == "") {
+              $dat = ' null ' ;   
+         } else {
+              $dat = "'" . str_replace("/", "-", $dat) . "'";   
+         }
+    }
+    return $dat;
+}
+
+function mascara_cpo($cpo, $mas) {	// Formata campos com máscara
+     $ret = '';
+     $nro = 00;
+     $tmc = strlen($cpo);
+     $tmm = strlen($mas);
+     if ($tmm == 0) { $tmm = $tmc; }
+     for ($ind = 0; $ind < $tmm; $ind++) {
+         if (trim($mas[$ind]) == "") {
+             if (isset($cpo[$nro]) == true) {
+                 $ret = $ret . $cpo[$nro];
+                 $nro = $nro + 1;
+             }
+         } else {
+             $ret = $ret . $mas[$ind];
+         }
+     }
+     return $ret;
+ }
  
 ?>

@@ -75,4 +75,17 @@
           return $nro_r;
      }
 
+     function numero_reg($tab) {
+          $qtd = 0;
+          include "lerinformacao.inc";
+          $com = "Select Count(*) as qtde from " . $tab ;
+          $sql = mysqli_query($conexao, $com);
+          $nro_r = mysqli_num_rows($sql);
+          $sql = mysqli_query($conexao, $com);
+          while ($lin = mysqli_fetch_assoc($sql)) {        
+               $qtd = $lin['qtde']; 
+          }
+          return $qtd;
+     }
+
 ?>

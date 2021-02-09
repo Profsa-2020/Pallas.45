@@ -4,10 +4,19 @@
           <li>
                <a href="man-empresa.php?ope=1&cod=0">
                     <div class="icon">
+                         <i class="fa fa-cogs" aria-hidden="true"></i>
+                         <i class="fa fa-cogs" aria-hidden="true"></i>
+                    </div>
+                    <div class="name"><span data-text="Parâmetros">Parâmetros</span></div>
+               </a>
+          </li>
+          <li>
+               <a href="con-fundos.php">
+                    <div class="icon">
                          <i class="fa fa-building" aria-hidden="true"></i>
                          <i class="fa fa-building" aria-hidden="true"></i>
                     </div>
-                    <div class="name"><span data-text="Parâmetros">Parâmetros</span></div>
+                    <div class="name"><span data-text="Fundos">Fundos</span></div>
                </a>
           </li>
           <li>
@@ -35,15 +44,6 @@
                          <i class="fa fa-search" aria-hidden="true"></i>
                     </div>
                     <div class="name"><span data-text="Consultas">Consultas</span></div>
-               </a>
-          </li>
-          <li>
-               <a href="#">
-                    <div class="icon">
-                         <i class="fa fa-line-chart" aria-hidden="true"></i>
-                         <i class="fa fa-line-chart" aria-hidden="true"></i>
-                    </div>
-                    <div class="name"><span data-text="Gráficos">Gráficos</span></div>
                </a>
           </li>
           <li>

@@ -55,6 +55,7 @@ $(document).ready(function() {
      });
 
      $('#arq-up').change(function() {
+          $('#inf_1').text('');
           var arqu = $(this)[0].files[0].name;
           var data = $(this)[0].files[0].lastModifiedDate;
           data = ((data.getDate())) + "/" + ((data.getMonth() + 1)) + "/" + data.getFullYear();
@@ -85,7 +86,7 @@ $(document).ready(function() {
      });
 
      $('#frmTelImp').submit(function() {
-          let arq = $('#arq').val();          
+          let arq = $('#arq').val();
           let sta = $('#sta_a').val();
           let reg = $('#reg_a').val();
           if (sta == 0) {
@@ -93,30 +94,33 @@ $(document).ready(function() {
           } else {
                $('.pre-1').show();
                form = $(this);
-               var formulario = new FormData(form[0]);               
+               var formulario = new FormData(form[0]);
                $.ajax({
-                    url: 'ajax/upload-csv.php?arq=' + arq + '&reg=' + reg, 
+                    url: 'ajax/upload-csv.php?arq=' + arq + '&reg=' + reg,
                     data: formulario,
                     type: 'POST',
                     processData: false,
                     contentType: false,
                     dataType: 'json',
-                    success: function (data) {
+                    success: function(data) {
                          if (data.men != "") {
                               alert(data.men);
                          } else {
+                              $('#arq').val(0);
                               $('#sta_a').val(0);
-                              $('#nom_a').text('UpLoad do arquivo processado com sucesso !');
-                              $('#dat_a').text('');
-                              $('#lin_a').text('');
-                              $('#tam_a').text('');
-                              $('#max_a').text('');
+                              $('#inf_1').text('Processamento efetuado com sucesso - Lidos: ' + data.pro + ' Gravados: ' + data.gra);
+                              $('#nom_a').text('Nome do Arquivo: ');
+                              $('#dat_a').text('Data do Arquivo: ');
+                              $('#lin_a').text('Número de Linhas: ');
+                              $('#tam_a').text('Tamanho do Arquivo: ');
+                              $('#max_a').text('Tamanho Máximo: ');
                               $('#reg_a').text(0);
                          }
                     },
-                    error: function(data){
-                         console.log("Erro: " + JSON.stringify(data));	
-                         alert('Um erro ocorreu no processamento do UpLoad do arquivo');
+                    error: function(data) {
+                         console.log("Erro: " + JSON.stringify(data));
+                         alert(
+                              'Um erro ocorreu no processamento do UpLoad do arquivo');
                     }
                });
                $('.pre-1').hide();
@@ -144,6 +148,7 @@ $(document).ready(function() {
 </script>
 
 <?php 
+     ini_set('max_execution_time', 180);       
      $max = ini_get('upload_max_filesize');
 ?>
 
@@ -159,10 +164,15 @@ $(document).ready(function() {
                <div class="col-md-10">
                     <!-- Corpo -->
                     <p class="lit-4">Processo de Importação de Dados</p>
-
+                    <br />
+                    <div class="row">
+                         <div class="col-md-12 text-center">
+                         <strong><p id="inf_1"> </p></strong>
+                         </div>
+                    </div>
+                    <br />
                     <form class="qua-4" id="frmTelImp" name="frmTelImp" action="processo-imp.php" method="POST"
                          enctype="multipart/form-data">
-                         <br /><br />
                          <div class="row">
                               <div class="col-md-2"></div>
                               <div class="cpo-1 col-md-8">
@@ -204,8 +214,9 @@ $(document).ready(function() {
                          <br />
                          <input type="hidden" id="sta_a" name="sta_a" value="0" />
                          <input type="hidden" id="reg_a" name="reg_a" value="0" />
-                         <input type="hidden" id="tam_m" name="tam_m" value="<?php echo ini_get('upload_max_filesize'); ?>" />
-                         <input name="arq-up" type="file" id="arq-up" class="bot-3" accept=".csv" />
+                         <input type="hidden" id="tam_m" name="tam_m"
+                              value="<?php echo ini_get('upload_max_filesize'); ?>" />
+                         <input name="arq-up" type="file" id="arq-up" class="bot-3" value="" accept=".csv" />
                     </form>
 
                     <div class="pre-1" class="row text-center">
