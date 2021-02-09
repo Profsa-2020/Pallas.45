@@ -43,7 +43,8 @@
 
 <script>
 $(document).ready(function() {
-     $('.pre-1').hide();
+     $('.alert').alert();
+     $('.alert').delay(2500).fadeOut(2500);
 
      $('#upload').bind("click", function() {
           let arq = $('#arq').val();
@@ -85,50 +86,6 @@ $(document).ready(function() {
           }
      });
 
-     $('#frmTelImp').submit(function() {
-          let arq = $('#arq').val();
-          let sta = $('#sta_a').val();
-          let reg = $('#reg_a').val();
-          if (sta == 0) {
-               alert("Não há arquivo informado para efetuar UpLoad e Importação");
-          } else {
-               $('.pre-1').show();
-               form = $(this);
-               var formulario = new FormData(form[0]);
-               $.ajax({
-                    url: 'ajax/upload-csv.php?arq=' + arq + '&reg=' + reg,
-                    data: formulario,
-                    type: 'POST',
-                    processData: false,
-                    contentType: false,
-                    dataType: 'json',
-                    success: function(data) {
-                         if (data.men != "") {
-                              alert(data.men);
-                         } else {
-                              $('#arq').val(0);
-                              $('#sta_a').val(0);
-                              $('#inf_1').text('Processamento efetuado com sucesso - Lidos: ' + data.pro + ' Gravados: ' + data.gra);
-                              $('#nom_a').text('Nome do Arquivo: ');
-                              $('#dat_a').text('Data do Arquivo: ');
-                              $('#lin_a').text('Número de Linhas: ');
-                              $('#tam_a').text('Tamanho do Arquivo: ');
-                              $('#max_a').text('Tamanho Máximo: ');
-                              $('#reg_a').text(0);
-                         }
-                    },
-                    error: function(data) {
-                         console.log("Erro: " + JSON.stringify(data));
-                         alert(
-                              'Um erro ocorreu no processamento do UpLoad do arquivo');
-                    }
-               });
-               $('.pre-1').hide();
-               return false;
-          }
-          return false;
-     });
-
      $(window).scroll(function() {
           if ($(this).scrollTop() > 100) {
                $(".subir").fadeIn(500);
@@ -148,8 +105,46 @@ $(document).ready(function() {
 </script>
 
 <?php 
+     $pro = 0;
+     $gra = 0;
+     include_once "dados.php";
+     include_once "profsa.php";
+     $_SESSION['wrknompro'] = __FILE__;
+     date_default_timezone_set("America/Sao_Paulo");
+     $_SESSION['wrkdatide'] = date ("d/m/Y H:i:s", getlastmod());
+     $_SESSION['wrknomide'] = get_current_user();
+     $_SESSION['wrknumusu'] = getmypid();
+     if (isset($_SERVER['HTTP_REFERER']) == true) {
+          if (limpa_pro($_SESSION['wrknompro']) != limpa_pro($_SERVER['HTTP_REFERER'])) {
+               $_SESSION['wrkproant'] = limpa_pro($_SERVER['HTTP_REFERER']);
+               $ret = gravar_log(6, "Entrada na página de UpLoad de arquivos .Csv Pallas.45 - MoneyWay");  
+          }
+     }
      ini_set('max_execution_time', 180);       
      $max = ini_get('upload_max_filesize');
+     if (isset($_REQUEST['processa']) == true) {
+          $arq = (isset($_REQUEST['arq']) == false ? 0 : $_REQUEST['arq']);
+          $ret = upload_csv($_SESSION['wrknumusu'], $_FILES, $arq, $cam, $nom, $des, $tip, $ext, $tam, $men);
+          if ($men != "") {
+               echo '<script>alert("' . $men . '");</script>';
+          } else {
+               $qtd = verifica_csv($cam, $nom, $arq, $con);
+               if ($qtd == 999999) {
+                    echo '<script>alert("Arquivo informado para UpLoad não possue quebra de linhas");</script>';
+               } else if ($qtd != 0) {
+                    if ($arq == 1) {
+                         echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 116");</script>';
+                    }
+               } else {
+                    if ($arq == 1) {
+                         $ret = processa_fun($cam, $nom, $des, $arq, $pro, $gra, $men, $com);
+                    }
+                    if ($arq == 2) {
+                         $ret = processa_dia($cam, $nom, $des, $arq, $pro, $gra, $men, $com);
+                    }
+               }
+          }
+     }
 ?>
 
 <body id="box00">
@@ -165,10 +160,16 @@ $(document).ready(function() {
                     <!-- Corpo -->
                     <p class="lit-4">Processo de Importação de Dados</p>
                     <br />
-                    <div class="row">
-                         <div class="col-md-12 text-center">
-                         <strong><p id="inf_1"> </p></strong>
-                         </div>
+                    <div class="row text-center">
+                         <div class="col-md-1"></div>
+                         <?php
+                              if ($pro != 0) {
+                                   echo '<div class="col-md-10 alert alert-success alert-dismissible fade show" role="alert">';
+                                   echo '<p><strong><h4>Processamento efetuado com Sucesso - Lidos: ' . $pro . ' Gravados: ' . $gra . '</h4></strong></p>';     
+                                   echo '</div>';
+                              }
+                         ?>
+                         <div class="col-md-1"></div>
                     </div>
                     <br />
                     <form class="qua-4" id="frmTelImp" name="frmTelImp" action="processo-imp.php" method="POST"
@@ -195,6 +196,11 @@ $(document).ready(function() {
                                         <span id="tam_a">Tamanho do Arquivo: </span><br />
                                         <span id="lin_a">Número de Linhas: </span><br />
                                         <span id="max_a">Tamanho Máximo: </span><br />
+                                        <?php
+                                        if ($pro != 0) {
+                                             echo '<br /><span>Lidos / Gravados: ' . $pro . ' - ' . $gra . '</span><br />';
+                                        }
+                                        ?>
                                    </strong>
                               </div>
                          </div>
@@ -218,12 +224,6 @@ $(document).ready(function() {
                               value="<?php echo ini_get('upload_max_filesize'); ?>" />
                          <input name="arq-up" type="file" id="arq-up" class="bot-3" value="" accept=".csv" />
                     </form>
-
-                    <div class="pre-1" class="row text-center">
-                         <div class="col-md-12">
-                              <img id="pre-2" class="img-fluid" src="img/preloader2.gif">
-                         </div>
-                    </div>
                </div>
           </div>
      </div>
@@ -231,5 +231,216 @@ $(document).ready(function() {
           <img class="subir" src="img/subir.png" title="Volta a página para o seu topo." />
      </div>
 </body>
+<?php
+     function upload_csv ($nro, $fil , $ord, &$cam, &$nom, &$des, &$tip, &$ext, &$tam, &$men) {
+          $sta = 0; $des = ""; $tam = 0; $men = ""; $cam = ""; $nom = ""; $arq = false;
+          $arq = (isset($fil['arq-up']) ? $fil['arq-up'] : false); 
+          if ($arq == false) {
+               $men = "Não há arquivo informado para ser efetuado o UpLoad no sistema";
+               return 1;
+          } else if ($arq['name'] == "") {
+               $men = "Nome do arquivo informado para UpLoad etá em branco";
+               return 2;
+          }            
+          $erro[0] = 'Não houve erro encontrado no Upload do arquivo';
+          $erro[1] = 'O arquivo informado no upload é maior do que o limite da plataforma';
+          $erro[2] = 'O arquivo ultrapassa o limite de tamanho especifiado no HTML';
+          $erro[3] = 'O upload do arquivo foi feito parcialmente, tente novamente';
+          $erro[4] = 'Não foi feito o upload do arquivo corretamente !';
+          $erro[5] = 'Não foi feito o upload do arquivo corretamente !!';
+          $erro[6] = 'Pasta temporária ausente para Upload do arquivo informado';
+          $erro[7] = 'Falha em escrever o arquivo para upload informado em disco';
+          if ($arq['error'] != 0) {
+               $men = $erro[$arq['error']];
+               return 3; 
+          }
+          if ($sta == 0) {
+               $tip = array('csv', 'CSV');
+               $nom = $arq['name'];
+               $des = limpa_cpo($arq['name']);
+               $tam = $arq['size'];
+               $fim = explode('.', $des);
+               $ext = end($fim);
+               if (array_search($ext, $tip) === false) {
+                    $men = 'Extensão de arquivo informado deve ser somente .csv';
+                    $sta = 4; 
+               }
+          }
+          if ($sta == 0) {
+               $tip = explode('.', $des);
+               $des = $tip[0] . "." . $ext;
+               $pas = "upload"; 
+               if (file_exists($pas) == false) { mkdir($pas);  }
+               $nom = 'Csv_' . str_pad($nro, 6, "0", STR_PAD_LEFT) . "_" . str_pad($ord, 3, "0", STR_PAD_LEFT) . "." . $ext; 
+               $cam = $pas . "/" . 'Csv_' . str_pad($nro, 6, "0", STR_PAD_LEFT) . "_" . str_pad($ord, 3, "0", STR_PAD_LEFT) . "." . $ext; 
+               $ret = move_uploaded_file($arq['tmp_name'], $cam);
+               if ($ret == false) {
+                    $men = 'Erro na cópia do arquivo informado para upload';
+                    $sta = 5; 
+               } else {
+                    $sta = gravar_log(25, "UpLoad de arquivo - Nom: " . $nom . " Tam: " . $tam . " Cam: " . $cam . " Des: " . $des);
+               }      
+          }    
+          return $sta;
+     }
+
+     function verifica_csv ($cam, $nom, $ord, &$con) {
+          $con = 0;
+          include_once "dados.php";
+          $csv = fopen($cam, "r");  
+          while (!feof ($csv)) {
+               $tam = strlen(fgets($csv));   // Menor que 2000 OK
+               if ($tam > 2000) {
+                    fclose($csv);     
+                    return 999999;
+               } else {
+                    $lin = explode(";", fgets($csv));
+                    if ($ord == 1) {
+                         if (count($lin) != 1 && count($lin) != 116) {
+                              $con = $con + 1;          
+                         }
+                    }
+                    if ($ord == 2) {
+                         if (count($lin) != 1 && count($lin) != 8) {
+                              $con = $con + 1;          
+                         }
+                    }
+               }
+          } 
+          fclose($csv);     
+          return $con; 
+     }
+
+     function processa_fun ($cam, $nom, $des, $ord, &$pro, &$gra, &$men, &$com) {
+          $ret = 0; 
+          $pro = 0; 
+          $gra = 0; 
+          $men = ''; $com = '';
+          include_once "dados.php";
+          $csv = fopen($cam, "r");  
+          while (!feof ($csv)) {
+               $lin = explode(";", fgets($csv));
+               $nro = acessa_reg("Select idfundo from tb_fundos where funcnpj = '" . limpa_nro($lin[0]) . "'", $reg);            
+               if ($nro == 0 &&  limpa_nro($lin[0]) != "0") {
+                    $sql  = "insert into tb_fundos (";
+                    $sql .= "funcnpj, ";
+                    $sql .= "funnome, ";
+                    $sql .= "fundatacomp, ";
+                    $sql .= "funcondominio, ";
+                    $sql .= "funnegmercado, ";
+                    $sql .= "funpubalvo, ";
+                    $sql .= "funcotas, ";
+                    $sql .= "funespelho, ";
+                    $sql .= "funclaambima, ";
+                    $sql .= "funaplminima, ";
+                    $sql .= "funatuadiaria, ";
+                    $sql .= "funupload, ";
+                    $sql .= "funarquivo, ";
+                    $sql .= "funordem, ";
+                    $sql .= "funsequencia, ";
+                    $sql .= "funprocesso, ";
+                    $sql .= "keyinc, ";
+                    $sql .= "datinc ";
+                    $sql .= ") value ( ";
+                    $sql .= "'" . limpa_nro($lin[0]) . "',";
+                    $sql .= "'" . utf8_encode(str_replace("'", "´", substr($lin[1], 0, 75))) . "',";
+                    if (substr($lin[2], 4, 1) == "-" || substr($lin[2], 4, 1) == "/") {
+                         $sql .= "'" . $lin[2] . "',";
+                    } else {
+                         $sql .= "'" . inverte_dat(1, $lin[2]) . "',";
+                    }
+                    $sql .= "'" . substr($lin[3], 0, 1) . "',";  // Coluna D
+                    $sql .= "'" . substr($lin[5], 0, 1) . "',";  // Coluna F
+                    $sql .= "'" . substr($lin[8], 0, 1) . "',";  // Coluna I
+                    $sql .= "'" . substr($lin[15], 0, 1) . "',";  // Coluna P
+                    $sql .= "'" . substr($lin[16], 0, 1) . "',";  // Coluna Q
+                    $sql .= "'" . substr($lin[10], 0, 1) . "',";  // Coluna K
+                    $sql .= "'" . $lin[17] . "',";  // Coluna R R$ - Aplicação Mínima
+                    $sql .= "'" . substr($lin[18], 0, 1) . "',";  // Coluna S - Atualização Diária
+                    $sql .= "'" . $nom . "',";  
+                    $sql .= "'" . $des . "',";  
+                    $sql .= "'" . $ord . "',";  
+                    $sql .= "'" . $pro . "',";  
+                    $sql .= "'" .  $_SESSION['wrknumusu'] . "',";  
+                    $sql .= "'" . $_SESSION['wrkideusu'] . "',";
+                    $sql .= "'" . date("Y-m-d H:i:s") . "')";
+                    $ret = comando_tab($sql, $nro, $cha, $men);
+                    if ($ret == false) {
+                         $com = $sql;
+                         $men = "Erro na gravação do registro solicitado no banco de dados !";
+                    }               
+                    $gra = $gra + 1;
+               } 
+               $pro = $pro + 1;
+          } 
+          fclose($csv);     
+          return $ret; 
+     }
+
+     function processa_dia ($cam, $nom, $des, $ord, &$pro, &$gra, &$men, &$com) {
+          $ret = 0; 
+          $pro = 0; 
+          $gra = 0; 
+          $men = ''; $com = '';
+          include_once "dados.php";
+          $csv = fopen($cam, "r");  
+          while (!feof ($csv)) {
+               $lin = explode(";", fgets($csv));
+               $nro = acessa_reg("Select idfundo from tb_fundos where funcnpj = '" . limpa_nro($lin[0]) . "'", $reg);            
+               if ($nro == 0 &&  limpa_nro($lin[0]) != "0") {
+                    $sql  = "insert into tb_movto_id (";
+                    $sql .= "idfundo, ";
+                    $sql .= "inffundo, ";
+                    $sql .= "infdata, ";
+                    $sql .= "infotal, ";
+                    $sql .= "infquota, ";
+                    $sql .= "infpatrimonio, ";
+                    $sql .= "infcapital, ";
+                    $sql .= "infresgate, ";
+                    $sql .= "infnumcotas, ";
+                    $sql .= "infprocesso, ";
+                    $sql .= "infsequencia, ";
+                    $sql .= "infupload, ";
+                    $sql .= "infarquivo, ";
+                    $sql .= "infordem, ";
+                    $sql .= "keyinc, ";
+                    $sql .= "datinc ";
+                    $sql .= ") value ( ";
+                    $sql .= "'" . limpa_nro($lin[0]) . "',";
+                    $sql .= "'" . utf8_encode(str_replace("'", "´", substr($lin[1], 0, 75))) . "',";
+                    if (substr($lin[2], 4, 1) == "-" || substr($lin[2], 4, 1) == "/") {
+                         $sql .= "'" . $lin[2] . "',";
+                    } else {
+                         $sql .= "'" . inverte_dat(1, $lin[2]) . "',";
+                    }
+                    $sql .= "'" . substr($lin[3], 0, 1) . "',";  // Coluna D
+                    $sql .= "'" . substr($lin[5], 0, 1) . "',";  // Coluna F
+                    $sql .= "'" . substr($lin[8], 0, 1) . "',";  // Coluna I
+                    $sql .= "'" . substr($lin[15], 0, 1) . "',";  // Coluna P
+                    $sql .= "'" . substr($lin[16], 0, 1) . "',";  // Coluna Q
+                    $sql .= "'" . substr($lin[10], 0, 1) . "',";  // Coluna K
+                    $sql .= "'" . $lin[17] . "',";  // Coluna R R$ - Aplicação Mínima
+                    $sql .= "'" . substr($lin[18], 0, 1) . "',";  // Coluna S - Atualização Diária
+                    $sql .= "'" . $nom . "',";  
+                    $sql .= "'" . $des . "',";  
+                    $sql .= "'" . $ord . "',";  
+                    $sql .= "'" . $pro . "',";  
+                    $sql .= "'" .  $_SESSION['wrknumusu'] . "',";  
+                    $sql .= "'" . $_SESSION['wrkideusu'] . "',";
+                    $sql .= "'" . date("Y-m-d H:i:s") . "')";
+                    $ret = comando_tab($sql, $nro, $cha, $men);
+                    if ($ret == false) {
+                         $com = $sql;
+                         $men = "Erro na gravação do registro solicitado no banco de dados !";
+                    }               
+                    $gra = $gra + 1;
+               } 
+               $pro = $pro + 1;
+          } 
+          fclose($csv);     
+          return $ret; 
+     }
+
+?>
 
 </html>
