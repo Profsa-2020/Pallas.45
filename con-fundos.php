@@ -112,10 +112,10 @@ $(document).ready(function() {
                                         <thead>
                                              <tr>
                                                   <th width="5%">Código</th>
+                                                  <th>Status</th>
                                                   <th>C.N.P.J.</th>
                                                   <th>Nome do Fundo</th>
                                                   <th>Cadastro</th>
-                                                  <th>Status</th>
                                                   <th>Aplicação Mínima</th>
                                                   <th>Inclusão</th>
                                                   <th>Alteração</th>
@@ -147,13 +147,13 @@ function carrega_fun() {
      foreach ($reg as $lin) {
          $txt =  '<tr>';
          $txt .= '<td class="text-center">' . $lin['idfundo'] . '</td>';
+         if ($lin['funstatus'] == 0) {$txt .= "<td>" . "" . "</td>";}
+         if ($lin['funstatus'] == 1) {$txt .= "<td>" . "Blo" . "</td>";}
+         if ($lin['funstatus'] == 2) {$txt .= "<td>" . "Exc" . "</td>";}
+         if ($lin['funstatus'] == 3) {$txt .= "<td>" . "Can" . "</td>";}
          $txt .= "<td>" . mascara_cpo($lin['funcnpj'],"  .   .   /    -  ") . "</td>";
          $txt .= "<td>" . $lin['funnome'] . "</td>";
          $txt .= "<td>" . date('d/m/Y',strtotime($lin['fundatacomp'])) . "</td>";
-         if ($lin['funstatus'] == 0) {$txt .= "<td>" . "Normal" . "</td>";}
-         if ($lin['funstatus'] == 1) {$txt .= "<td>" . "Bloqueado" . "</td>";}
-         if ($lin['funstatus'] == 2) {$txt .= "<td>" . "Suspenso" . "</td>";}
-         if ($lin['funstatus'] == 3) {$txt .= "<td>" . "Cancelado" . "</td>";}
          $txt .= '<td class="text-right">' . number_format($lin['funaplminima'], 2, ",", ".") . '</td>';
          if ($lin['datinc'] == null) {
                $txt .= "<td>" . '' . "</td>";
