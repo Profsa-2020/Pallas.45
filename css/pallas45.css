@@ -148,6 +148,23 @@
     font-weight: bold;
 }
 
+.qua-6 {
+    padding: 10px 5px;
+    border: 0.5px solid #9ea0a0;
+    background-color: #f3f3f3;
+}
+
+.qua-6 label {
+    font-size: 14px;
+    color: #918e8e;
+}
+
+.qua-6 input[type=text], .qua-6 select, .qua-6 select option, .qua-6 textarea {
+    font-size: 14px;
+    padding: 2px 10px;
+    color: #676a6c;
+ }
+
 @media only screen and (max-width: 900px) {  
     .qua-1 { width: 90%; }
 }

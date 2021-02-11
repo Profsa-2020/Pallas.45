@@ -44,7 +44,7 @@
 <script>
 $(document).ready(function() {
      $('.alert').alert();
-     $('.alert').delay(2500).fadeOut(2500);
+     $('.alert').delay(5000).fadeOut(2500);
 
      $('#upload').bind("click", function() {
           let arq = $('#arq').val();
@@ -56,7 +56,7 @@ $(document).ready(function() {
      });
 
      $('#arq-up').change(function() {
-          $('#inf_1').text('');
+          $('#inf-1').text('');
           $('#qtd_m').val(0);
           var ord = $('#arq').val();
           var arqu = $(this)[0].files[0].name;
@@ -138,7 +138,7 @@ $(document).ready(function() {
           }
      }
      if (isset($_SESSION['wrkqtdreg']) == false) { $_SESSION['wrkqtdreg'] = 0; }
-     ini_set('max_execution_time', 300);       
+     ini_set('max_execution_time', 600);       
      $max = ini_get('upload_max_filesize');
      if (isset($_REQUEST['processa']) == true) {
           $arq = (isset($_REQUEST['arq']) == false ? 0 : $_REQUEST['arq']);
@@ -210,7 +210,7 @@ $(document).ready(function() {
                          <?php
                               if ($pro != 0) {
                                    echo '<div class="col-md-10 alert alert-success alert-dismissible fade show" role="alert">';
-                                   echo '<p><strong><h4>Processamento efetuado com Sucesso - Lidos: ' . $pro . ' Gravados: ' . $gra . '</h4></strong></p>';     
+                                   echo '<p><strong><h4 id="inf-1">Processamento efetuado com Sucesso - Lidos: ' . $pro . ' Gravados: ' . $gra . '</h4></strong></p>';     
                                    echo '</div>';
                               }
                          ?>
@@ -265,11 +265,11 @@ $(document).ready(function() {
                               <div class="col-md-3"></div>
                               <div class="col-md-3">
                                    <button type="button" id="upload" name="upload" class="bot-1"> <i
-                                             class="cur-1 fa fa-upload fa-1g" aria-hidden="true"></i> UpLoad</button>
+                                             class="cur-1 fa fa-database fa-1g" aria-hidden="true"></i>&nbsp; &nbsp; Arquivo</button>
                               </div>
                               <div class="col-md-3">
                                    <button type="submit" id="processa" name="processa" class="bot-1"> <i
-                                             class="cur-1 fa fa-cogs fa-1g" aria-hidden="true"></i> Processar</button>
+                                             class="cur-1 fa fa-cogs fa-1g" aria-hidden="true"></i>&nbsp; &nbsp; Processar</button>
                               </div>
                               <div class="col-md-3"></div>
                          </div>
@@ -428,7 +428,7 @@ $(document).ready(function() {
                     }
                     $sql .= "'" . substr($lin[3], 0, 1) . "',";  // Coluna D
                     $sql .= "'" . substr($lin[5], 0, 1) . "',";  // Coluna F
-                    $sql .= "'" . substr($lin[8], 0, 1) . "',";  // Coluna I
+                    $sql .= "'" . substr($lin[8], 0, 1) . "',";  // Coluna I - Publico Alvo
                     $sql .= "'" . substr($lin[15], 0, 1) . "',";  // Coluna P
                     $sql .= "'" . substr($lin[16], 0, 1) . "',";  // Coluna Q
                     $sql .= "'" . substr($lin[10], 0, 1) . "',";  // Coluna K
@@ -700,14 +700,14 @@ $(document).ready(function() {
                $tip = 0;
                $lin = explode(";", fgets($csv));               
                $cha = ler_fundo($lin[0], $sta);
-               if ($cha == 1) {
-                    if ($lin[2] == "Fundo Cambial") {$tip = 1; }
-                    if ($lin[2] == "Fundo da Dívida Externa") {$tip = 2; }
-                    if ($lin[2] == "Fundo de Ações") {$tip = 3; }
-                    if ($lin[2] == "Fundo de Curto Prazo") {$tip = 4; }
-                    if ($lin[2] == "Fundo de Renda Fixa") {$tip = 5; }
-                    if ($lin[2] == "Fundo Multimercado") {$tip = 6; }
-                    if ($lin[2] == "Fundo Referenciado") {$tip = 7; }
+               if ($cha >= 1) {
+                    if ($lin[2] == utf8_decode("Fundo Cambial")) {$tip = 1; }
+                    if ($lin[2] == utf8_decode("Fundo da Dívida Externa")) {$tip = 2; }
+                    if ($lin[2] == utf8_decode("Fundo de Ações")) {$tip = 3; }
+                    if ($lin[2] == utf8_decode("Fundo de Curto Prazo")) {$tip = 4; }
+                    if ($lin[2] == utf8_decode("Fundo de Renda Fixa")) {$tip = 5; }
+                    if ($lin[2] == utf8_decode("Fundo Multimercado")) {$tip = 6; }
+                    if ($lin[2] == utf8_decode("Fundo Referenciado")) {$tip = 7; }
                     if ($tip >= 1) {
                          $sql  = "update tb_fundos set ";
                          $sql .= "funclasse = '". $tip . "', ";
@@ -738,38 +738,38 @@ $(document).ready(function() {
                $tip = 0;
                $lin = explode(";", fgets($csv));               
                $cha = ler_fundo($lin[0], $sta);
-               if ($cha == 1) {
-                    if ($lin[2] == "Carteira de ações") {$tip = 1; }
-                    if ($lin[2] == "Cota de PIBB") {$tip = 2; } 
-                    if ($lin[2] == "DI de um dia") {$tip = 3; } 
-                    if ($lin[2] == "Dólar comercial") {$tip = 4; } 
-                    if ($lin[2] == "Euro") {$tip = 5; } 
-                    if ($lin[2] == "Ibovespa") {$tip = 6; } 
-                    if ($lin[2] == "IBrX") {$tip = 7; } 
-                    if ($lin[2] == "IBrX-50") {$tip = 8; } 
-                    if ($lin[2] == "IEE") {$tip = 9; } 
-                    if ($lin[2] == "Índice de Mercado Andima Geral") {$tip = 10; } 
-                    if ($lin[2] == "Índice de Mercado Andima LFT") {$tip = 11; } 
-                    if ($lin[2] == "Índice de Mercado Andima NTN-B até 5 anos") {$tip = 12; } 
-                    if ($lin[2] == "Índice de Mercado Andima NTN-B mais de 5 anos") {$tip = 13; } 
-                    if ($lin[2] == "Índice de Mercado Andima todas NTN-B") {$tip = 14; } 
-                    if ($lin[2] == "Índice de Mercado Andima todas NTN-C") {$tip = 15; } 
-                    if ($lin[2] == "Índice de preços") {$tip = 16; } 
-                    if ($lin[2] == "Índice de Preços ao Consumidor (IPC/FIPE)") {$tip = 17; } 
-                    if ($lin[2] == "Índice de Preços ao Consumidor Amplo (IPCA/IBGE)") {$tip = 18; } 
-                    if ($lin[2] == "Índice Geral de Preços-Disponibilidade Interna (IGP-DI)") {$tip = 19; }
-                    if ($lin[2] == "Índice Geral de Preços-Mercado (IGP-M)") {$tip = 20; } 
-                    if ($lin[2] == "Índice Nacional de Preços ao Consumidor (INPC/IBGE)") {$tip = 21; } 
-                    if ($lin[2] == "IRF-M") {$tip = 22; } 
-                    if ($lin[2] == "ITEL") {$tip = 23; } 
-                    if ($lin[2] == "Ouro 250 gramas") {$tip = 24; } 
-                    if ($lin[2] == "OUTROS") {$tip = 25; } 
-                    if ($lin[2] == "Taxa Anbid") {$tip = 26; } 
-                    if ($lin[2] == "Taxa Básica Financeira") {$tip = 27; } 
-                    if ($lin[2] == "Taxa de Juro de Longo Prazo") {$tip = 28; } 
-                    if ($lin[2] == "Taxa de juro prefixada") {$tip = 29; } 
-                    if ($lin[2] == "Taxa Referencial") {$tip = 30; } 
-                    if ($lin[2] == "Taxa Selic") {$tip = 31; } 
+               if ($cha >= 1) {
+                    if ($lin[2] == utf8_decode("Carteira de ações")){$tip = 1; }
+                    if ($lin[2] == utf8_decode("Cota de PIBB")){$tip = 2; } 
+                    if ($lin[2] == utf8_decode("DI de um dia")){$tip = 3; } 
+                    if ($lin[2] == utf8_decode("Dólar comercial")){$tip = 4; } 
+                    if ($lin[2] == utf8_decode("Euro")){$tip = 5; } 
+                    if ($lin[2] == utf8_decode("Ibovespa")){$tip = 6; } 
+                    if ($lin[2] == utf8_decode("IBrX")){$tip = 7; } 
+                    if ($lin[2] == utf8_decode("IBrX-50")){$tip = 8; } 
+                    if ($lin[2] == utf8_decode("IEE")){$tip = 9; } 
+                    if ($lin[2] == utf8_decode("Índice de Mercado Andima Geral")){$tip = 10; } 
+                    if ($lin[2] == utf8_decode("Índice de Mercado Andima LFT")){$tip = 11; } 
+                    if ($lin[2] == utf8_decode("Índice de Mercado Andima NTN-B até 5 anos")){$tip = 12; } 
+                    if ($lin[2] == utf8_decode("Índice de Mercado Andima NTN-B mais de 5 anos")){$tip = 13; } 
+                    if ($lin[2] == utf8_decode("Índice de Mercado Andima todas NTN-B")){$tip = 14; } 
+                    if ($lin[2] == utf8_decode("Índice de Mercado Andima todas NTN-C")){$tip = 15; } 
+                    if ($lin[2] == utf8_decode("Índice de preços")){$tip = 16; } 
+                    if ($lin[2] == utf8_decode("Índice de Preços ao Consumidor (IPC/FIPE)")){$tip = 17; } 
+                    if ($lin[2] == utf8_decode("Índice de Preços ao Consumidor Amplo (IPCA/IBGE)")){$tip = 18; } 
+                    if ($lin[2] == utf8_decode("Índice Geral de Preços-Disponibilidade Interna (IGP-DI)")){$tip = 19; }
+                    if ($lin[2] == utf8_decode("Índice Geral de Preços-Mercado (IGP-M)")){$tip = 20; } 
+                    if ($lin[2] == utf8_decode("Índice Nacional de Preços ao Consumidor (INPC/IBGE)")){$tip = 21; } 
+                    if ($lin[2] == utf8_decode("IRF-M")){$tip = 22; } 
+                    if ($lin[2] == utf8_decode("ITEL")){$tip = 23; } 
+                    if ($lin[2] == utf8_decode("Ouro 250 gramas")){$tip = 24; } 
+                    if ($lin[2] == utf8_decode("OUTROS")){$tip = 25; } 
+                    if ($lin[2] == utf8_decode("Taxa Anbid")){$tip = 26; } 
+                    if ($lin[2] == utf8_decode("Taxa Básica Financeira")){$tip = 27; } 
+                    if ($lin[2] == utf8_decode("Taxa de Juro de Longo Prazo")){$tip = 28; } 
+                    if ($lin[2] == utf8_decode("Taxa de juro prefixada")){$tip = 29; } 
+                    if ($lin[2] == utf8_decode("Taxa Referencial")){$tip = 30; } 
+                    if ($lin[2] == utf8_decode("Taxa Selic")){$tip = 31; } 
                     if ($tip >= 1) {
                          $sql  = "update tb_fundos set ";
                          $sql .= "funrentab = '". $tip . "', ";

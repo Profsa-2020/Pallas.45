@@ -111,12 +111,15 @@ $(document).ready(function() {
                                    <table id="tab-0" class="table table-sm table-striped">
                                         <thead>
                                              <tr>
-                                                  <th width="5%">Código</th>
-                                                  <th>Status</th>
+                                                  <th width="5%">Nro</th>
+                                                  <th>Sta</th>
                                                   <th>C.N.P.J.</th>
                                                   <th>Nome do Fundo</th>
                                                   <th>Cadastro</th>
                                                   <th>Aplicação Mínima</th>
+                                                  <th>Espelho</th>
+                                                  <th>Condomínio</th>
+                                                  <th>Anbima</th>
                                                   <th>Inclusão</th>
                                                   <th>Alteração</th>
                                              </tr>
@@ -145,28 +148,39 @@ function carrega_fun() {
      $com = "Select * from tb_fundos order by funnome, idfundo";
      $nro = leitura_reg($com, $reg);
      foreach ($reg as $lin) {
-         $txt =  '<tr>';
-         $txt .= '<td class="text-center">' . $lin['idfundo'] . '</td>';
-         if ($lin['funstatus'] == 0) {$txt .= "<td>" . "" . "</td>";}
-         if ($lin['funstatus'] == 1) {$txt .= "<td>" . "Blo" . "</td>";}
-         if ($lin['funstatus'] == 2) {$txt .= "<td>" . "Exc" . "</td>";}
-         if ($lin['funstatus'] == 3) {$txt .= "<td>" . "Can" . "</td>";}
-         $txt .= "<td>" . mascara_cpo($lin['funcnpj'],"  .   .   /    -  ") . "</td>";
-         $txt .= "<td>" . $lin['funnome'] . "</td>";
-         $txt .= "<td>" . date('d/m/Y',strtotime($lin['fundatacomp'])) . "</td>";
-         $txt .= '<td class="text-right">' . number_format($lin['funaplminima'], 2, ",", ".") . '</td>';
-         if ($lin['datinc'] == null) {
+          $txt =  '<tr>'; 
+          $txt .= '<td class="text-center">' . $lin['idfundo'] . '</td>';
+          if ($lin['funstatus'] == 0) {$txt .= "<td>" . "" . "</td>";}
+          if ($lin['funstatus'] == 1) {$txt .= "<td>" . "Blo" . "</td>";}
+          if ($lin['funstatus'] == 2) {$txt .= "<td>" . "Exc" . "</td>";}
+          if ($lin['funstatus'] == 3) {$txt .= "<td>" . "Can" . "</td>";}
+          $txt .= "<td>" . mascara_cpo($lin['funcnpj'],"  .   .   /    -  ") . "</td>";
+          $txt .= "<td>" . $lin['funnome'] . "</td>";
+          $txt .= "<td>" . date('d/m/Y',strtotime($lin['fundatacomp'])) . "</td>";
+          $txt .= '<td class="text-right">' . number_format($lin['funaplminima'], 2, ",", ".") . '</td>';
+          $txt .= '<td class="text-center">' . ($lin['funespelho'] == "N" ? 'Não' : 'Sim' ) . "</td>";
+          $txt .= '<td class="text-center">' . ($lin['funcondominio'] == "A" ? 'Abe' : 'Fec' ) . "</td>";
+          $cpo = "*** " . $lin['funclaambima'] . ' ***';
+          if ($lin['funclaambima'] == "") { $cpo = ''; }
+          if ($lin['funclaambima'] == "A") { $cpo = 'Açoes'; }
+          if ($lin['funclaambima'] == "C") { $cpo = 'Cambial'; }
+          if ($lin['funclaambima'] == "M") { $cpo = 'Multimercado'; }
+          if ($lin['funclaambima'] == "R") { $cpo = 'Renda Fixa'; }
+          if ($lin['funclaambima'] == "P") { $cpo = 'Previdência'; }
+          if ($lin['funclaambima'] == "F") { $cpo = 'Fundo Cambial'; }
+          $txt .= "<td>" . $cpo . "</td>"; 
+          if ($lin['datinc'] == null) {
                $txt .= "<td>" . '' . "</td>";
           }else{
-               $txt .= "<td>" . date('d/m/Y H:m:s',strtotime($lin['datinc'])) . "</td>";
-         }
-         if ($lin['datalt'] == null) {
-             $txt .= "<td>" . '' . "</td>";
-         }else{
-             $txt .= "<td>" . date('d/m/Y H:m:s',strtotime($lin['datalt'])) . "</td>";
-         }
-         $txt .= "</tr>";
-         echo $txt;
+               $txt .= "<td>" . date('d/m/Y',strtotime($lin['datinc'])) . "</td>";
+          }
+          if ($lin['datalt'] == null) {
+               $txt .= "<td>" . '' . "</td>";
+          }else{
+               $txt .= "<td>" . date('d/m/Y',strtotime($lin['datalt'])) . "</td>";
+          }
+          $txt .= "</tr>";
+          echo $txt;
      }
 }
 
