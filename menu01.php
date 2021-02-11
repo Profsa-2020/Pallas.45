@@ -65,6 +65,12 @@ $(document).ready(function() {
 
 });
 </script>
+<?php
+
+     $tab = array(); 
+     $ret = carrega_das($tab);
+
+?>
 
 <body id="box00">
      <h1 class="cab-0">Menu Principal - MoneyWay Investimentos - Profsa Informática</h1>
@@ -75,19 +81,44 @@ $(document).ready(function() {
                <div class="col-md-2">
 
                     <?php include_once "cabecalho-2.php"; ?>
-                    
+
                </div>
 
                <!---------- Corpo ---------->
                <div class="col-md-10">
                     <div class="row">
 
-                         <div class="col-md-10 text-center">                              
+                         <div class="col-md-12 text-center">
                               <span class="lit-3">DashBoard</span> &nbsp; &nbsp; &nbsp; <i
                                    class="fa fa-tachometer fa-3x" aria-hidden="true"></i>
                          </div>
+                    </div>
+                    <br />
+                    <div class="row">
                          <div class="col-md-2"></div>
-
+                         <div class="qua-5 col-md-2 text-center">
+                              <p>Usuários</p>
+                              <span><?php echo number_format($tab['usu'], 0, ",", "."); ?></span>
+                         </div>
+                         <div class="qua-5 col-md-2 text-center">
+                              <p>Fundos</p>
+                              <span><?php echo number_format($tab['fun'], 0, ",", "."); ?></span>
+                         </div>
+                         <div class="qua-5 col-md-2 text-center">
+                              <p>Movimento</p>
+                              <span><?php echo number_format($tab['mv0'], 0, ",", "."); ?></span>
+                         </div>
+                         <div class="qua-5 col-md-2 text-center">
+                              <p>Opções</p>
+                              <span><?php echo number_format($tab['opc'], 0, ",", "."); ?></span>
+                         </div>
+                         <div class="col-md-2"></div>
+                    </div>
+                    <br /><br />
+                    <div class="row">
+                         <div class="col-md-12 text-center">
+                              <img class="ima-2 img-fluid  animated zoomInUp" src="img/logo-05.png" />
+                         </div>
                     </div>
                </div>
           </div>
@@ -95,5 +126,39 @@ $(document).ready(function() {
                <img class="subir" src="img/subir.png" title="Volta a página para o seu topo." />
           </div>
 </body>
+<?php
+function carrega_das(&$tab) {
+     $sta = 0;
+     $tab['usu'] = 0;
+     $tab['fun'] = 0;
+     $tab['opc'] = 0;
+     $tab['mv0'] = 0;
+     include_once "dados.php";
+     date_default_timezone_set("America/Sao_Paulo");
+     $com = 'Select count(*) as qtdlinhas from tb_usuario';
+     $nro = acessa_reg($com, $reg);
+     if ($nro == 1) {
+          $tab['usu'] = $reg['qtdlinhas'];
+     }        
+     $com = 'Select count(*) as qtdlinhas from tb_fundos';
+     $nro = acessa_reg($com, $reg);
+     if ($nro == 1) {
+          $tab['fun'] = $reg['qtdlinhas'];
+     }        
+     $com = 'Select count(*) as qtdlinhas from tb_opcoes';
+     $nro = acessa_reg($com, $reg);
+     if ($nro == 1) {
+          $tab['opc'] = $reg['qtdlinhas'];
+     }        
+     $com = 'Select count(*) as qtdlinhas from tb_movto_id';
+     $nro = acessa_reg($com, $reg);
+     if ($nro == 1) {
+          $tab['mv0'] = $reg['qtdlinhas'];
+     }        
+
+     return $sta;
+}
+
+?>
 
 </html>

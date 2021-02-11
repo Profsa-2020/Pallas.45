@@ -135,6 +135,19 @@
     box-shadow: 10px 15px 5px rgba(0,0,0,.3);
 }
 
+.qua-5 {
+    color: #04d766;
+    margin: 5px 10px;
+    border-radius: 5px;
+    border: 0.5px solid #979696;
+    box-shadow: 10px 15px 5px rgba(226, 223, 223, 0.3);
+}
+
+.qua-5 p, .qua-5 span {
+    font-size: 16px;
+    font-weight: bold;
+}
+
 @media only screen and (max-width: 900px) {  
     .qua-1 { width: 90%; }
 }
