@@ -57,6 +57,8 @@ $(document).ready(function() {
 
      $('#arq-up').change(function() {
           $('#inf_1').text('');
+          $('#qtd_m').val(0);
+          var ord = $('#arq').val();
           var arqu = $(this)[0].files[0].name;
           var data = $(this)[0].files[0].lastModifiedDate;
           data = ((data.getDate())) + "/" + ((data.getMonth() + 1)) + "/" + data.getFullYear();
@@ -82,6 +84,21 @@ $(document).ready(function() {
                     $('#lin_a').text('Número de Linhas: ' + (lines.length - 2) + ' linhas');
                }
                fileReader.readAsText($(this)[0].files[0]);
+
+               $.getJSON("ajax/movto_exi.php", { nom: arqu, ord: ord })
+                    .done(function(data) {
+                    if (data.men != "") {
+                         alert(data.men);
+                    } else {
+                         if (data.qtd > 0 && data.ord == 4) {    // 4 - arquivo de movimento
+                              ('#qtd_m').val(data.qtd);
+                              alert('Há [' + data.qtd + '] registros no movimento para este arquivo, será excluído !');
+                         }
+                    }
+               }).fail(function(data){
+                    console.log('Erro: ' + JSON.stringify(data)); 
+                    alert("Erro ocorrido no processamento da verificação de movto");
+               });
 
           }
      });
@@ -120,6 +137,7 @@ $(document).ready(function() {
                $ret = gravar_log(6, "Entrada na página de UpLoad de arquivos .Csv Pallas.45 - MoneyWay");  
           }
      }
+     if (isset($_SESSION['wrkqtdreg']) == false) { $_SESSION['wrkqtdreg'] = 0; }
      ini_set('max_execution_time', 300);       
      $max = ini_get('upload_max_filesize');
      if (isset($_REQUEST['processa']) == true) {
@@ -144,6 +162,12 @@ $(document).ready(function() {
                     if ($arq == 4) {
                          echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 8");</script>';
                     }
+                    if ($arq == 5) {
+                         echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 5");</script>';
+                    }
+                    if ($arq == 6) {
+                         echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 5");</script>';
+                    }
                } else {
                     if ($arq == 1) {
                          $ret = processa_fun($cam, $nom, $des, $arq, $pro, $gra, $men, $com);
@@ -156,6 +180,12 @@ $(document).ready(function() {
                     }
                     if ($arq == 4) {
                          $ret = processa_dia($cam, $nom, $des, $arq, $pro, $gra, $men, $com);
+                    }
+                    if ($arq == 5) {
+                         $ret = processa_cla($cam, $nom, $des, $arq, $pro, $gra, $men, $com);
+                    }
+                    if ($arq == 6) {
+                         $ret = processa_ren($cam, $nom, $des, $arq, $pro, $gra, $men, $com);
                     }
                }
           }
@@ -192,14 +222,16 @@ $(document).ready(function() {
                          <div class="row">
                               <div class="col-md-2"></div>
                               <div class="cpo-1 col-md-8">
-                                   <label>Arquivo .Csv a ser importado</label>
+                                   <label class="cor-2">Arquivo .Csv a ser importado</label>
                                    <select id="arq" name="arq" class="form-control">
                                         <option value="0">Selecione o arquivo a ser importado ...
                                         </option>
-                                        <option value="1">Informações Cadastrais</option>
+                                        <option value="1">Informações Cadastrais dos Fundos</option>
                                         <option value="2">Opções dos Fundos - Situação</option>
                                         <option value="3">Opções dos Fundos - Exclusivo</option>
                                         <option value="4">Informações Diárias (movimento)</option>
+                                        <option value="5">Informações de Fundos - Classes</option>
+                                        <option value="6">Informações de Fundos - Rentabilidade</option>
 
                                    </select>
                               </div>
@@ -222,7 +254,13 @@ $(document).ready(function() {
                                    </strong>
                               </div>
                          </div>
-                         <br /><br />
+                         <br />
+                         <div class="row text-center">
+                              <div id="mov-1" class="col-md-12">
+                                   <strong><h5></h5></strong>
+                              </div>
+                         </div>
+                         <br />
                          <div class="row text-center">
                               <div class="col-md-3"></div>
                               <div class="col-md-3">
@@ -238,6 +276,7 @@ $(document).ready(function() {
                          <br />
                          <input type="hidden" id="sta_a" name="sta_a" value="0" />
                          <input type="hidden" id="reg_a" name="reg_a" value="0" />
+                         <input type="hidden" id="qtd_m" name="qtd_m" value="0" />
                          <input type="hidden" id="tam_m" name="tam_m"
                               value="<?php echo ini_get('upload_max_filesize'); ?>" />
                          <input name="arq-up" type="file" id="arq-up" class="bot-3" value="" accept=".csv" />
@@ -333,6 +372,16 @@ $(document).ready(function() {
                               $con = $con + 1;          
                          }
                     }
+                    if ($ord == 5) {
+                         if (count($lin) != 1 && count($lin) != 5) {
+                              $con = $con + 1;          
+                         }
+                    }
+                    if ($ord == 6) {
+                         if (count($lin) != 1 && count($lin) != 5) {
+                              $con = $con + 1;          
+                         }
+                    }
                }
           } 
           fclose($csv);     
@@ -411,6 +460,15 @@ $(document).ready(function() {
           $gra = 0; 
           $men = ''; $com = '';
           include_once "dados.php";
+          if ($_SESSION['wrkqtdreg'] > 0) {
+               $_SESSION['wrkqtdreg'] = 0;
+               $sql  = "delete from tb_movto_id where infarquivo = '" . $nom . "'" ;
+               $ret = comando_tab($sql, $nro, $cha, $men);
+               if ($ret == false) {
+                    print_r($sql);
+                    echo '<script>alert("Erro na exclusão do movimento solicitado !");</script>';
+               }                         
+          }
           $csv = fopen($cam, "r");  
           while (!feof ($csv)) {
                $lin = explode(";", fgets($csv));
@@ -418,7 +476,6 @@ $(document).ready(function() {
                if ($cha != 0 && $sta == 0) {
                     $sql  = "insert into tb_movto_id (";
                     $sql .= "idfundo, ";
-                    $sql .= "inffundo, ";
                     $sql .= "infdata, ";
                     $sql .= "inftotal, ";
                     $sql .= "infquota, ";
@@ -426,7 +483,6 @@ $(document).ready(function() {
                     $sql .= "infcapital, ";
                     $sql .= "infresgate, ";
                     $sql .= "infnumcotas, ";
-                    $sql .= "infupload, ";
                     $sql .= "infsequencia, ";
                     $sql .= "infarquivo, ";
                     $sql .= "infordem, ";
@@ -435,7 +491,6 @@ $(document).ready(function() {
                     $sql .= "datinc ";
                     $sql .= ") value ( ";
                     $sql .= "'" . $cha . "',";
-                    $sql .= "'" . limpa_nro($lin[0]) . "',";
                     if (substr($lin[1], 4, 1) == "-" || substr($lin[1], 4, 1) == "/") {
                          $sql .= "'" . $lin[1] . "',";
                     } else {
@@ -447,7 +502,6 @@ $(document).ready(function() {
                     $sql .= "'" . $lin[5] . "',";  
                     $sql .= "'" . $lin[6] . "',";
                     $sql .= "'" . $lin[7] . "',";  
-                    $sql .= "'" . $nom . "',";  
                     $sql .= "'" . $pro . "',";  
                     $sql .= "'" . $des . "',";  
                     $sql .= "'" . $ord . "',";  
@@ -489,6 +543,7 @@ $(document).ready(function() {
                          $sql .= "opcativo, ";
                          $sql .= "opcarquivo, ";
                          $sql .= "opcordem, ";
+                         $sql .= "opctipo, ";
                          $sql .= "keyinc, ";
                          $sql .= "datinc ";
                          $sql .= ") value ( ";
@@ -497,6 +552,7 @@ $(document).ready(function() {
                          $sql .= "'" . '0' . "',";     // 0-desativado, 1-ativo
                          $sql .= "'" . $des . "',";  
                          $sql .= "'" . $pro . "',";  
+                         $sql .= "'" . $ord . "',";  
                          $sql .= "'" . $_SESSION['wrkideusu'] . "',";
                          $sql .= "'" . date("Y-m-d H:i:s") . "')";
                          $ret = comando_tab($sql, $nro, $cha, $men);
@@ -560,6 +616,7 @@ $(document).ready(function() {
                          $sql .= "opcativo, ";
                          $sql .= "opcarquivo, ";
                          $sql .= "opcordem, ";
+                         $sql .= "opctipo, ";
                          $sql .= "keyinc, ";
                          $sql .= "datinc ";
                          $sql .= ") value ( ";
@@ -568,6 +625,7 @@ $(document).ready(function() {
                          $sql .= "'" . '0' . "',";     // 0-desativado, 1-ativo
                          $sql .= "'" . $des . "',";  
                          $sql .= "'" . $pro . "',";  
+                         $sql .= "'" . $ord . "',";  
                          $sql .= "'" . $_SESSION['wrkideusu'] . "',";
                          $sql .= "'" . date("Y-m-d H:i:s") . "')";
                          $ret = comando_tab($sql, $nro, $cha, $men);
@@ -629,6 +687,106 @@ $(document).ready(function() {
                $key = $reg['idopcao'];
           }
           return $key;
+     }
+
+     function processa_cla ($cam, $nom, $des, $ord, &$pro, &$atu, &$men, &$com) {
+          $ret = 0; 
+          $pro = 0; 
+          $atu = 0;
+          $men = ''; $com = '';
+          include_once "dados.php";
+          $csv = fopen($cam, "r");  
+          while (!feof ($csv)) {
+               $tip = 0;
+               $lin = explode(";", fgets($csv));               
+               $cha = ler_fundo($lin[0], $sta);
+               if ($cha == 1) {
+                    if ($lin[2] == "Fundo Cambial") {$tip = 1; }
+                    if ($lin[2] == "Fundo da Dívida Externa") {$tip = 2; }
+                    if ($lin[2] == "Fundo de Ações") {$tip = 3; }
+                    if ($lin[2] == "Fundo de Curto Prazo") {$tip = 4; }
+                    if ($lin[2] == "Fundo de Renda Fixa") {$tip = 5; }
+                    if ($lin[2] == "Fundo Multimercado") {$tip = 6; }
+                    if ($lin[2] == "Fundo Referenciado") {$tip = 7; }
+                    if ($tip >= 1) {
+                         $sql  = "update tb_fundos set ";
+                         $sql .= "funclasse = '". $tip . "', ";
+                         $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
+                         $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
+                         $sql .= "where idfundo = " . $cha;
+                         $ret = comando_tab($sql, $nro, $ind, $men);
+                         if ($ret == false) {
+                              $com = $sql;
+                              $men = "Erro na regravação do registro da classe no banco de dados !";
+                         }      
+                         $atu = $atu + 1;
+                    }         
+               }
+               $pro = $pro + 1;
+          }
+          return $ret;
+     }
+
+     function processa_ren ($cam, $nom, $des, $ord, &$pro, &$atu, &$men, &$com) {
+          $ret = 0; 
+          $pro = 0; 
+          $atu = 0;
+          $men = ''; $com = '';
+          include_once "dados.php";
+          $csv = fopen($cam, "r");  
+          while (!feof ($csv)) {
+               $tip = 0;
+               $lin = explode(";", fgets($csv));               
+               $cha = ler_fundo($lin[0], $sta);
+               if ($cha == 1) {
+                    if ($lin[2] == "Carteira de ações") {$tip = 1; }
+                    if ($lin[2] == "Cota de PIBB") {$tip = 2; } 
+                    if ($lin[2] == "DI de um dia") {$tip = 3; } 
+                    if ($lin[2] == "Dólar comercial") {$tip = 4; } 
+                    if ($lin[2] == "Euro") {$tip = 5; } 
+                    if ($lin[2] == "Ibovespa") {$tip = 6; } 
+                    if ($lin[2] == "IBrX") {$tip = 7; } 
+                    if ($lin[2] == "IBrX-50") {$tip = 8; } 
+                    if ($lin[2] == "IEE") {$tip = 9; } 
+                    if ($lin[2] == "Índice de Mercado Andima Geral") {$tip = 10; } 
+                    if ($lin[2] == "Índice de Mercado Andima LFT") {$tip = 11; } 
+                    if ($lin[2] == "Índice de Mercado Andima NTN-B até 5 anos") {$tip = 12; } 
+                    if ($lin[2] == "Índice de Mercado Andima NTN-B mais de 5 anos") {$tip = 13; } 
+                    if ($lin[2] == "Índice de Mercado Andima todas NTN-B") {$tip = 14; } 
+                    if ($lin[2] == "Índice de Mercado Andima todas NTN-C") {$tip = 15; } 
+                    if ($lin[2] == "Índice de preços") {$tip = 16; } 
+                    if ($lin[2] == "Índice de Preços ao Consumidor (IPC/FIPE)") {$tip = 17; } 
+                    if ($lin[2] == "Índice de Preços ao Consumidor Amplo (IPCA/IBGE)") {$tip = 18; } 
+                    if ($lin[2] == "Índice Geral de Preços-Disponibilidade Interna (IGP-DI)") {$tip = 19; }
+                    if ($lin[2] == "Índice Geral de Preços-Mercado (IGP-M)") {$tip = 20; } 
+                    if ($lin[2] == "Índice Nacional de Preços ao Consumidor (INPC/IBGE)") {$tip = 21; } 
+                    if ($lin[2] == "IRF-M") {$tip = 22; } 
+                    if ($lin[2] == "ITEL") {$tip = 23; } 
+                    if ($lin[2] == "Ouro 250 gramas") {$tip = 24; } 
+                    if ($lin[2] == "OUTROS") {$tip = 25; } 
+                    if ($lin[2] == "Taxa Anbid") {$tip = 26; } 
+                    if ($lin[2] == "Taxa Básica Financeira") {$tip = 27; } 
+                    if ($lin[2] == "Taxa de Juro de Longo Prazo") {$tip = 28; } 
+                    if ($lin[2] == "Taxa de juro prefixada") {$tip = 29; } 
+                    if ($lin[2] == "Taxa Referencial") {$tip = 30; } 
+                    if ($lin[2] == "Taxa Selic") {$tip = 31; } 
+                    if ($tip >= 1) {
+                         $sql  = "update tb_fundos set ";
+                         $sql .= "funrentab = '". $tip . "', ";
+                         $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
+                         $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
+                         $sql .= "where idfundo = " . $cha;
+                         $ret = comando_tab($sql, $nro, $ind, $men);
+                         if ($ret == false) {
+                              $com = $sql;
+                              $men = "Erro na regravação do registro da classe no banco de dados !";
+                         }      
+                         $atu = $atu + 1;
+                    }                        
+               }
+               $pro = $pro + 1;
+          }
+          return $ret;
      }
 
 ?>
