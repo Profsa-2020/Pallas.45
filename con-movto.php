@@ -44,6 +44,9 @@
           src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
      <link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
 
+     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+
      <script type="text/javascript" src="js/datepicker-pt-BR.js"></script>
 
      <script type="text/javascript" src="js/jquery.mask.min.js"></script>
@@ -74,6 +77,14 @@ $(document).ready(function() {
           "aaSorting": [
                [1, 'asc'],
                [2, 'asc']
+          ],
+          "dom" : 'Bfrtip',
+          "buttons": [
+               {
+                    "extend": 'csv',
+                    "text": ' .CSV ',
+                    "fieldSeparator": ';'              
+               }
           ],
           "language": {
                "lengthMenu": "Demonstrar _MENU_ linhas por páginas",
@@ -149,7 +160,7 @@ $(document).ready(function() {
                                    <br />
                                    <button type="submit" id="con" name="consulta" class="bot-2"
                                         title="Carrega dados do movimen to conforme parâmetros informados pelo usuário."><i
-                                             class="fa fa-search fa-3x" aria-hidden="true"></i></button>
+                                             class="fa fa-search fa-2x" aria-hidden="true"></i></button>
                               </div>
                          </div>
                     </form>

@@ -57,11 +57,9 @@ $(document).ready(function() {
 
      $('#arq-up').change(function() {
           $('#inf-1').text('');
-          $('#inf-2').text('Fase: 01/03');
           $('#qtd_m').val(0);
           var ord = $('#arq').val();
           var arqu = $(this)[0].files[0].name;
-          $('#inf-3').text($(this)[0].files[0].name);
           var data = $(this)[0].files[0].lastModifiedDate;
           data = ((data.getDate())) + "/" + ((data.getMonth() + 1)) + "/" + data.getFullYear();
           tam = $(this)[0].files[0]['size'] / 1024;
@@ -87,25 +85,20 @@ $(document).ready(function() {
                }
                fileReader.readAsText($(this)[0].files[0]);
 
-               $.getJSON("ajax/movto_exi.php", {
-                         nom: arqu,
-                         ord: ord
-                    })
+               $.getJSON("ajax/movto_exi.php", { nom: arqu, ord: ord })
                     .done(function(data) {
-                         if (data.men != "") {
-                              alert(data.men);
-                         } else {
-                              if (data.qtd > 0 && data.ord == 4) { // 4 - arquivo de movimento
-                                   ('#qtd_m').val(data.qtd);
-                                   alert('Há [' + data.qtd +
-                                        '] registros no movimento para este arquivo, será excluído !'
-                                   );
-                              }
+                    if (data.men != "") {
+                         alert(data.men);
+                    } else {
+                         if (data.qtd > 0 && data.ord == 4) {    // 4 - arquivo de movimento
+                              ('#qtd_m').val(data.qtd);
+                              alert('Há [' + data.qtd + '] registros no movimento para este arquivo, será excluído !');
                          }
-                    }).fail(function(data) {
-                         console.log('Erro: ' + JSON.stringify(data));
-                         alert("Erro ocorrido no processamento da verificação de movto");
-                    });
+                    }
+               }).fail(function(data){
+                    console.log('Erro: ' + JSON.stringify(data)); 
+                    alert("Erro ocorrido no processamento da verificação de movto");
+               });
 
           }
      });
@@ -131,7 +124,6 @@ $(document).ready(function() {
 <?php 
      $pro = 0;
      $gra = 0;
-     $inf = "Fase: 00/03";
      include_once "dados.php";
      include_once "profsa.php";
      $_SESSION['wrknompro'] = __FILE__;
@@ -146,66 +138,59 @@ $(document).ready(function() {
           }
      }
      if (isset($_SESSION['wrkqtdreg']) == false) { $_SESSION['wrkqtdreg'] = 0; }
-     if (isset($_SESSION['wrkopereg']) == false) { $_SESSION['wrkopereg'] = 0; }
-     if (isset($_SESSION['wrknomcsv']) == false) { $_SESSION['wrknomcsv'] = ''; }
-     if (isset($_SESSION['wrknomarq']) == false) { $_SESSION['wrknomarq'] = ''; }
      ini_set('max_execution_time', 600);       
      $max = ini_get('upload_max_filesize');
-     $arq = (isset($_REQUEST['arq']) == false ? 0 : $_REQUEST['arq']);
-     if (isset($_REQUEST['subir']) == true) {
-          $inf = "Fase: 02/03"; $_SESSION['wrkopereg'] = $arq;
+     if (isset($_REQUEST['processa']) == true) {
+          $arq = (isset($_REQUEST['arq']) == false ? 0 : $_REQUEST['arq']);
           $ret = upload_csv($_SESSION['wrknumusu'], $_FILES, $arq, $cam, $nom, $des, $tip, $ext, $tam, $men);
           if ($men != "") {
                echo '<script>alert("' . $men . '");</script>';
-          }
-     }     
-     if (isset($_REQUEST['processa']) == true) {
-          $arq = $_SESSION['wrkopereg'];
-          $qtd = verifica_csv($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $con);
-          if ($qtd >= 999998) {
-               echo '<script>alert("Arquivo informado para UpLoad não possue quebra de linhas");</script>';
-          } else if ($qtd != 0) {
-               if ($arq == 1) {
-                    echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 116");</script>';
-               }
-               if ($arq == 2) {
-                    echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 5");</script>';
-               }
-               if ($arq == 3) {
-                    echo '<script>alert("Arquivo informado para UpLoad tem colunas incorretas -> 5");</script>';
-               }
-               if ($arq == 4) {
-                    echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 8");</script>';
-               }
-               if ($arq == 5) {
-                    echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 5");</script>';
-               }
-               if ($arq == 6) {
-                    echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 5");</script>';
-               }
           } else {
-               if ($arq == 1) {
-                    $ret = processa_fun($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
-               }
-               if ($arq == 2) {
-                    $ret = processa_sit($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
-               }
-               if ($arq == 3) {
-                    $ret = processa_exc($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
-               }
-               if ($arq == 4) {
-                    $ret = processa_dia($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
-               }
-               if ($arq == 5) {
-                    $ret = processa_cla($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
-               }
-               if ($arq == 6) {
-                    $ret = processa_ren($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
+               $qtd = verifica_csv($cam, $nom, $arq, $con);
+               if ($qtd == 999999) {
+                    echo '<script>alert("Arquivo informado para UpLoad não possue quebra de linhas");</script>';
+               } else if ($qtd != 0) {
+                    if ($arq == 1) {
+                         echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 116");</script>';
+                    }
+                    if ($arq == 2) {
+                         echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 5");</script>';
+                    }
+                    if ($arq == 3) {
+                         echo '<script>alert("Arquivo informado para UpLoad tem colunas incorretas -> 5");</script>';
+                    }
+                    if ($arq == 4) {
+                         echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 8");</script>';
+                    }
+                    if ($arq == 5) {
+                         echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 5");</script>';
+                    }
+                    if ($arq == 6) {
+                         echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 5");</script>';
+                    }
+               } else {
+                    if ($arq == 1) {
+                         $ret = processa_fun($cam, $nom, $des, $arq, $pro, $gra, $men, $com);
+                    }
+                    if ($arq == 2) {
+                         $ret = processa_sit($cam, $nom, $des, $arq, $pro, $gra, $men, $com);
+                    }
+                    if ($arq == 3) {
+                         $ret = processa_exc($cam, $nom, $des, $arq, $pro, $gra, $men, $com);
+                    }
+                    if ($arq == 4) {
+                         $ret = processa_dia($cam, $nom, $des, $arq, $pro, $gra, $men, $com);
+                    }
+                    if ($arq == 5) {
+                         $ret = processa_cla($cam, $nom, $des, $arq, $pro, $gra, $men, $com);
+                    }
+                    if ($arq == 6) {
+                         $ret = processa_ren($cam, $nom, $des, $arq, $pro, $gra, $men, $com);
+                    }
                }
           }
-          $inf = "Fase: 03/03"; $_SESSION['wrknomcsv'] = ""; $_SESSION['wrknomarq'] = "";
      }
- ?>
+?>
 
 <body id="box00">
      <h1 class="cab-0">Importações - MoneyWay Investimentos - Profsa Informática</h1>
@@ -232,7 +217,7 @@ $(document).ready(function() {
                          <div class="col-md-1"></div>
                     </div>
                     <br />
-                    <form class="qua-4" id="frmTelImp" name="frmTelImp" action="processo-002.php" method="POST"
+                    <form class="qua-4" id="frmTelImp" name="frmTelImp" action="processo-imp.php" method="POST"
                          enctype="multipart/form-data">
                          <div class="row">
                               <div class="col-md-2"></div>
@@ -256,8 +241,7 @@ $(document).ready(function() {
                          <div class="row">
                               <div class="col-md-12 text-center">
                                    <strong>
-                                        <span id="nom_a">Nome do Arquivo:
-                                             <?php echo $_SESSION['wrknomcsv']; ?></span><br />
+                                        <span id="nom_a">Nome do Arquivo: </span><br />
                                         <span id="dat_a">Data do Arquivo: </span><br />
                                         <span id="tam_a">Tamanho do Arquivo: </span><br />
                                         <span id="lin_a">Número de Linhas: </span><br />
@@ -270,38 +254,24 @@ $(document).ready(function() {
                                    </strong>
                               </div>
                          </div>
+                         <br />
                          <div class="row text-center">
                               <div id="mov-1" class="col-md-12">
-                                   <strong>
-                                        <h5></h5>
-                                   </strong>
+                                   <strong><h5></h5></strong>
                               </div>
                          </div>
                          <br />
-                         <div class="row">
-                              <div class="col-md-12 text-center">
+                         <div class="row text-center">
+                              <div class="col-md-3"></div>
+                              <div class="col-md-3">
                                    <button type="button" id="upload" name="upload" class="bot-1"> <i
-                                             class="cur-1 fa fa-database fa-1g" aria-hidden="true"></i>&nbsp; &nbsp;
-                                        Arquivo</button>
-                                   &nbsp;
-                                   <button type="submit" id="subir" name="subir" class="bot-1"> <i
-                                             class="cur-1 fa fa-upload fa-1g" aria-hidden="true"></i>&nbsp; &nbsp;
-                                        UpLoad</button>
-                                   &nbsp;
+                                             class="cur-1 fa fa-database fa-1g" aria-hidden="true"></i>&nbsp; &nbsp; Arquivo</button>
+                              </div>
+                              <div class="col-md-3">
                                    <button type="submit" id="processa" name="processa" class="bot-1"> <i
-                                             class="cur-1 fa fa-cogs fa-1g" aria-hidden="true"></i>&nbsp; &nbsp;
-                                        Atualizar</button>
+                                             class="cur-1 fa fa-cogs fa-1g" aria-hidden="true"></i>&nbsp; &nbsp; Processar</button>
                               </div>
-                         </div>
-                         <br />
-                         <div class="row">
-                              <div class="col-md-12 text-center ">
-                              <strong>
-                                   <span id="inf-2"><?php echo $inf; ?></span><br />
-                                   <span id="inf-3"><?php echo $_SESSION['wrknomcsv']; ?></span><br />
-                                   <span id="inf-4"><?php echo $_SESSION['wrknomarq']; ?></span><br />
-                                   </strong>
-                              </div>
+                              <div class="col-md-3"></div>
                          </div>
                          <br />
                          <input type="hidden" id="sta_a" name="sta_a" value="0" />
@@ -357,12 +327,10 @@ $(document).ready(function() {
                $tip = explode('.', $des);
                $des = $tip[0] . "." . $ext;
                $pas = "upload"; 
-               $_SESSION['wrknomcsv'] = $des;
                if (file_exists($pas) == false) { mkdir($pas);  }
                $nom = 'Csv_' . str_pad($nro, 6, "0", STR_PAD_LEFT) . "_" . str_pad($ord, 3, "0", STR_PAD_LEFT) . "." . $ext; 
                $cam = $pas . "/" . 'Csv_' . str_pad($nro, 6, "0", STR_PAD_LEFT) . "_" . str_pad($ord, 3, "0", STR_PAD_LEFT) . "." . $ext; 
                $ret = move_uploaded_file($arq['tmp_name'], $cam);
-               $_SESSION['wrknomarq'] = $nom;
                if ($ret == false) {
                     $men = 'Erro na cópia do arquivo informado para upload';
                     $sta = 5; 
@@ -375,9 +343,8 @@ $(document).ready(function() {
 
      function verifica_csv ($cam, $nom, $ord, &$con) {
           $con = 0;
-          if ($cam == "") { return 999998; }
           include_once "dados.php";
-          $csv = fopen('upload/' . $cam, "r");  
+          $csv = fopen($cam, "r");  
           while (!feof ($csv)) {
                $tam = strlen(fgets($csv));   // Menor que 2000 OK
                if ($tam > 2000) {
@@ -421,13 +388,13 @@ $(document).ready(function() {
           return $con; 
      }
 
-     function processa_fun ($cam, $des, $ord, &$pro, &$gra, &$men, &$com) {
+     function processa_fun ($cam, $nom, $des, $ord, &$pro, &$gra, &$men, &$com) {
           $ret = 0; 
           $pro = 0; 
           $gra = 0; 
           $men = ''; $com = '';
           include_once "dados.php";
-          $csv = fopen('upload/' . $cam, "r");  
+          $csv = fopen($cam, "r");  
           while (!feof ($csv)) {
                $lin = explode(";", fgets($csv));
                $nro = acessa_reg("Select idfundo from tb_fundos where funcnpj = '" . limpa_nro($lin[0]) . "'", $reg);            
@@ -467,7 +434,7 @@ $(document).ready(function() {
                     $sql .= "'" . substr($lin[10], 0, 1) . "',";  // Coluna K
                     $sql .= "'" . $lin[17] . "',";  // Coluna R R$ - Aplicação Mínima
                     $sql .= "'" . substr($lin[18], 0, 1) . "',";  // Coluna S - Atualização Diária
-                    $sql .= "'" . $cam . "',";  
+                    $sql .= "'" . $nom . "',";  
                     $sql .= "'" . $des . "',";  
                     $sql .= "'" . $ord . "',";  
                     $sql .= "'" . $pro . "',";  
@@ -487,7 +454,7 @@ $(document).ready(function() {
           return $ret; 
      }
 
-     function processa_dia ($cam, $des, $ord, &$pro, &$gra, &$men, &$com) {
+     function processa_dia ($cam, $nom, $des, $ord, &$pro, &$gra, &$men, &$com) {
           $ret = 0; 
           $pro = 0; 
           $gra = 0; 
@@ -502,7 +469,7 @@ $(document).ready(function() {
                     echo '<script>alert("Erro na exclusão do movimento solicitado !");</script>';
                }                         
           }
-          $csv = fopen('upload/' . $cam, "r");  
+          $csv = fopen($cam, "r");  
           while (!feof ($csv)) {
                $lin = explode(";", fgets($csv));
                $cha = ler_fundo($lin[0], $sta);
@@ -554,7 +521,7 @@ $(document).ready(function() {
           return $ret; 
      }
 
-     function processa_sit ($cam, $des, $ord, &$pro, &$gra, &$men, &$com) {
+     function processa_sit ($cam, $nom, $des, $ord, &$pro, &$gra, &$men, &$com) {
           $ret = 0; 
           $pro = 0; 
           $gra = 0; 
@@ -562,7 +529,7 @@ $(document).ready(function() {
           $upd = 0; 
           $men = ''; $com = '';
           include_once "dados.php";
-          $csv = fopen('upload/' . $cam, "r");  
+          $csv = fopen($cam, "r");  
           while (!feof ($csv)) {
                $lin = explode(";", fgets($csv));               
                $ati = (strpos($lin[2], "NORMAL") > 0 ? 1 : 0);    
@@ -628,7 +595,7 @@ $(document).ready(function() {
           return $ret; 
      }
 
-     function processa_exc ($cam, $des, $ord, &$pro, &$gra, &$men, &$com) {
+     function processa_exc ($cam, $nom, $des, $ord, &$pro, &$gra, &$men, &$com) {
           $ret = 0; 
           $pro = 0; 
           $gra = 0; 
@@ -636,7 +603,7 @@ $(document).ready(function() {
           $upd = 0;
           $men = ''; $com = '';
           include_once "dados.php";
-          $csv = fopen('upload/' . $cam, "r");  
+          $csv = fopen($cam, "r");  
           while (!feof ($csv)) {
                $lin = explode(";", fgets($csv));               
                if ($lin[2] == 'S') {
@@ -722,13 +689,13 @@ $(document).ready(function() {
           return $key;
      }
 
-     function processa_cla ($cam, $des, $ord, &$pro, &$atu, &$men, &$com) {
+     function processa_cla ($cam, $nom, $des, $ord, &$pro, &$atu, &$men, &$com) {
           $ret = 0; 
           $pro = 0; 
           $atu = 0;
           $men = ''; $com = '';
           include_once "dados.php";
-          $csv = fopen('upload/' . $cam, "r");  
+          $csv = fopen($cam, "r");  
           while (!feof ($csv)) {
                $tip = 0;
                $lin = explode(";", fgets($csv));               
@@ -760,13 +727,13 @@ $(document).ready(function() {
           return $ret;
      }
 
-     function processa_ren ($cam, $des, $ord, &$pro, &$atu, &$men, &$com) {
+     function processa_ren ($cam, $nom, $des, $ord, &$pro, &$atu, &$men, &$com) {
           $ret = 0; 
           $pro = 0; 
           $atu = 0;
           $men = ''; $com = '';
           include_once "dados.php";
-          $csv = fopen('upload/' . $cam, "r");  
+          $csv = fopen($cam, "r");  
           while (!feof ($csv)) {
                $tip = 0;
                $lin = explode(";", fgets($csv));               

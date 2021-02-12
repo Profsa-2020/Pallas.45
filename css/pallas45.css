@@ -227,6 +227,16 @@
     background: #caf5de;
 }
 
+button.dt-button {
+    cursor: pointer;
+    color: #ffffff;
+    border-radius: 5px;
+    width: 70px !important;
+    height: 25px !important;
+    font-size: 12px !important;
+    background-color: #04d766;
+}
+
 /* Menu vertical (lateral) com movimento */
 .men-1 ul {
     position: relative;

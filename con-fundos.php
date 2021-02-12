@@ -44,17 +44,49 @@
           src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
      <link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
 
+     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+
+     <script type="text/javascript" src="js/datepicker-pt-BR.js"></script>
+
+     <script type="text/javascript" src="js/jquery.mask.min.js"></script>
+
      <link href="css/pallas45.css" rel="stylesheet" type="text/css" media="screen" />
-     <title>Fundos - Análise de Investimentos - Profsa Informátda Ltda</title>
+     <title>Fundos - Análise de Investimentos - MoneyWay</title>
 </head>
 
 <script>
+$(function() {
+     $("#dti").mask("99/99/9999");
+     $("#dtf").mask("99/99/9999");
+     $("#dti").datepicker($.datepicker.regional["pt-BR"]);
+     $("#dtf").datepicker($.datepicker.regional["pt-BR"]);
+});
+
 $(document).ready(function() {
+     $('#dti').change(function() {
+          $('#tab-0 tbody').empty();
+     });
+
+     $('#dtf').change(function() {
+          $('#tab-0 tbody').empty();
+     });
+
+     /* https://datatables.net/reference/button/csv */ 
+
      $('#tab-0').DataTable({
           "pageLength": 25,
           "aaSorting": [
                [2, 'asc'],
                [1, 'asc']
+          ],
+          "dom" : 'Bfrtip',
+          "buttons": [
+               {
+                    "extend": 'csv',
+                    "text": ' .CSV ',
+                    "fieldSeparator": ';'
+               }
           ],
           "language": {
                "lengthMenu": "Demonstrar _MENU_ linhas por páginas",
@@ -90,7 +122,14 @@ $(document).ready(function() {
 });
 </script>
 
-<?php include_once "dados.php"; ?>
+<?php 
+     include_once "dados.php"; 
+     $dti = date('d/m/Y', strtotime('-90 days'));
+     $dtf = date('d/m/Y');
+     $dti = (isset($_REQUEST['dti']) == false ? $dti : $_REQUEST['dti']);
+     $dtf = (isset($_REQUEST['dtf']) == false ? $dtf : $_REQUEST['dtf']);
+
+?>
 
 <body id="box00">
      <h1 class="cab-0">Fundos - MoneyWay Investimentos - Profsa Informática</h1>
@@ -103,7 +142,34 @@ $(document).ready(function() {
                </div>
                <div class="col-md-10">
                     <!-- Corpo -->
-                    <p class="lit-4">Consulta de Fundos - <?php echo  number_format(numero_reg('tb_fundos'), 0, ",", "."); ?></p>
+                    <p class="lit-4">Consulta de Fundos -
+                         <?php echo  number_format(numero_reg('tb_fundos'), 0, ",", "."); ?></p>
+
+                    <form class="qua-6" id="frmTelCon" name="frmTelCon" action="con-movto.php" method="POST">
+                         <div class="row">
+                              <div class="col-md-4"></div>
+                              <div class="col-md-2">
+                                   <label>Data Inicial</label>
+                                   <input type="text" class="form-control text-center" maxlength="10" id="dti"
+                                        name="dti" value="<?php echo $dti; ?>" required />
+                              </div>
+                              <div class="col-md-2">
+                                   <label>Data Final</label>
+                                   <input type="text" class="form-control text-center" maxlength="10" id="dtf"
+                                        name="dtf" value="<?php echo $dtf; ?>" required />
+                              </div>
+                              <div class="col-md-3"></div>
+                              <div class="col-md-1 text-center">
+                                   <br />
+                                   <button type="submit" id="con" name="consulta" class="bot-2"
+                                        title="Carrega dados do movimen to conforme parâmetros informados pelo usuário."><i
+                                             class="fa fa-search fa-2x" aria-hidden="true"></i></button>
+                              </div>
+                         </div>
+                    </form>
+
+                    <br />
+
                     <div class="row qua-3">
                          <div class="col-md-12">
                               <br />
@@ -125,7 +191,7 @@ $(document).ready(function() {
                                              </tr>
                                         </thead>
                                         <tbody>
-                                             <?php $ret = carrega_fun();  ?>
+                                             <?php $ret = carrega_fun($dti, $dtf);  ?>
                                         </tbody>
                                    </table>
                                    <hr />
@@ -142,10 +208,12 @@ $(document).ready(function() {
 </body>
 
 <?php
-function carrega_fun() {
+function carrega_fun($dti, $dtf) {
      include_once "dados.php";
      include_once "profsa.php";
-     $com = "Select * from tb_fundos order by funnome, idfundo";
+     $dti = substr($dti,6,4) . "-" . substr($dti,3,2) . "-" . substr($dti,0,2) . " 00:00:00";
+     $dtf = substr($dtf,6,4) . "-" . substr($dtf,3,2) . "-" . substr($dtf,0,2) . " 23:59:59";
+     $com = "Select * from tb_fundos where fundatacomp between '" . $dti . "' and '" . $dtf . "' order by funnome, idfundo";
      $nro = leitura_reg($com, $reg);
      foreach ($reg as $lin) {
           $txt =  '<tr>'; 
