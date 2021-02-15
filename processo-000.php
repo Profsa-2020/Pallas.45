@@ -138,7 +138,12 @@ $(document).ready(function() {
           }
      }
      if (isset($_SESSION['wrkqtdreg']) == false) { $_SESSION['wrkqtdreg'] = 0; }
-     ini_set('max_execution_time', 600);       
+
+     ini_set('upload_max_filesize', '25M');
+     ini_set('post_max_size', '25M');
+     ini_set('max_input_time', 600);
+     ini_set('max_execution_time', 600);
+
      $max = ini_get('upload_max_filesize');
      if (isset($_REQUEST['processa']) == true) {
           $arq = (isset($_REQUEST['arq']) == false ? 0 : $_REQUEST['arq']);

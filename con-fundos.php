@@ -44,8 +44,10 @@
           src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
      <link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
 
-     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
-     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+     <script type="text/javascript" language="javascript"
+          src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+     <script type="text/javascript" language="javascript"
+          src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
 
      <script type="text/javascript" src="js/datepicker-pt-BR.js"></script>
 
@@ -64,6 +66,14 @@ $(function() {
 });
 
 $(document).ready(function() {
+     $('#cla').change(function() {
+          $('#tab-0 tbody').empty();
+     });
+
+     $('#pub').change(function() {
+          $('#tab-0 tbody').empty();
+     });
+
      $('#dti').change(function() {
           $('#tab-0 tbody').empty();
      });
@@ -72,7 +82,7 @@ $(document).ready(function() {
           $('#tab-0 tbody').empty();
      });
 
-     /* https://datatables.net/reference/button/csv */ 
+     /* https://datatables.net/reference/button/csv */
 
      $('#tab-0').DataTable({
           "pageLength": 25,
@@ -80,14 +90,12 @@ $(document).ready(function() {
                [2, 'asc'],
                [1, 'asc']
           ],
-          "dom" : 'Bfrtip',
-          "buttons": [
-               {
-                    "extend": 'csv',
-                    "text": ' .CSV ',
-                    "fieldSeparator": ';'
-               }
-          ],
+          "dom": 'Bfrtip',
+          "buttons": [{
+               "extend": 'csv',
+               "text": ' .CSV ',
+               "fieldSeparator": ';'
+          }],
           "language": {
                "lengthMenu": "Demonstrar _MENU_ linhas por páginas",
                "zeroRecords": "Não existe registros a demonstar ...",
@@ -128,6 +136,11 @@ $(document).ready(function() {
      $dtf = date('d/m/Y');
      $dti = (isset($_REQUEST['dti']) == false ? $dti : $_REQUEST['dti']);
      $dtf = (isset($_REQUEST['dtf']) == false ? $dtf : $_REQUEST['dtf']);
+     $cla = (isset($_REQUEST['cla']) == false ? 0 : $_REQUEST['cla']);
+     $pub = (isset($_REQUEST['pub']) == false ? '' : $_REQUEST['pub']);
+     $esp = (isset($_REQUEST['esp']) == false ? '' : $_REQUEST['esp']);
+     $con = (isset($_REQUEST['con']) == false ? '' : $_REQUEST['con']);
+     $tem = (isset($_REQUEST['tem']) == false ? 0 : $_REQUEST['tem']);
 
 ?>
 
@@ -145,31 +158,131 @@ $(document).ready(function() {
                     <p class="lit-4">Consulta de Fundos -
                          <?php echo  number_format(numero_reg('tb_fundos'), 0, ",", "."); ?></p>
 
-                    <form class="qua-6" id="frmTelCon" name="frmTelCon" action="con-movto.php" method="POST">
+                    <form class="qua-6" id="frmTelCon" name="frmTelCon" action="con-fundos.php" method="POST">
                          <div class="row">
-                              <div class="col-md-4"></div>
                               <div class="col-md-2">
-                                   <label>Data Inicial</label>
+                                   <label>Data Inicial-Cadastro</label>
                                    <input type="text" class="form-control text-center" maxlength="10" id="dti"
                                         name="dti" value="<?php echo $dti; ?>" required />
                               </div>
                               <div class="col-md-2">
-                                   <label>Data Final</label>
+                                   <label>Data Final-Cadastro</label>
                                    <input type="text" class="form-control text-center" maxlength="10" id="dtf"
                                         name="dtf" value="<?php echo $dtf; ?>" required />
                               </div>
-                              <div class="col-md-3"></div>
-                              <div class="col-md-1 text-center">
+                              <div class="col-md-2">
+                                   <label>Classes</label><br />
+                                   <select id="cla" name="cla" class="form-control">
+                                        <option value="0" <?php echo ($cla != 0 ? '' : 'selected="selected"'); ?>>
+                                             Todas ...
+                                        <option value="1" <?php echo ($cla != 1 ? '' : 'selected="selected"'); ?>>
+                                             Fundo Cambial
+                                        </option>
+                                        <option value="2" <?php echo ($cla != 2 ? '' : 'selected="selected"'); ?>>
+                                             Fundo da Dívida Externa
+                                        </option>
+                                        <option value="3" <?php echo ($cla != 3 ? '' : 'selected="selected"'); ?>>
+                                             Fundo de Açoes
+                                        </option>
+                                        <option value="4" <?php echo ($cla != 4 ? '' : 'selected="selected"'); ?>>
+                                             Fundo de Curto Prazo
+                                        </option>
+                                        <option value="5" <?php echo ($cla != 5 ? '' : 'selected="selected"'); ?>>
+                                             Fundo de Renda Fixa
+                                        </option>
+                                        <option value="6" <?php echo ($cla != 6 ? '' : 'selected="selected"'); ?>>
+                                             Fundo Multimercado
+                                        </option>
+                                        <option value="7" <?php echo ($cla != 7 ? '' : 'selected="selected"'); ?>>
+                                             Fundo Referenciado
+                                        </option>
+                                   </select>
+                              </div>
+                              <div class="col-md-2">
+                                   <label>Público</label><br />
+                                   <select id="pub" name="pub" class="form-control">
+                                        <option value="" <?php echo ($pub != '' ? '' : 'selected="selected"'); ?>>
+                                             Todas ...
+                                        <option value="A" <?php echo ($pub != 'A' ? '' : 'selected="selected"'); ?>>
+                                             Profissionais
+                                        </option>
+                                        <option value="B" <?php echo ($pub != 'B' ? '' : 'selected="selected"'); ?>>
+                                             Qualificados
+                                        </option>
+                                        <option value="C" <?php echo ($pub != 'C' ? '' : 'selected="selected"'); ?>>
+                                             Previdenciário
+                                        </option>
+                                        <option value="D" <?php echo ($pub != 'D' ? '' : 'selected="selected"'); ?>>
+                                             Geral
+                                        </option>
+                                   </select>
+                              </div>
+                              <div class="col-md-2">
+                                   <label>Espelho</label><br />
+                                   <select id="esp" name="esp" class="form-control">
+                                        <option value="" <?php echo ($esp != '' ? '' : 'selected="selected"'); ?>>
+                                             Todas ...
+                                        <option value="S" <?php echo ($esp != 'S' ? '' : 'selected="selected"'); ?>>
+                                             Sim
+                                        </option>
+                                        <option value="N" <?php echo ($esp != 'N' ? '' : 'selected="selected"'); ?>>
+                                             Não
+                                        </option>
+                                   </select>
+                              </div>
+                              <div class="col-md-2 text-center">
                                    <br />
                                    <button type="submit" id="con" name="consulta" class="bot-2"
                                         title="Carrega dados do movimen to conforme parâmetros informados pelo usuário."><i
-                                             class="fa fa-search fa-2x" aria-hidden="true"></i></button>
+                                             class="fa fa-search fa-3x" aria-hidden="true"></i></button>
                               </div>
                          </div>
+                         <div class="row">
+                              <div class="col-md-4"></div>
+
+                              <div class="col-md-2">
+
+                              </div>
+                              <div class="col-md-2">
+                                   <label>Tempo</label><br />
+                                   <select id="tem" name="tem" class="form-control">
+                                        <option value="0" <?php echo ($tem != '0' ? '0' : 'selected="selected"'); ?>>
+                                             Todos ...
+                                        <option value="2" <?php echo ($tem != '2' ? '' : 'selected="selected"'); ?>>
+                                             + de 2 anos
+                                        </option>
+                                        <option value="5" <?php echo ($tem != '5' ? '' : 'selected="selected"'); ?>>
+                                             + de 5 anos
+                                        </option>
+                                        <option value="7" <?php echo ($tem != '7' ? '' : 'selected="selected"'); ?>>
+                                             + de 7 anos
+                                        </option>
+                                        <option value="10" <?php echo ($tem != '10' ? '' : 'selected="selected"'); ?>>
+                                             + de 10 anos
+                                        </option>
+                                        <option value="15" <?php echo ($tem != '15' ? '' : 'selected="selected"'); ?>>
+                                             + de 15 anos
+                                        </option>
+                                   </select>
+                              </div>
+                              <div class="col-md-2">
+                                   <label>Condomínio</label><br />
+                                   <select id="con" name="con" class="form-control">
+                                        <option value="" <?php echo ($con != '' ? '' : 'selected="selected"'); ?>>
+                                             Todos ...
+                                        <option value="A" <?php echo ($con != 'A' ? '' : 'selected="selected"'); ?>>
+                                             Aberto
+                                        </option>
+                                        <option value="F" <?php echo ($con != 'F' ? '' : 'selected="selected"'); ?>>
+                                             Fechado
+                                        </option>
+                                   </select>
+                              </div>
+                              <div class="col-md-2"></div>
+
+                         </div>
                     </form>
-
                     <br />
-
                     <div class="row qua-3">
                          <div class="col-md-12">
                               <br />
@@ -183,6 +296,8 @@ $(document).ready(function() {
                                                   <th>Nome do Fundo</th>
                                                   <th>Cadastro</th>
                                                   <th>Aplicação Mínima</th>
+                                                  <th>Patrimônio Líquido</th>
+                                                  <th>Público</th>
                                                   <th>Espelho</th>
                                                   <th>Condomínio</th>
                                                   <th>Anbima</th>
@@ -191,7 +306,7 @@ $(document).ready(function() {
                                              </tr>
                                         </thead>
                                         <tbody>
-                                             <?php $ret = carrega_fun($dti, $dtf);  ?>
+                                             <?php $ret = carrega_fun($cla, $pub, $esp, $con, $tem, $dti, $dtf);  ?>
                                         </tbody>
                                    </table>
                                    <hr />
@@ -208,48 +323,81 @@ $(document).ready(function() {
 </body>
 
 <?php
-function carrega_fun($dti, $dtf) {
+function carrega_fun($cla, $pub, $esp, $con, $tem, $dti, $dtf) {
      include_once "dados.php";
      include_once "profsa.php";
      $dti = substr($dti,6,4) . "-" . substr($dti,3,2) . "-" . substr($dti,0,2) . " 00:00:00";
      $dtf = substr($dtf,6,4) . "-" . substr($dtf,3,2) . "-" . substr($dtf,0,2) . " 23:59:59";
-     $com = "Select * from tb_fundos where fundatacomp between '" . $dti . "' and '" . $dtf . "' order by funnome, idfundo";
+     $com = "Select * from tb_fundos where fundatacomp between '" . $dti . "' and '" . $dtf . "' ";
+     if ($cla != 0) { $com .= " and funclasse = " . $cla; }
+     if ($esp != '') { $com .= " and funespelho = '" . $esp . "'"; }
+     if ($pub != '') { $com .= " and funpubalvo = '" . $pub . "'"; }
+     if ($con != '') { $com .= " and funcondominio = '" . $con . "'"; }
+     $com .= " order by funnome, idfundo";
      $nro = leitura_reg($com, $reg);
      foreach ($reg as $lin) {
-          $txt =  '<tr>'; 
-          $txt .= '<td class="text-center">' . $lin['idfundo'] . '</td>';
-          if ($lin['funstatus'] == 0) {$txt .= "<td>" . "" . "</td>";}
-          if ($lin['funstatus'] == 1) {$txt .= "<td>" . "Blo" . "</td>";}
-          if ($lin['funstatus'] == 2) {$txt .= "<td>" . "Exc" . "</td>";}
-          if ($lin['funstatus'] == 3) {$txt .= "<td>" . "Can" . "</td>";}
-          $txt .= "<td>" . mascara_cpo($lin['funcnpj'],"  .   .   /    -  ") . "</td>";
-          $txt .= "<td>" . $lin['funnome'] . "</td>";
-          $txt .= "<td>" . date('d/m/Y',strtotime($lin['fundatacomp'])) . "</td>";
-          $txt .= '<td class="text-right">' . number_format($lin['funaplminima'], 2, ",", ".") . '</td>';
-          $txt .= '<td class="text-center">' . ($lin['funespelho'] == "N" ? 'Não' : 'Sim' ) . "</td>";
-          $txt .= '<td class="text-center">' . ($lin['funcondominio'] == "A" ? 'Abe' : 'Fec' ) . "</td>";
-          $cpo = "*** " . $lin['funclaambima'] . ' ***';
-          if ($lin['funclaambima'] == "") { $cpo = ''; }
-          if ($lin['funclaambima'] == "A") { $cpo = 'Açoes'; }
-          if ($lin['funclaambima'] == "C") { $cpo = 'Cambial'; }
-          if ($lin['funclaambima'] == "M") { $cpo = 'Multimercado'; }
-          if ($lin['funclaambima'] == "R") { $cpo = 'Renda Fixa'; }
-          if ($lin['funclaambima'] == "P") { $cpo = 'Previdência'; }
-          if ($lin['funclaambima'] == "F") { $cpo = 'Fundo Cambial'; }
-          $txt .= "<td>" . $cpo . "</td>"; 
-          if ($lin['datinc'] == null) {
-               $txt .= "<td>" . '' . "</td>";
-          }else{
-               $txt .= "<td>" . date('d/m/Y',strtotime($lin['datinc'])) . "</td>";
+          $flag = 0;
+          $ida = calcula_idade($lin['fundatacomp']);
+          if ($tem != 0) {
+               if ($ida < $tem) { $flag = 1; }
           }
-          if ($lin['datalt'] == null) {
-               $txt .= "<td>" . '' . "</td>";
-          }else{
-               $txt .= "<td>" . date('d/m/Y',strtotime($lin['datalt'])) . "</td>";
+          if ($flag == 0) {
+               $txt =  '<tr>'; 
+               $txt .= '<td class="text-center">' . $lin['idfundo'] . '</td>';
+               if ($lin['funstatus'] == 0) {$txt .= "<td>" . "" . "</td>";}
+               if ($lin['funstatus'] == 1) {$txt .= "<td>" . "Blo" . "</td>";}
+               if ($lin['funstatus'] == 2) {$txt .= "<td>" . "Exc" . "</td>";}
+               if ($lin['funstatus'] == 3) {$txt .= "<td>" . "Can" . "</td>";}
+               $txt .= "<td>" . mascara_cpo($lin['funcnpj'],"  .   .   /    -  ") . "</td>";
+               $txt .= "<td>" . $lin['funnome'] . "</td>";
+               $txt .= '<td class="text-center">' . date('d/m/Y',strtotime($lin['fundatacomp'])) . '<br />' . $ida . ' anos' . '</td>';
+               $txt .= '<td class="text-right">' . number_format($lin['funaplminima'], 2, ",", ".") . '</td>';
+               $ret = patrimonio_liq($lin['idfundo'], $dat, $val);
+               $txt .= '<td class="text-center">' . $val . '<br />' . $dat. '</td>';
+               $cpo = "*** " . $lin['funpubalvo'] . ' ***';
+               if ($lin['funpubalvo'] == "") { $cpo = ''; }
+               if ($lin['funpubalvo'] == "A") { $cpo = 'Profissionais'; }
+               if ($lin['funpubalvo'] == "B") { $cpo = 'Qualificados'; }
+               if ($lin['funpubalvo'] == "C") { $cpo = 'Previdenciário'; }
+               if ($lin['funpubalvo'] == "D") { $cpo = 'Geral'; }
+               $txt .= "<td>" . $cpo . "</td>"; 
+               $txt .= '<td class="text-center">' . ($lin['funespelho'] == "N" ? 'Não' : 'Sim' ) . "</td>";
+               $txt .= '<td class="text-center">' . ($lin['funcondominio'] == "A" ? 'Aberto' : 'Fechado' ) . "</td>";
+               $cpo = "*** " . $lin['funclaambima'] . ' ***';
+               if ($lin['funclaambima'] == "") { $cpo = ''; }
+               if ($lin['funclaambima'] == "A") { $cpo = 'Açoes'; }
+               if ($lin['funclaambima'] == "C") { $cpo = 'Cambial'; }
+               if ($lin['funclaambima'] == "M") { $cpo = 'Multimercado'; }
+               if ($lin['funclaambima'] == "R") { $cpo = 'Renda Fixa'; }
+               if ($lin['funclaambima'] == "P") { $cpo = 'Previdência'; }
+               if ($lin['funclaambima'] == "F") { $cpo = 'Fundo Cambial'; }
+               $txt .= "<td>" . $cpo . "</td>"; 
+               if ($lin['datinc'] == null) {
+                    $txt .= "<td>" . '' . "</td>";
+               }else{
+                    $txt .= "<td>" . date('d/m/Y',strtotime($lin['datinc'])) . "</td>";
+               }
+               if ($lin['datalt'] == null) {
+                    $txt .= "<td>" . '' . "</td>";
+               }else{
+                    $txt .= "<td>" . date('d/m/Y',strtotime($lin['datalt'])) . "</td>";
+               }
+               $txt .= "</tr>";
+               echo $txt;
           }
-          $txt .= "</tr>";
-          echo $txt;
      }
+}
+
+function patrimonio_liq($cod, &$dat, &$val) {
+     include_once "dados.php";
+     $ret = 0; $dat = '**/**/****'; $val = '';
+     $com = "Select infdata, infpatrimonio from tb_movto_id where idfundo = " . $cod . " order by infdata";
+     $nro = leitura_reg($com, $reg);
+     foreach ($reg as $lin) {
+          $dat = date('d/m/Y',strtotime($lin['infdata']));
+          $val = number_format($lin['infpatrimonio'], 2, ",", ".");
+     }
+     return $ret;
 }
 
 ?>

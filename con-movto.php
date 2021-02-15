@@ -122,7 +122,7 @@ $(document).ready(function() {
 
 <?php 
      include_once "dados.php"; 
-     $dti = date('d/m/Y', strtotime('-30 days'));
+     $dti = date('d/m/Y', strtotime('-90 days'));
      $dtf = date('d/m/Y');
      $dti = (isset($_REQUEST['dti']) == false ? $dti : $_REQUEST['dti']);
      $dtf = (isset($_REQUEST['dtf']) == false ? $dtf : $_REQUEST['dtf']);
@@ -145,6 +145,7 @@ $(document).ready(function() {
 
                     <form class="qua-6" id="frmTelCon" name="frmTelCon" action="con-movto.php" method="POST">
                          <div class="row">
+                         
                               <div class="col-md-2">
                                    <label>Data Inicial</label>
                                    <input type="text" class="form-control text-center" maxlength="10" id="dti"

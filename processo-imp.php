@@ -145,8 +145,12 @@ $(document).ready(function() {
                $ret = gravar_log(6, "Entrada na página de UpLoad de arquivos .Csv Pallas.45 - MoneyWay");  
           }
      }
+     if (isset($_REQUEST['ope']) == true) { $_SESSION['wrkopereg'] = $_REQUEST['ope']; }
+     if (isset($_REQUEST['cod']) == true) { $_SESSION['wrkcodreg'] = $_REQUEST['cod']; }
+
      if (isset($_SESSION['wrkqtdreg']) == false) { $_SESSION['wrkqtdreg'] = 0; }
      if (isset($_SESSION['wrkopereg']) == false) { $_SESSION['wrkopereg'] = 0; }
+     if (isset($_SESSION['wrknumcol']) == false) { $_SESSION['wrknumcol'] = 0; }
      if (isset($_SESSION['wrknomcsv']) == false) { $_SESSION['wrknomcsv'] = ''; }
      if (isset($_SESSION['wrknomarq']) == false) { $_SESSION['wrknomarq'] = ''; }
      ini_set('max_execution_time', 600);       
@@ -162,7 +166,9 @@ $(document).ready(function() {
      if (isset($_REQUEST['processa']) == true) {
           $arq = $_SESSION['wrkopereg'];
           $qtd = verifica_csv($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $con);
-          if ($qtd >= 999998) {
+          if ($qtd == 999998) {
+               echo '<script>alert("Arquivo informado não carregado para efetuar UpLoad do mesmo");</script>';
+          } else if ($qtd == 999999) {
                echo '<script>alert("Arquivo informado para UpLoad não possue quebra de linhas");</script>';
           } else if ($qtd != 0) {
                if ($arq == 1) {
@@ -183,6 +189,9 @@ $(document).ready(function() {
                if ($arq == 6) {
                     echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 5");</script>';
                }
+               if ($arq == 7) {
+                    echo '<script>alert("Arquivo fornecido para UpLoad tem colunas incorretas -> 2/7");</script>';
+               }
           } else {
                if ($arq == 1) {
                     $ret = processa_fun($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
@@ -201,6 +210,9 @@ $(document).ready(function() {
                }
                if ($arq == 6) {
                     $ret = processa_ren($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
+               }
+               if ($arq == 7) {
+                    $ret = processa_ind($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
                }
           }
           $inf = "Fase: 03/03"; $_SESSION['wrknomcsv'] = ""; $_SESSION['wrknomarq'] = "";
@@ -232,7 +244,7 @@ $(document).ready(function() {
                          <div class="col-md-1"></div>
                     </div>
                     <br />
-                    <form class="qua-4" id="frmTelImp" name="frmTelImp" action="processo-002.php" method="POST"
+                    <form class="qua-4" id="frmTelImp" name="frmTelImp" action="processo-imp.php" method="POST"
                          enctype="multipart/form-data">
                          <div class="row">
                               <div class="col-md-2"></div>
@@ -247,7 +259,7 @@ $(document).ready(function() {
                                         <option value="4">Informações Diárias (movimento)</option>
                                         <option value="5">Informações de Fundos - Classes</option>
                                         <option value="6">Informações de Fundos - Rentabilidade</option>
-
+                                        <option value="7">Índices de Correção de Ativos</option>
                                    </select>
                               </div>
                               <div class="col-md-2"></div>
@@ -297,7 +309,7 @@ $(document).ready(function() {
                          <div class="row">
                               <div class="col-md-12 text-center ">
                               <strong>
-                                   <span id="inf-2"><?php echo $inf; ?></span><br />
+                                   <h4><span id="inf-2"><?php echo $inf; ?></span></h4>
                                    <span id="inf-3"><?php echo $_SESSION['wrknomcsv']; ?></span><br />
                                    <span id="inf-4"><?php echo $_SESSION['wrknomarq']; ?></span><br />
                                    </strong>
@@ -374,7 +386,7 @@ $(document).ready(function() {
      }
 
      function verifica_csv ($cam, $nom, $ord, &$con) {
-          $con = 0;
+          $con = 0; $_SESSION['wrknumcol'] = 0;
           if ($cam == "") { return 999998; }
           include_once "dados.php";
           $csv = fopen('upload/' . $cam, "r");  
@@ -384,7 +396,12 @@ $(document).ready(function() {
                     fclose($csv);     
                     return 999999;
                } else {
-                    $lin = explode(";", fgets($csv));
+                    $reg = fgets($csv);
+                    if (strpos($reg, ';') == 0) {
+                         $lin = explode(",", $reg);
+                    } else {
+                         $lin = explode(";", $reg);
+                    }   
                     if ($ord == 1) {
                          if (count($lin) != 1 && count($lin) != 116) {
                               $con = $con + 1;          
@@ -414,6 +431,14 @@ $(document).ready(function() {
                          if (count($lin) != 1 && count($lin) != 5) {
                               $con = $con + 1;          
                          }
+                    }
+                    if ($ord == 7) {
+                         if (count($lin) != 1 && count($lin) != 2 && count($lin) != 7) {
+                              $con = $con + 1;          
+                         }
+                    }
+                    if (count($lin) >= 2) {
+                         $_SESSION['wrknumcol'] = count($lin);
                     }
                }
           } 
@@ -459,9 +484,12 @@ $(document).ready(function() {
                     } else {
                          $sql .= "'" . inverte_dat(1, $lin[2]) . "',";
                     }
-                    $sql .= "'" . substr($lin[3], 0, 1) . "',";  // Coluna D
+                    $sql .= "'" . substr($lin[3], 0, 1) . "',";  // Coluna D - Condomínio
                     $sql .= "'" . substr($lin[5], 0, 1) . "',";  // Coluna F
-                    $sql .= "'" . substr($lin[8], 0, 1) . "',";  // Coluna I - Publico Alvo
+                    if ($lin[8] == "INVESTIDORES PROFISSIONAIS") { $sql .= "'" . 'A' . "',"; }  // Coluna I - Publico Alvo }
+                    if ($lin[8] == "INVESTIDORES QUALIFICADOS") { $sql .= "'" . 'B' . "',";  }
+                    if (utf8_encode($lin[8]) == "PREVIDENCIÁRIO") { $sql .= "'" . 'C' . "',";  }
+                    if (utf8_encode($lin[8]) == "PÚBLICO EM GERAL") { $sql .= "'" . 'D' . "',";  }
                     $sql .= "'" . substr($lin[15], 0, 1) . "',";  // Coluna P
                     $sql .= "'" . substr($lin[16], 0, 1) . "',";  // Coluna Q
                     $sql .= "'" . substr($lin[10], 0, 1) . "',";  // Coluna K
@@ -722,6 +750,16 @@ $(document).ready(function() {
           return $key;
      }
 
+     function ler_indice ($cpo, $dat) {
+          $key = 0; 
+          include_once "dados.php";
+          $nro = acessa_reg("Select idindice from tb_indice where indcodigo = " . $cpo . " and inddata = '" . $dat . "'", $reg);            
+          if ($nro == 1) {
+               $key = $reg['idindice'];
+          }
+          return $key;
+     }
+
      function processa_cla ($cam, $des, $ord, &$pro, &$atu, &$men, &$com) {
           $ret = 0; 
           $pro = 0; 
@@ -818,6 +856,61 @@ $(document).ready(function() {
                     }                        
                }
                $pro = $pro + 1;
+          }
+          return $ret;
+     }
+
+     function processa_ind ($cam, $des, $ord, &$pro, &$gra, &$men, &$com) {
+          $ret = 0; 
+          $gra = 0; 
+          $pro = 0; 
+          $dat = '';
+          $men = ''; $com = '';
+          include_once "dados.php";
+          $csv = fopen('upload/' . $cam, "r");  
+          while (!feof ($csv)) {
+               $key = 0; $cpo = 0;
+               if ($_SESSION['wrknumcol'] == 2) {
+                    $lin = explode(";", fgets($csv));     
+                    $dat = inverte_dat(1,$lin[0]);   
+                    $cpo = 1;
+               } else {
+                    $lin = explode(",", fgets($csv));        
+                    $dat = $lin[0];
+                    $cpo = 0;
+               }
+               if (is_numeric(substr($lin[0], 0, 1)) == true  ) {
+                    $key = ler_indice($cpo, $dat);
+               }
+               if ($key == 0 && $dat != "Data" && $dat != "Date") {     
+                    if (count($lin) >= 2 ) {
+                         $sql  = "insert into tb_indice (";
+                         $sql .= "indcodigo, ";
+                         $sql .= "indtipo, ";
+                         $sql .= "inddata, ";
+                         $sql .= "indtaxa, ";
+                         $sql .= "keyinc, ";
+                         $sql .= "datinc ";
+                         $sql .= ") value ( ";
+                         $sql .= "'" . $cpo . "',";
+                         $sql .= "'" . '1' . "',";     
+                         $sql .= "'" . $dat . "',";     
+                         if ($_SESSION['wrknumcol'] == 2) {
+                              $sql .= "'" . str_replace(",", ".", $lin[1]) . "',";     
+                         } else {
+                              $sql .= "'" . str_replace(",", ".", $lin[4]) . "',";     
+                         }
+                         $sql .= "'" . $_SESSION['wrkideusu'] . "',";
+                         $sql .= "'" . date("Y-m-d H:i:s") . "')";
+                         $ret = comando_tab($sql, $nro, $cha, $men);
+                         if ($ret == false) {
+                              $com = $sql;
+                              $men = "Erro na gravação do registro de data no banco de dados !";
+                         }               
+                         $gra = $gra + 1;
+                    }
+               }
+          $pro = $pro + 1;          
           }
           return $ret;
      }

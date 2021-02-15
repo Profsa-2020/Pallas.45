@@ -283,16 +283,32 @@ function mascara_cpo($cpo, $mas) {	// Formata campos com máscara
      $tmm = strlen($mas);
      if ($tmm == 0) { $tmm = $tmc; }
      for ($ind = 0; $ind < $tmm; $ind++) {
-         if (trim($mas[$ind]) == "") {
-             if (isset($cpo[$nro]) == true) {
-                 $ret = $ret . $cpo[$nro];
-                 $nro = $nro + 1;
-             }
-         } else {
-             $ret = $ret . $mas[$ind];
-         }
+          if (trim($mas[$ind]) == "") {
+               if (isset($cpo[$nro]) == true) {
+                    $ret = $ret . $cpo[$nro];
+                    $nro = $nro + 1;
+               }
+          } else {
+               $ret = $ret . $mas[$ind];
+          }
      }
      return $ret;
  }
  
+function calcula_idade($nas) {
+     $ida = 0;
+     $nas = inverte_dat(0, $nas);
+     $ano_h = date('Y');
+     $mes_h = date('m');
+     $dia_h = date('d');
+     $ano_n = date('Y', strtotime($nas));
+     $mes_n = date('m', strtotime($nas));
+     $dia_n = date('d', strtotime($nas));
+     $ida = $ano_h - $ano_n;
+     if ($mes_n > $mes_h) {
+          $ida = $ida - 1;
+     }
+     return $ida;
+}
+
 ?>

@@ -20,7 +20,16 @@
                </a>
           </li>
           <li>
-               <a href="processo-imp.php">
+               <a href="man-indice.php?ope=1&cod=0">
+                    <div class="icon">
+                         <i class="fa fa-balance-scale" aria-hidden="true"></i>
+                         <i class="fa fa-balance-scale" aria-hidden="true"></i>
+                    </div>
+                    <div class="name"><span data-text="Índices">Índices</span></div>
+               </a>
+          </li>
+          <li>
+               <a href="processo-imp.php?ope=8&cod=0">
                     <div class="icon">
                          <i class="fa fa-cloud-upload" aria-hidden="true"></i>
                          <i class="fa fa-cloud-upload" aria-hidden="true"></i>
