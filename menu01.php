@@ -87,7 +87,6 @@ $(document).ready(function() {
                <!---------- Corpo ---------->
                <div class="col-md-10">
                     <div class="row">
-
                          <div class="col-md-12 text-center">
                               <span class="lit-3">DashBoard</span> &nbsp; &nbsp; &nbsp; <i
                                    class="fa fa-tachometer fa-3x" aria-hidden="true"></i>
@@ -95,7 +94,7 @@ $(document).ready(function() {
                     </div>
                     <br />
                     <div class="row">
-                         <div class="col-md-2"></div>
+                         <div class="col-md-1"></div>
                          <div class="qua-5 col-md-2 text-center">
                               <p>Usuários</p>
                               <span><?php echo number_format($tab['usu'], 0, ",", "."); ?></span>
@@ -112,12 +111,24 @@ $(document).ready(function() {
                               <p>Opções</p>
                               <span><?php echo number_format($tab['opc'], 0, ",", "."); ?></span>
                          </div>
-                         <div class="col-md-2"></div>
+                         <div class="qua-5 col-md-2 text-center">
+                              <p>Índices</p>
+                              <span><?php echo number_format($tab['ind'], 0, ",", "."); ?></span>
+                         </div>
+                         <div class="col-md-1"></div>
+                    </div>
+                    <br /><br />
+                    <div class="row">
+                         <div class="col-md-3"><h4><strong>Classes dos Fundos</strong></h4></div>
+                         <div class="col-md-6">
+                              <?php echo $tab['cla']; ?>
+                         </div>
+                         <div class="col-md-3"></div>
                     </div>
                     <br /><br />
                     <div class="row">
                          <div class="col-md-12 text-center">
-                              <img class="ima-2 img-fluid  animated zoomInUp" src="img/logo-05.png" />
+                              <img class="ima-2 img-fluid  animated zoomInUp" src="img/logo-03.png" />
                          </div>
                     </div>
                </div>
@@ -132,7 +143,9 @@ function carrega_das(&$tab) {
      $tab['usu'] = 0;
      $tab['fun'] = 0;
      $tab['opc'] = 0;
+     $tab['ind'] = 0;
      $tab['mv0'] = 0;
+     $tab['cla'] = '';
      include_once "dados.php";
      date_default_timezone_set("America/Sao_Paulo");
      $com = 'Select count(*) as qtdlinhas from tb_usuario';
@@ -150,12 +163,40 @@ function carrega_das(&$tab) {
      if ($nro == 1) {
           $tab['opc'] = $reg['qtdlinhas'];
      }        
+     $com = 'Select count(*) as qtdlinhas from tb_indice';
+     $nro = acessa_reg($com, $reg);
+     if ($nro == 1) {
+          $tab['ind'] = $reg['qtdlinhas'];
+     }        
      $com = 'Select count(*) as qtdlinhas from tb_movto_id';
      $nro = acessa_reg($com, $reg);
      if ($nro == 1) {
           $tab['mv0'] = $reg['qtdlinhas'];
      }        
-
+     $nro = leitura_reg("Select funclasse, Count(*) as funqtde from tb_fundos group by funclasse", $reg);
+     if ($nro > 0) {
+          $tab['cla'] .= '<table class="table">';
+          $tab['cla'] .= '<tbody>';
+     }
+     foreach ($reg as $lin) {
+          $des = "**********";
+          if ($lin['funclasse'] == 1) { $des = "Fundo Cambial"; }
+          if ($lin['funclasse'] == 2) { $des = "Fundo da Dívida Externa"; }
+          if ($lin['funclasse'] == 3) { $des = "Fundo de Açoes"; }
+          if ($lin['funclasse'] == 4) { $des = "Fundo de Curto Prazo"; }
+          if ($lin['funclasse'] == 5) { $des = "Fundo de Renda Fixa"; }
+          if ($lin['funclasse'] == 6) { $des = "Fundo Multimercado"; }
+          if ($lin['funclasse'] == 7) { $des = "Fundo Referenciado"; }
+          $tab['cla'] .= '<tr>';
+          $tab['cla'] .= "<td>" . $des . "</td>";
+          $tab['cla'] .= "<td>" . number_format($lin['funqtde'], 0, ",", ".") . "</td>";
+          $tab['cla'] .= "<td>" . round($lin['funqtde'] / $tab['fun'] * 100, 2) . " %</td>";
+          $tab['cla'] .= '</tr>';
+     }
+     if ($nro > 0) {
+          $tab['cla'] .= '</tbody>';
+          $tab['cla'] .= '</table>';
+     }
      return $sta;
 }
 

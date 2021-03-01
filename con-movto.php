@@ -44,8 +44,10 @@
           src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
      <link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
 
-     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
-     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+     <script type="text/javascript" language="javascript"
+          src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+     <script type="text/javascript" language="javascript"
+          src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
 
      <script type="text/javascript" src="js/datepicker-pt-BR.js"></script>
 
@@ -57,13 +59,18 @@
 
 <script>
 $(function() {
-     $("#dti").mask("99/99/9999");
-     $("#dtf").mask("99/99/9999");
+     $("#cgc").mask("00.000.000/0000-00");
+     $("#dti").mask("00/00/0000");
+     $("#dtf").mask("00/00/0000");
      $("#dti").datepicker($.datepicker.regional["pt-BR"]);
      $("#dtf").datepicker($.datepicker.regional["pt-BR"]);
 });
 
 $(document).ready(function() {
+     $('#cgc').blur(function() {
+          $('#tab-0 tbody').empty();
+     });
+
      $('#dti').change(function() {
           $('#tab-0 tbody').empty();
      });
@@ -78,14 +85,12 @@ $(document).ready(function() {
                [1, 'asc'],
                [2, 'asc']
           ],
-          "dom" : 'Bfrtip',
-          "buttons": [
-               {
-                    "extend": 'csv',
-                    "text": ' .CSV ',
-                    "fieldSeparator": ';'              
-               }
-          ],
+          "dom": 'Bfrtip',
+          "buttons": [{
+               "extend": 'csv',
+               "text": ' .CSV ',
+               "fieldSeparator": ';'
+          }],
           "language": {
                "lengthMenu": "Demonstrar _MENU_ linhas por páginas",
                "zeroRecords": "Não existe registros a demonstar ...",
@@ -99,6 +104,27 @@ $(document).ready(function() {
                     sNext: "Próximo",
                     sPrevious: "Anterior"
                }
+          }
+     });
+
+     $("#cgc").blur(function() {
+          var cgc = $('#cgc').val();
+          if (cgc != "") {
+               $.getJSON("ajax/verifica-cgc.php", {
+                    cgc: cgc
+               })
+               .done(function(data) {
+                    if (data.men != "") {
+                         alert(data.men);
+                         $('#cgc').val('');
+                         $('#nom').val('');
+                    } else {
+                         $('#nom').val(data.nom);
+                    }
+               }).fail(function(data) {
+                    console.log('Erro: ' + JSON.stringify(data));
+                    alert("Erro ocorrido no processamento de verificação do cnpj");
+               });
           }
      });
 
@@ -122,11 +148,19 @@ $(document).ready(function() {
 
 <?php 
      include_once "dados.php"; 
+     if (isset($_SESSION['wrknomfun']) == false) { $_SESSION['wrknomfun'] = ""; }
+     if (isset($_SESSION['wrkopereg']) == false) { $_SESSION['wrkopereg'] = 0; }
+     if (isset($_SESSION['wrkcodreg']) == false) { $_SESSION['wrkcodreg'] = 0; }
+     if (isset($_REQUEST['ope']) == true) { $_SESSION['wrkopereg'] = $_SESSION['wrknomfun'] = ""; }
+
      $dti = date('d/m/Y', strtotime('-90 days'));
      $dtf = date('d/m/Y');
+     $cgc = (isset($_REQUEST['cgc']) == false ? '' : $_REQUEST['cgc']);
+     $nom = (isset($_REQUEST['nom']) == false ? $_SESSION['wrknomfun'] : $_REQUEST['nom']);
      $dti = (isset($_REQUEST['dti']) == false ? $dti : $_REQUEST['dti']);
      $dtf = (isset($_REQUEST['dtf']) == false ? $dtf : $_REQUEST['dtf']);
- 
+     if ($_SESSION['wrknomfun'] == "") { $_SESSION['wrknomfun'] = $nom; }
+
 ?>
 
 <body id="box00">
@@ -144,8 +178,7 @@ $(document).ready(function() {
                          <?php echo  number_format(numero_reg('tb_movto_id'), 0, ",", "."); ?></p>
 
                     <form class="qua-6" id="frmTelCon" name="frmTelCon" action="con-movto.php" method="POST">
-                         <div class="row">
-                         
+                         <div class="form-row">
                               <div class="col-md-2">
                                    <label>Data Inicial</label>
                                    <input type="text" class="form-control text-center" maxlength="10" id="dti"
@@ -156,7 +189,18 @@ $(document).ready(function() {
                                    <input type="text" class="form-control text-center" maxlength="10" id="dtf"
                                         name="dtf" value="<?php echo $dtf; ?>" required />
                               </div>
-                              <div class="col-md-7"></div>
+                              <div class="col-md-2">
+                                   <label>Número do Cnpj </label> &nbsp; &nbsp; <span class="cur-1" title="Abre janela com dados de cadastro do fundo solicitado"><i class="fa fa-building fa-1g" aria-hidden="true"></i></span>
+                                   <input type="text" class="form-control text-center" maxlength="18" id="cgc"
+                                        name="cgc" value="<?php echo $cgc; ?>" />
+                              </div>
+                              <div class="col-md-5 text-center">
+                              <label>Nome do Fundo</label>
+                                   <span>
+                                        <input type="text" class="form-control text-center" id="nom"
+                                             name="nom" value="<?php echo $_SESSION['wrknomfun']; ?>" disabled />
+                                   </span>
+                              </div>
                               <div class="col-md-1 text-center">
                                    <br />
                                    <button type="submit" id="con" name="consulta" class="bot-2"
@@ -165,9 +209,7 @@ $(document).ready(function() {
                               </div>
                          </div>
                     </form>
-
                     <br />
-
                     <div class="row qua-3">
                          <div class="col-md-12">
                               <br />
@@ -187,7 +229,7 @@ $(document).ready(function() {
                                              </tr>
                                         </thead>
                                         <tbody>
-                                             <?php $ret = carrega_mov($dti, $dtf);  ?>
+                                             <?php $ret = carrega_mov($cgc, $dti, $dtf);  ?>
                                         </tbody>
                                    </table>
                                    <hr />
@@ -204,13 +246,14 @@ $(document).ready(function() {
 </body>
 
 <?php
-function carrega_mov($dti, $dtf) {
+function carrega_mov($cgc, $dti, $dtf) {
      include_once "dados.php";
      include_once "profsa.php";
      $dti = substr($dti,6,4) . "-" . substr($dti,3,2) . "-" . substr($dti,0,2) . " 00:00:00";
      $dtf = substr($dtf,6,4) . "-" . substr($dtf,3,2) . "-" . substr($dtf,0,2) . " 23:59:59";
      $com = "Select M.*, F.funnome from (tb_movto_id M left join tb_fundos F on M.idfundo = F.idfundo) ";
      $com .= " where infdata between '" . $dti . "' and '" . $dtf . "' ";
+     if ($cgc != "") { $com .= " and inffundo = '" . limpa_nro($cgc) . "'"; }
      $com .= " order by infdata, idmovto ";          
      $nro = leitura_reg($com, $reg);
      foreach ($reg as $lin) {

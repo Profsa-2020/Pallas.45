@@ -51,7 +51,7 @@ function gravar_log($ope = 0, $obs = "", $cod = "") {
      if (isset($_SESSION['wrknompro']) == true) {$prg = $_SESSION['wrknompro'];}
      if (isset($_SESSION['wrknomant']) == true) {$ant = $_SESSION['wrknomant'];}
      if (isset($_SESSION['wrknumdoc']) == true) {$doc = $_SESSION['wrknumdoc'];}
-     if (isset($_SESSION['wrknumcha']) == true) {$nro = $_SESSION['wrknumcha'];}
+     if (isset($_SESSION['wrkideusu']) == true) {$nro = $_SESSION['wrkideusu'];}
      if (isset($_SESSION['wrkcidusu']) == true) {$cid = $_SESSION['wrkcidusu'];}
      if (isset($_SESSION['wrkestusu']) == true) {$est = $_SESSION['wrkestusu'];} 
      if ($nom == "") { $nom = substr(get_current_user(), 0, 50); }
@@ -129,6 +129,12 @@ function limpa_pro($nom)  {
           $nom = substr($nom,0, $ind);  
      }
      return $nom;
+ }
+
+ function limpa_vlo($val){ 
+     $val = str_replace(".", "", $val);
+     $val = str_replace(",", ".", $val);
+     return $val;
  }
 
  function limpa_nro($string){ 

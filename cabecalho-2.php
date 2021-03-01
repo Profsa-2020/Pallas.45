@@ -11,7 +11,7 @@
                </a>
           </li>
           <li>
-               <a href="con-fundos.php">
+               <a href="con-fundos.php?ope=4&cod=0">
                     <div class="icon">
                          <i class="fa fa-building" aria-hidden="true"></i>
                          <i class="fa fa-building" aria-hidden="true"></i>
@@ -47,7 +47,7 @@
                </a>
           </li>
           <li>
-               <a href="con-movto.php">
+               <a href="con-movto.php?ope=4&cod=0">
                     <div class="icon">
                          <i class="fa fa-search" aria-hidden="true"></i>
                          <i class="fa fa-search" aria-hidden="true"></i>

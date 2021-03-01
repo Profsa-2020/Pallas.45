@@ -582,7 +582,7 @@ $(document).ready(function() {
                     } 
                     if ($cha != 0) {
                          $sql  = "update tb_fundos set ";
-                         $sql .= "funstatus = '". '3' . "', ";
+                         $sql .= "funstatus = '". '2' . "', ";
                          $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
                          $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
                          $sql .= "where idfundo = " . $cha;
@@ -655,7 +655,7 @@ $(document).ready(function() {
                     } 
                     if ($cha != 0) {
                          $sql  = "update tb_fundos set ";
-                         $sql .= "funstatus = '". '2' . "', ";
+                         $sql .= "funstatus = '". '3' . "', ";
                          $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
                          $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
                          $sql .= "where idfundo = " . $cha;

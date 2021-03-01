@@ -125,6 +125,23 @@ $(document).ready(function() {
           }, 1500);
      });
 
+     $("#web-1").click(function() {
+          let arq = $('#arq').val();
+          if (arq == 0) {
+               alert("Selecione um tipo de arquivo para abrir endereço do site");
+          } else if (arq == 1) {
+               window.open('http://dados.cvm.gov.br/dados/FI/DOC/EXTRATO/DADOS/', '_blank');
+          } else if (arq == 2 || arq == 3) {
+               window.open('http://dados.cvm.gov.br/dataset/fi-cad/resource/9ff23a88-d333-4b04-8600-ee474d9e1aae?inner_span=True', '_blank');
+          } else if (arq == 4) {
+               window.open('http://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/', '_blank');
+          } else if (arq == 5 || arq == 6) {
+               window.open('http://dados.cvm.gov.br/dataset/fi-cad/resource/9ff23a88-d333-4b04-8600-ee474d9e1aae?inner_span=True', '_blank');
+          }
+
+     });
+
+
 });
 </script>
 
@@ -153,7 +170,7 @@ $(document).ready(function() {
      if (isset($_SESSION['wrknumcol']) == false) { $_SESSION['wrknumcol'] = 0; }
      if (isset($_SESSION['wrknomcsv']) == false) { $_SESSION['wrknomcsv'] = ''; }
      if (isset($_SESSION['wrknomarq']) == false) { $_SESSION['wrknomarq'] = ''; }
-     ini_set('max_execution_time', 600);       
+     ini_set('max_execution_time', 900);       
      $max = ini_get('upload_max_filesize');
      $arq = (isset($_REQUEST['arq']) == false ? 0 : $_REQUEST['arq']);
      if (isset($_REQUEST['subir']) == true) {
@@ -247,22 +264,23 @@ $(document).ready(function() {
                     <form class="qua-4" id="frmTelImp" name="frmTelImp" action="processo-imp.php" method="POST"
                          enctype="multipart/form-data">
                          <div class="row">
-                              <div class="col-md-2"></div>
-                              <div class="cpo-1 col-md-8">
+                              <div class="col-md-1"></div>
+                              <div class="cpo-1 col-md-10">
                                    <label class="cor-2">Arquivo .Csv a ser importado</label>
                                    <select id="arq" name="arq" class="form-control">
                                         <option value="0">Selecione o arquivo a ser importado ...
                                         </option>
-                                        <option value="1">Informações Cadastrais dos Fundos</option>
-                                        <option value="2">Opções dos Fundos - Situação</option>
-                                        <option value="3">Opções dos Fundos - Exclusivo</option>
-                                        <option value="4">Informações Diárias (movimento)</option>
-                                        <option value="5">Informações de Fundos - Classes</option>
-                                        <option value="6">Informações de Fundos - Rentabilidade</option>
+                                        <option value="1">Informações Cadastrais dos Fundos (extrato_fi_AAAA.csv)
+                                        </option>
+                                        <option value="2">Opções dos Fundos - Situação (cad_fi_hist_sit.csv)</option>
+                                        <option value="3">Opções dos Fundos - Exclusivo (cad_fi_hist_exclusivo.csv)</option>
+                                        <option value="4">INFORMAÇÕES DIÁRIAS (inf_diario_fi_AAAAMM.csv)</option>
+                                        <option value="5">Informações de Fundos - Classes (cad_fi_hist_classe.csv)</option>
+                                        <option value="6">Informações de Fundos - Rentabilidade (cad_fi_hist_rentab.csv)</option>
                                         <option value="7">Índices de Correção de Ativos</option>
                                    </select>
                               </div>
-                              <div class="col-md-2"></div>
+                              <div class="col-md-1"></div>
                          </div>
                          <br />
                          <div class="row">
@@ -307,11 +325,17 @@ $(document).ready(function() {
                          </div>
                          <br />
                          <div class="row">
+                              <div class="col-md-12 text-center">
+                                   <i id="web-1" class="cur-1 fa fa-globe fa-2x" aria-hidden="true" title="Abre nova guia com acesso ao web site do tipo de arquivo"></i>
+                              </div>
+                         </div>
+                         <br />
+                         <div class="row">
                               <div class="col-md-12 text-center ">
-                              <strong>
-                                   <h4><span id="inf-2"><?php echo $inf; ?></span></h4>
-                                   <span id="inf-3"><?php echo $_SESSION['wrknomcsv']; ?></span><br />
-                                   <span id="inf-4"><?php echo $_SESSION['wrknomarq']; ?></span><br />
+                                   <strong>
+                                        <h4><span id="inf-2"><?php echo $inf; ?></span></h4>
+                                        <span id="inf-3"><?php echo $_SESSION['wrknomcsv']; ?></span><br />
+                                        <span id="inf-4"><?php echo $_SESSION['wrknomarq']; ?></span><br />
                                    </strong>
                               </div>
                          </div>
@@ -492,7 +516,7 @@ $(document).ready(function() {
                     if (utf8_encode($lin[8]) == "PÚBLICO EM GERAL") { $sql .= "'" . 'D' . "',";  }
                     $sql .= "'" . substr($lin[15], 0, 1) . "',";  // Coluna P
                     $sql .= "'" . substr($lin[16], 0, 1) . "',";  // Coluna Q
-                    $sql .= "'" . substr($lin[10], 0, 1) . "',";  // Coluna K
+                    $sql .= "'" . substr($lin[10], 0, 1) . "',";  // Coluna K - Anbima
                     $sql .= "'" . $lin[17] . "',";  // Coluna R R$ - Aplicação Mínima
                     $sql .= "'" . substr($lin[18], 0, 1) . "',";  // Coluna S - Atualização Diária
                     $sql .= "'" . $cam . "',";  
@@ -537,6 +561,7 @@ $(document).ready(function() {
                if ($cha != 0 && $sta == 0) {
                     $sql  = "insert into tb_movto_id (";
                     $sql .= "idfundo, ";
+                    $sql .= "inffundo, ";
                     $sql .= "infdata, ";
                     $sql .= "inftotal, ";
                     $sql .= "infquota, ";
@@ -548,10 +573,12 @@ $(document).ready(function() {
                     $sql .= "infarquivo, ";
                     $sql .= "infordem, ";
                     $sql .= "infprocesso, ";
+                    $sql .= "infnumero, ";
                     $sql .= "keyinc, ";
                     $sql .= "datinc ";
                     $sql .= ") value ( ";
                     $sql .= "'" . $cha . "',";
+                    $sql .= "'" . limpa_nro($lin[0]) . "',";  
                     if (substr($lin[1], 4, 1) == "-" || substr($lin[1], 4, 1) == "/") {
                          $sql .= "'" . $lin[1] . "',";
                     } else {
@@ -565,7 +592,8 @@ $(document).ready(function() {
                     $sql .= "'" . $lin[7] . "',";  
                     $sql .= "'" . $pro . "',";  
                     $sql .= "'" . $des . "',";  
-                    $sql .= "'" . $ord . "',";  
+                    $sql .= "'" . $ord . "',";
+                    $sql .= "'" . $pro . "',";
                     $sql .= "'" .  $_SESSION['wrknumusu'] . "',";  
                     $sql .= "'" . $_SESSION['wrkideusu'] . "',";
                     $sql .= "'" . date("Y-m-d H:i:s") . "')";
@@ -590,65 +618,75 @@ $(document).ready(function() {
           $upd = 0; 
           $men = ''; $com = '';
           include_once "dados.php";
+          $ret = comando_tab("Update tb_fundos set funstatus = 0", $nro, $cha, $men);
+          if ($ret == false) {
+               $com = $sql;
+               $men = "Erro na atualização do status dos fundos (situação) !";
+          }          
           $csv = fopen('upload/' . $cam, "r");  
           while (!feof ($csv)) {
-               $lin = explode(";", fgets($csv));               
-               $ati = (strpos($lin[2], "NORMAL") > 0 ? 1 : 0);    
-               if ($ati == 0) {
-                    $key = ler_opcao($lin[0]);
-                    $cha = ler_fundo($lin[0], $sta);
-                    if ($cha != 0 && $key == 0) {
-                         $sql  = "insert into tb_opcoes (";
-                         $sql .= "opccnpj, ";
-                         $sql .= "opcexclusivo, ";
-                         $sql .= "opcativo, ";
-                         $sql .= "opcarquivo, ";
-                         $sql .= "opcordem, ";
-                         $sql .= "opctipo, ";
-                         $sql .= "keyinc, ";
-                         $sql .= "datinc ";
-                         $sql .= ") value ( ";
-                         $sql .= "'" . limpa_nro($lin[0]) . "',";
-                         $sql .= "'" . '0' . "',";     // 0-não exclusivo, 1-exclusivo  
-                         $sql .= "'" . '0' . "',";     // 0-desativado, 1-ativo
-                         $sql .= "'" . $des . "',";  
-                         $sql .= "'" . $pro . "',";  
-                         $sql .= "'" . $ord . "',";  
-                         $sql .= "'" . $_SESSION['wrkideusu'] . "',";
-                         $sql .= "'" . date("Y-m-d H:i:s") . "')";
-                         $ret = comando_tab($sql, $nro, $cha, $men);
-                         if ($ret == false) {
-                              $com = $sql;
-                              $men = "Erro na gravação do registro solicitado no banco de dados !";
-                         }               
-                         $gra = $gra + 1;
+               $lin = explode(";", fgets($csv));     
+               if (count($lin) >=2) {
+                    $ati = (strpos($lin[2], "NORMAL") > 0 ? 1 : 0);    
+                    if ($ati == 0 && trim($lin[4]) == "") {
+                         $key = ler_opcao($lin[0]);
+                         $cha = ler_fundo($lin[0], $sta);
+                         if ($cha != 0 && $key == 0) {
+                              $sql  = "insert into tb_opcoes (";
+                              $sql .= "opccnpj, ";
+                              $sql .= "opcexclusivo, ";
+                              $sql .= "opcativo, ";
+                              $sql .= "opcarquivo, ";
+                              $sql .= "opcordem, ";
+                              $sql .= "opctipo, ";
+                              $sql .= "opcdessituacao, ";
+                              $sql .= "keyinc, ";
+                              $sql .= "datinc ";
+                              $sql .= ") value ( ";
+                              $sql .= "'" . limpa_nro($lin[0]) . "',";
+                              $sql .= "'" . '0' . "',";     // 0-não exclusivo, 1-exclusivo  
+                              $sql .= "'" . '0' . "',";     // 0-desativado, 1-ativo
+                              $sql .= "'" . $des . "',";  
+                              $sql .= "'" . $pro . "',";  
+                              $sql .= "'" . $ord . "',";
+                              $sql .= "'" . $lin[2] . "',";
+                              $sql .= "'" . $_SESSION['wrkideusu'] . "',";
+                              $sql .= "'" . date("Y-m-d H:i:s") . "')";
+                              $ret = comando_tab($sql, $nro, $cha, $men);
+                              if ($ret == false) {
+                                   $com = $sql;
+                                   $men = "Erro na gravação do registro solicitado no banco de dados !";
+                              }               
+                              $gra = $gra + 1;
+                         }
+                         if ($key != 0) {
+                              $sql  = "update tb_opcoes set ";
+                              $sql .= "opcativo = '". '2' . "', ";
+                              $sql .= "opcdessituacao = '" . $lin[2] . "', ";
+                              $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
+                              $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
+                              $sql .= "where idopcao = " . $key;
+                              $ret = comando_tab($sql, $nro, $ind, $men);
+                              if ($ret == false) {
+                                   $com = $sql;
+                                   $men = "Erro na regravação do ativo solicitado no banco de dados !!!";
+                              }               
+                              $atu = $atu + 1;
+                         } 
+                         if ($cha != 0) {
+                              $sql  = "update tb_fundos set ";
+                              $sql .= "funstatus = '". '2' . "', ";
+                              $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
+                              $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
+                              $sql .= "where idfundo = " . $cha;
+                              $ret = comando_tab($sql, $nro, $ind, $men);
+                              if ($ret == false) {
+                                   $com = $sql;
+                                   $men = "Erro na regravação do registro solicitado no banco de dados !";
+                              }               
+                              $upd = $upd + 1;
+                         } 
                     }
-                    if ($key != 0) {
-                         $sql  = "update tb_opcoes set ";
-                         $sql .= "opcativo = '". '2' . "', ";
-                         $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
-                         $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
-                         $sql .= "where idopcao = " . $key;
-                         $ret = comando_tab($sql, $nro, $ind, $men);
-                         if ($ret == false) {
-                              $com = $sql;
-                              $men = "Erro na regravação do ativo solicitado no banco de dados !!!";
-                         }               
-                         $atu = $atu + 1;
-                    } 
-                    if ($cha != 0) {
-                         $sql  = "update tb_fundos set ";
-                         $sql .= "funstatus = '". '3' . "', ";
-                         $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
-                         $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
-                         $sql .= "where idfundo = " . $cha;
-                         $ret = comando_tab($sql, $nro, $ind, $men);
-                         if ($ret == false) {
-                              $com = $sql;
-                              $men = "Erro na regravação do registro solicitado no banco de dados !";
-                         }               
-                         $upd = $upd + 1;
-                    } 
                }
                $pro = $pro + 1;
           } 
@@ -666,62 +704,64 @@ $(document).ready(function() {
           include_once "dados.php";
           $csv = fopen('upload/' . $cam, "r");  
           while (!feof ($csv)) {
-               $lin = explode(";", fgets($csv));               
-               if ($lin[2] == 'S') {
-                    $key = ler_opcao($lin[0]);
-                    $cha = ler_fundo($lin[0], $sta);
-                    if ($cha != 0 && $key == 0) {
-                         $sql  = "insert into tb_opcoes (";
-                         $sql .= "opccnpj, ";
-                         $sql .= "opcexclusivo, ";
-                         $sql .= "opcativo, ";
-                         $sql .= "opcarquivo, ";
-                         $sql .= "opcordem, ";
-                         $sql .= "opctipo, ";
-                         $sql .= "keyinc, ";
-                         $sql .= "datinc ";
-                         $sql .= ") value ( ";
-                         $sql .= "'" . limpa_nro($lin[0]) . "',";
-                         $sql .= "'" . '1' . "',";     // 0-não exclusivo, 1-exclusivo  
-                         $sql .= "'" . '0' . "',";     // 0-desativado, 1-ativo
-                         $sql .= "'" . $des . "',";  
-                         $sql .= "'" . $pro . "',";  
-                         $sql .= "'" . $ord . "',";  
-                         $sql .= "'" . $_SESSION['wrkideusu'] . "',";
-                         $sql .= "'" . date("Y-m-d H:i:s") . "')";
-                         $ret = comando_tab($sql, $nro, $cha, $men);
-                         if ($ret == false) {
-                              $com = $sql;
-                              $men = "Erro na gravação do registro solicitado no banco de dados !";
-                         }               
-                         $gra = $gra + 1;
+               $lin = explode(";", fgets($csv));           
+               if (count($lin) >=2) {
+                    if ($lin[2] == 'S' && trim($lin[4]) == "") {
+                         $key = ler_opcao($lin[0]);
+                         $cha = ler_fundo($lin[0], $sta);
+                         if ($cha != 0 && $key == 0) {
+                              $sql  = "insert into tb_opcoes (";
+                              $sql .= "opccnpj, ";
+                              $sql .= "opcexclusivo, ";
+                              $sql .= "opcativo, ";
+                              $sql .= "opcarquivo, ";
+                              $sql .= "opcordem, ";
+                              $sql .= "opctipo, ";
+                              $sql .= "keyinc, ";
+                              $sql .= "datinc ";
+                              $sql .= ") value ( ";
+                              $sql .= "'" . limpa_nro($lin[0]) . "',";
+                              $sql .= "'" . '1' . "',";     // 0-não exclusivo, 1-exclusivo  
+                              $sql .= "'" . '0' . "',";     // 0-desativado, 1-ativo
+                              $sql .= "'" . $des . "',";  
+                              $sql .= "'" . $pro . "',";  
+                              $sql .= "'" . $ord . "',";  
+                              $sql .= "'" . $_SESSION['wrkideusu'] . "',";
+                              $sql .= "'" . date("Y-m-d H:i:s") . "')";
+                              $ret = comando_tab($sql, $nro, $cha, $men);
+                              if ($ret == false) {
+                                   $com = $sql;
+                                   $men = "Erro na gravação do registro solicitado no banco de dados !";
+                              }               
+                              $gra = $gra + 1;
+                         }
+                         if ($key != 0) {
+                              $sql  = "update tb_opcoes set ";
+                              $sql .= "opcexclusivo = '". '2' . "', ";
+                              $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
+                              $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
+                              $sql .= "where idopcao = " . $key;
+                              $ret = comando_tab($sql, $nro, $ind, $men);
+                              if ($ret == false) {
+                                   $com = $sql;
+                                   $men = "Erro na regravação da opção solicitado no banco de dados !!";
+                              }               
+                              $atu = $atu + 1;
+                         } 
+                         if ($cha != 0) {
+                              $sql  = "update tb_fundos set ";
+                              $sql .= "funstatus = '". '3' . "', ";
+                              $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
+                              $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
+                              $sql .= "where idfundo = " . $cha;
+                              $ret = comando_tab($sql, $nro, $ind, $men);
+                              if ($ret == false) {
+                                   $com = $sql;
+                                   $men = "Erro na regravação do registro solicitado no banco de dados !!";
+                              }               
+                              $upd = $upd + 1;
+                         } 
                     }
-                    if ($key != 0) {
-                         $sql  = "update tb_opcoes set ";
-                         $sql .= "opcexclusivo = '". '2' . "', ";
-                         $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
-                         $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
-                         $sql .= "where idopcao = " . $key;
-                         $ret = comando_tab($sql, $nro, $ind, $men);
-                         if ($ret == false) {
-                              $com = $sql;
-                              $men = "Erro na regravação da opção solicitado no banco de dados !!";
-                         }               
-                         $atu = $atu + 1;
-                    } 
-                    if ($cha != 0) {
-                         $sql  = "update tb_fundos set ";
-                         $sql .= "funstatus = '". '2' . "', ";
-                         $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
-                         $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
-                         $sql .= "where idfundo = " . $cha;
-                         $ret = comando_tab($sql, $nro, $ind, $men);
-                         if ($ret == false) {
-                              $com = $sql;
-                              $men = "Erro na regravação do registro solicitado no banco de dados !!";
-                         }               
-                         $upd = $upd + 1;
-                    } 
                }
                $pro = $pro + 1;
           } 
@@ -769,29 +809,33 @@ $(document).ready(function() {
           $csv = fopen('upload/' . $cam, "r");  
           while (!feof ($csv)) {
                $tip = 0;
-               $lin = explode(";", fgets($csv));               
-               $cha = ler_fundo($lin[0], $sta);
-               if ($cha >= 1) {
-                    if ($lin[2] == utf8_decode("Fundo Cambial")) {$tip = 1; }
-                    if ($lin[2] == utf8_decode("Fundo da Dívida Externa")) {$tip = 2; }
-                    if ($lin[2] == utf8_decode("Fundo de Ações")) {$tip = 3; }
-                    if ($lin[2] == utf8_decode("Fundo de Curto Prazo")) {$tip = 4; }
-                    if ($lin[2] == utf8_decode("Fundo de Renda Fixa")) {$tip = 5; }
-                    if ($lin[2] == utf8_decode("Fundo Multimercado")) {$tip = 6; }
-                    if ($lin[2] == utf8_decode("Fundo Referenciado")) {$tip = 7; }
-                    if ($tip >= 1) {
-                         $sql  = "update tb_fundos set ";
-                         $sql .= "funclasse = '". $tip . "', ";
-                         $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
-                         $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
-                         $sql .= "where idfundo = " . $cha;
-                         $ret = comando_tab($sql, $nro, $ind, $men);
-                         if ($ret == false) {
-                              $com = $sql;
-                              $men = "Erro na regravação do registro da classe no banco de dados !";
-                         }      
-                         $atu = $atu + 1;
-                    }         
+               $lin = explode(";", fgets($csv));          
+               if (count($lin) >= 2) {
+                    if(trim($lin[4]) == "") {
+                         $cha = ler_fundo($lin[0], $sta);
+                         if ($cha >= 1) {
+                              if ($lin[2] == utf8_decode("Fundo Cambial")) {$tip = 1; }
+                              if ($lin[2] == utf8_decode("Fundo da Dívida Externa")) {$tip = 2; }
+                              if ($lin[2] == utf8_decode("Fundo de Ações")) {$tip = 3; }
+                              if ($lin[2] == utf8_decode("Fundo de Curto Prazo")) {$tip = 4; }
+                              if ($lin[2] == utf8_decode("Fundo de Renda Fixa")) {$tip = 5; }
+                              if ($lin[2] == utf8_decode("Fundo Multimercado")) {$tip = 6; }
+                              if ($lin[2] == utf8_decode("Fundo Referenciado")) {$tip = 7; }
+                              if ($tip >= 1) {
+                                   $sql  = "update tb_fundos set ";
+                                   $sql .= "funclasse = '". $tip . "', ";
+                                   $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
+                                   $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
+                                   $sql .= "where idfundo = " . $cha;
+                                   $ret = comando_tab($sql, $nro, $ind, $men);
+                                   if ($ret == false) {
+                                        $com = $sql;
+                                        $men = "Erro na regravação do registro da classe no banco de dados !";
+                                   }      
+                                   $atu = $atu + 1;
+                              }         
+                         }
+                    }
                }
                $pro = $pro + 1;
           }
@@ -807,53 +851,58 @@ $(document).ready(function() {
           $csv = fopen('upload/' . $cam, "r");  
           while (!feof ($csv)) {
                $tip = 0;
-               $lin = explode(";", fgets($csv));               
-               $cha = ler_fundo($lin[0], $sta);
-               if ($cha >= 1) {
-                    if ($lin[2] == utf8_decode("Carteira de ações")){$tip = 1; }
-                    if ($lin[2] == utf8_decode("Cota de PIBB")){$tip = 2; } 
-                    if ($lin[2] == utf8_decode("DI de um dia")){$tip = 3; } 
-                    if ($lin[2] == utf8_decode("Dólar comercial")){$tip = 4; } 
-                    if ($lin[2] == utf8_decode("Euro")){$tip = 5; } 
-                    if ($lin[2] == utf8_decode("Ibovespa")){$tip = 6; } 
-                    if ($lin[2] == utf8_decode("IBrX")){$tip = 7; } 
-                    if ($lin[2] == utf8_decode("IBrX-50")){$tip = 8; } 
-                    if ($lin[2] == utf8_decode("IEE")){$tip = 9; } 
-                    if ($lin[2] == utf8_decode("Índice de Mercado Andima Geral")){$tip = 10; } 
-                    if ($lin[2] == utf8_decode("Índice de Mercado Andima LFT")){$tip = 11; } 
-                    if ($lin[2] == utf8_decode("Índice de Mercado Andima NTN-B até 5 anos")){$tip = 12; } 
-                    if ($lin[2] == utf8_decode("Índice de Mercado Andima NTN-B mais de 5 anos")){$tip = 13; } 
-                    if ($lin[2] == utf8_decode("Índice de Mercado Andima todas NTN-B")){$tip = 14; } 
-                    if ($lin[2] == utf8_decode("Índice de Mercado Andima todas NTN-C")){$tip = 15; } 
-                    if ($lin[2] == utf8_decode("Índice de preços")){$tip = 16; } 
-                    if ($lin[2] == utf8_decode("Índice de Preços ao Consumidor (IPC/FIPE)")){$tip = 17; } 
-                    if ($lin[2] == utf8_decode("Índice de Preços ao Consumidor Amplo (IPCA/IBGE)")){$tip = 18; } 
-                    if ($lin[2] == utf8_decode("Índice Geral de Preços-Disponibilidade Interna (IGP-DI)")){$tip = 19; }
-                    if ($lin[2] == utf8_decode("Índice Geral de Preços-Mercado (IGP-M)")){$tip = 20; } 
-                    if ($lin[2] == utf8_decode("Índice Nacional de Preços ao Consumidor (INPC/IBGE)")){$tip = 21; } 
-                    if ($lin[2] == utf8_decode("IRF-M")){$tip = 22; } 
-                    if ($lin[2] == utf8_decode("ITEL")){$tip = 23; } 
-                    if ($lin[2] == utf8_decode("Ouro 250 gramas")){$tip = 24; } 
-                    if ($lin[2] == utf8_decode("OUTROS")){$tip = 25; } 
-                    if ($lin[2] == utf8_decode("Taxa Anbid")){$tip = 26; } 
-                    if ($lin[2] == utf8_decode("Taxa Básica Financeira")){$tip = 27; } 
-                    if ($lin[2] == utf8_decode("Taxa de Juro de Longo Prazo")){$tip = 28; } 
-                    if ($lin[2] == utf8_decode("Taxa de juro prefixada")){$tip = 29; } 
-                    if ($lin[2] == utf8_decode("Taxa Referencial")){$tip = 30; } 
-                    if ($lin[2] == utf8_decode("Taxa Selic")){$tip = 31; } 
-                    if ($tip >= 1) {
-                         $sql  = "update tb_fundos set ";
-                         $sql .= "funrentab = '". $tip . "', ";
-                         $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
-                         $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
-                         $sql .= "where idfundo = " . $cha;
-                         $ret = comando_tab($sql, $nro, $ind, $men);
-                         if ($ret == false) {
-                              $com = $sql;
-                              $men = "Erro na regravação do registro da classe no banco de dados !";
-                         }      
-                         $atu = $atu + 1;
-                    }                        
+               $lin = explode(";", fgets($csv));       
+               if (count($lin) >= 2) {
+                    if(trim($lin[4]) == "") {
+                         $cha = ler_fundo($lin[0], $sta);
+                         if ($cha >= 1) {
+                              if ($lin[2] == utf8_decode("Carteira de ações")){$tip = 1; }
+                              if ($lin[2] == utf8_decode("Cota de PIBB")){$tip = 2; } 
+                              if ($lin[2] == utf8_decode("DI de um dia")){$tip = 3; } 
+                              if ($lin[2] == utf8_decode("Dólar comercial")){$tip = 4; } 
+                              if ($lin[2] == utf8_decode("Euro")){$tip = 5; } 
+                              if ($lin[2] == utf8_decode("Ibovespa")){$tip = 6; } 
+                              if ($lin[2] == utf8_decode("IBrX")){$tip = 7; } 
+                              if ($lin[2] == utf8_decode("IBrX-50")){$tip = 8; } 
+                              if ($lin[2] == utf8_decode("IEE")){$tip = 9; } 
+                              if ($lin[2] == utf8_decode("Índice de Mercado Andima Geral")){$tip = 10; } 
+                              if ($lin[2] == utf8_decode("Índice de Mercado Andima LFT")){$tip = 11; } 
+                              if ($lin[2] == utf8_decode("Índice de Mercado Andima NTN-B até 5 anos")){$tip = 12; } 
+                              if ($lin[2] == utf8_decode("Índice de Mercado Andima NTN-B mais de 5 anos")){$tip = 13; } 
+                              if ($lin[2] == utf8_decode("Índice de Mercado Andima todas NTN-B")){$tip = 14; } 
+                              if ($lin[2] == utf8_decode("Índice de Mercado Andima todas NTN-C")){$tip = 15; } 
+                              if ($lin[2] == utf8_decode("Índice de preços")){$tip = 16; } 
+                              if ($lin[2] == utf8_decode("Índice de Preços ao Consumidor (IPC/FIPE)")){$tip = 17; } 
+                              if ($lin[2] == utf8_decode("Índice de Preços ao Consumidor Amplo (IPCA/IBGE)")){$tip = 18; } 
+                              if ($lin[2] == utf8_decode("Índice Geral de Preços-Disponibilidade Interna (IGP-DI)")){$tip = 19; }
+                              if ($lin[2] == utf8_decode("Índice Geral de Preços-Mercado (IGP-M)")){$tip = 20; } 
+                              if ($lin[2] == utf8_decode("Índice Nacional de Preços ao Consumidor (INPC/IBGE)")){$tip = 21; } 
+                              if ($lin[2] == utf8_decode("IRF-M")){$tip = 22; } 
+                              if ($lin[2] == utf8_decode("ITEL")){$tip = 23; } 
+                              if ($lin[2] == utf8_decode("Ouro 250 gramas")){$tip = 24; } 
+                              if ($lin[2] == utf8_decode("OUTROS")){$tip = 25; } 
+                              if ($lin[2] == utf8_decode("Taxa Anbid")){$tip = 26; } 
+                              if ($lin[2] == utf8_decode("Taxa Básica Financeira")){$tip = 27; } 
+                              if ($lin[2] == utf8_decode("Taxa de Juro de Longo Prazo")){$tip = 28; } 
+                              if ($lin[2] == utf8_decode("Taxa de juro prefixada")){$tip = 29; } 
+                              if ($lin[2] == utf8_decode("Taxa Referencial")){$tip = 30; } 
+                              if ($lin[2] == utf8_decode("Taxa Selic")){$tip = 31; } 
+                              if ($tip >= 1) {
+                                   $sql  = "update tb_fundos set ";
+                                   $sql .= "funrentab = '". $tip . "', ";
+                                   $sql .= "fundatainic = '". date('Y-m-d', strtotime($lin[3])) . "', ";
+                                   $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
+                                   $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
+                                   $sql .= "where idfundo = " . $cha;
+                                   $ret = comando_tab($sql, $nro, $ind, $men);
+                                   if ($ret == false) {
+                                        $com = $sql;
+                                        $men = "Erro na regravação do registro da classe no banco de dados !";
+                                   }      
+                                   $atu = $atu + 1;
+                              }                        
+                         }
+                    }
                }
                $pro = $pro + 1;
           }
