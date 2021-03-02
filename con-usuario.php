@@ -90,6 +90,16 @@ $(document).ready(function() {
 });
 </script>
 
+<?php
+     include_once "dados.php"; 
+     if (isset($_SERVER['HTTP_REFERER']) == true) {
+          if (limpa_pro($_SESSION['wrknompro']) != limpa_pro($_SERVER['HTTP_REFERER'])) {
+               $_SESSION['wrkproant'] = limpa_pro($_SERVER['HTTP_REFERER']);
+               $ret = gravar_log(8, "Entrada na página de consulta de usuários do sistema Pallas.45 - MoneyWay");  
+          }
+     }
+?>
+
 <body id="box00">
      <h1 class="cab-0">Usuários - MoneyWay Investimentos - Profsa Informática</h1>
      <?php include_once "cabecalho-1.php"; ?>

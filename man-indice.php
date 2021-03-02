@@ -274,12 +274,12 @@ $(document).ready(function() {
                                              <th width="5%">Alterar</th>
                                              <th width="5%">Excluir</th>
                                              <th width="5%">Número</th>
-                                             <th scope="col">Status</th>
-                                             <th scope="col">Nome do Índice</th>
-                                             <th scope="col">Data do Índice</th>
-                                             <th scope="col">Taxa</th>
-                                             <th scope="col">Inclusão</th>
-                                             <th scope="col">Alteração</th>
+                                             <th>Status</th>
+                                             <th>Nome do Índice</th>
+                                             <th>Data do Índice</th>
+                                             <th>Taxa</th>
+                                             <th>Inclusão</th>
+                                             <th>Alteração</th>
                                         </tr>
                                    </thead>
                                    <tbody>

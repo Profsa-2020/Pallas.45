@@ -160,6 +160,12 @@ $(document).ready(function() {
 
 <?php 
      include_once "dados.php"; 
+     if (isset($_SERVER['HTTP_REFERER']) == true) {
+          if (limpa_pro($_SESSION['wrknompro']) != limpa_pro($_SERVER['HTTP_REFERER'])) {
+               $_SESSION['wrkproant'] = limpa_pro($_SERVER['HTTP_REFERER']);
+               $ret = gravar_log(8, "Entrada na página de análise de fundos do sistema Pallas.45 - MoneyWay");  
+          }
+     }
      if (isset($_SESSION['wrkopereg']) == false) { $_SESSION['wrkopereg'] = 0; }
      if (isset($_SESSION['wrkcodreg']) == false) { $_SESSION['wrkcodreg'] = 0; }
      if (isset($_SESSION['wrklisfun']) == false) { $_SESSION['wrklisfun'] = array(); }
@@ -171,10 +177,12 @@ $(document).ready(function() {
      $dtf = (isset($_REQUEST['dtf']) == false ? $dtf : $_REQUEST['dtf']);
      $nom = (isset($_REQUEST['nom']) == false ? '' : $_REQUEST['nom']);
 
+     $qtd = count($_SESSION['wrklisfun']);
+
 ?>
 
 <body id="box00">
-     <h1 class="cab-0">Movimento - MoneyWay Investimentos - Profsa Informática</h1>
+     <h1 class="cab-0">Analise - MoneyWay Investimentos - Profsa Informática</h1>
      <?php include_once "cabecalho-1.php"; ?>
      <div class="container-fluid">
           <div class="row">
@@ -189,7 +197,7 @@ $(document).ready(function() {
                          <div class="form-row">
                               <div class="col-md-1 text-center">
                                    <label>Quantidade</label>
-                                   <p id="qtd" class="lit-5">0</p>
+                                   <p id="qtd" class="lit-5"><?php echo $qtd; ?></p>
                               </div>
                               <div class="col-md-2">
                                    <label>Número do Cnpj </label>
@@ -243,7 +251,11 @@ $(document).ready(function() {
                                              </tr>
                                         </thead>
                                         <tbody>
-
+                                        <?php
+                                             if (count($_SESSION['wrklisfun']) > 0) {
+                                                  $ret = carrega_fun();
+                                             }
+                                        ?>
                                         </tbody>
                                    </table>
                                    <hr />
@@ -260,6 +272,14 @@ $(document).ready(function() {
 </body>
 
 <?php
+function carrega_fun() {
+     $ret = 0;
+     include_once "dados.php";
+     include_once "profsa.php";
+
+
+     return $ret;
+}
 
 ?>
 

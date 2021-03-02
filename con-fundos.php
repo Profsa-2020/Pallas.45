@@ -137,6 +137,12 @@ $(document).ready(function() {
 
 <?php 
      include_once "dados.php"; 
+     if (isset($_SERVER['HTTP_REFERER']) == true) {
+          if (limpa_pro($_SESSION['wrknompro']) != limpa_pro($_SERVER['HTTP_REFERER'])) {
+               $_SESSION['wrkproant'] = limpa_pro($_SERVER['HTTP_REFERER']);
+               $ret = gravar_log(8, "Entrada na página de consulta de fundos do sistema Pallas.45 - MoneyWay");  
+          }
+     }
      $cla = (isset($_REQUEST['cla']) == false ? 0 : $_REQUEST['cla']);
      $pub = (isset($_REQUEST['pub']) == false ? '' : $_REQUEST['pub']);
      $esp = (isset($_REQUEST['esp']) == false ? '' : $_REQUEST['esp']);
