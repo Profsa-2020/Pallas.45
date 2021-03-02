@@ -60,10 +60,6 @@
 <script>
 $(function() {
      $("#cgc").mask("00.000.000/0000-00");
-     $("#dti").mask("00/00/0000");
-     $("#dtf").mask("00/00/0000");
-     $("#dti").datepicker($.datepicker.regional["pt-BR"]);
-     $("#dtf").datepicker($.datepicker.regional["pt-BR"]);
 });
 
 $(document).ready(function() {
@@ -71,12 +67,49 @@ $(document).ready(function() {
           $('#tab-0 tbody').empty();
      });
 
-     $('#dti').change(function() {
-          $('#tab-0 tbody').empty();
+     $("#cgc").blur(function() {
+          var cgc = $('#cgc').val();
+          if (cgc != "") {
+               $.getJSON("ajax/verifica-cgc.php", {
+                         cgc: cgc
+                    })
+                    .done(function(data) {
+                         if (data.men != "") {
+                              alert(data.men);
+                              $('#cgc').val('');
+                              $('#nom').val('');
+                         } else {
+                              $('#nom').val(data.nom);
+                         }
+                    }).fail(function(data) {
+                         console.log('Erro: ' + JSON.stringify(data));
+                         alert("Erro ocorrido no processamento de verificação do cnpj");
+                    });
+          }
      });
 
-     $('#dtf').change(function() {
-          $('#tab-0 tbody').empty();
+
+     $("#add").click(function() {
+          var cgc = $('#cgc').val();
+          var nom = $('#nom').val();
+          if (cgc != "") {
+               $.getJSON("ajax/adiciona-cgc.php", {
+                         cgc: cgc,
+                         nom: nom
+                    })
+                    .done(function(data) {
+                         if (data.men != "") {
+                              alert(data.men);
+                         } else {
+                              $('#cgc').val('');
+                              $('#nom').val('');
+                              $('#qtd').html(data.qtd);
+                         }
+                    }).fail(function(data) {
+                         console.log('Erro: ' + JSON.stringify(data));
+                         alert("Erro ocorrido no processamento de adição de cnpj");
+                    });
+          }
      });
 
      $('#tab-0').DataTable({
@@ -95,7 +128,7 @@ $(document).ready(function() {
                "lengthMenu": "Demonstrar _MENU_ linhas por páginas",
                "zeroRecords": "Não existe registros a demonstar ...",
                "info": "Mostrada página _PAGE_ de _PAGES_",
-               "infoEmpty": "Sem registros de Movimento ...",
+               "infoEmpty": "Sem registros para Análise ...",
                "sSearch": "Buscar:",
                "infoFiltered": "(Consulta de _MAX_ total de linhas)",
                "oPaginate": {
@@ -104,27 +137,6 @@ $(document).ready(function() {
                     sNext: "Próximo",
                     sPrevious: "Anterior"
                }
-          }
-     });
-
-     $("#cgc").blur(function() {
-          var cgc = $('#cgc').val();
-          if (cgc != "") {
-               $.getJSON("ajax/verifica-cgc.php", {
-                    cgc: cgc
-               })
-               .done(function(data) {
-                    if (data.men != "") {
-                         alert(data.men);
-                         $('#cgc').val('');
-                         $('#nom').val('');
-                    } else {
-                         $('#nom').val(data.nom);
-                    }
-               }).fail(function(data) {
-                    console.log('Erro: ' + JSON.stringify(data));
-                    alert("Erro ocorrido no processamento de verificação do cnpj");
-               });
           }
      });
 
@@ -143,44 +155,21 @@ $(document).ready(function() {
           }, 1500);
      });
 
-     $("#fun-d").click(function() {
-          var cgc = $('#cgc').val();
-          if (cgc != "") {
-               $.getJSON("ajax/carrega-fun.php", {
-                    cgc: cgc
-               })
-               .done(function(data) {
-                    if (data.men != "") {
-                         alert(data.men);
-                    } else {
-                         $('#dad_fun').html(data.txt);          
-                         $('#fun-dad').modal('show');          
-                    }
-               }).fail(function(data) {
-                    console.log('Erro: ' + JSON.stringify(data));
-                    alert("Erro ocorrido no processamento de demonstração do fundo");
-               });
-          }
-
-     });
-
 });
 </script>
 
 <?php 
      include_once "dados.php"; 
-     if (isset($_SESSION['wrknomfun']) == false) { $_SESSION['wrknomfun'] = ""; }
      if (isset($_SESSION['wrkopereg']) == false) { $_SESSION['wrkopereg'] = 0; }
      if (isset($_SESSION['wrkcodreg']) == false) { $_SESSION['wrkcodreg'] = 0; }
-     if (isset($_REQUEST['ope']) == true) { $_SESSION['wrkopereg'] = $_SESSION['wrknomfun'] = ""; }
+     if (isset($_SESSION['wrklisfun']) == false) { $_SESSION['wrklisfun'] = array(); }
 
      $dti = date('d/m/Y', strtotime('-90 days'));
      $dtf = date('d/m/Y');
      $cgc = (isset($_REQUEST['cgc']) == false ? '' : $_REQUEST['cgc']);
-     $nom = (isset($_REQUEST['nom']) == false ? $_SESSION['wrknomfun'] : $_REQUEST['nom']);
      $dti = (isset($_REQUEST['dti']) == false ? $dti : $_REQUEST['dti']);
      $dtf = (isset($_REQUEST['dtf']) == false ? $dtf : $_REQUEST['dtf']);
-     if ($_SESSION['wrknomfun'] == "") { $_SESSION['wrknomfun'] = $nom; }
+     $nom = (isset($_REQUEST['nom']) == false ? '' : $_REQUEST['nom']);
 
 ?>
 
@@ -195,32 +184,36 @@ $(document).ready(function() {
                </div>
                <div class="col-md-10">
                     <!-- Corpo -->
-                    <p class="lit-4">Consulta de Movimento -
-                         <?php echo  number_format(numero_reg('tb_movto_id'), 0, ",", "."); ?></p>
-
-                    <form class="qua-6" id="frmTelCon" name="frmTelCon" action="con-movto.php" method="POST">
+                    <p class="lit-4">Análise e Exportação de Dados</p>
+                    <form class="qua-6" id="frmTelAna" name="frmTelAna" action="con-movto.php" method="POST">
                          <div class="form-row">
-                              <div class="col-md-2">
-                                   <label>Data Inicial</label>
-                                   <input type="text" class="form-control text-center" maxlength="10" id="dti"
-                                        name="dti" value="<?php echo $dti; ?>" required />
+                              <div class="col-md-1 text-center">
+                                   <label>Quantidade</label>
+                                   <p id="qtd" class="lit-5">0</p>
                               </div>
                               <div class="col-md-2">
-                                   <label>Data Final</label>
-                                   <input type="text" class="form-control text-center" maxlength="10" id="dtf"
-                                        name="dtf" value="<?php echo $dtf; ?>" required />
-                              </div>
-                              <div class="col-md-2">
-                                   <label>Número do Cnpj </label> &nbsp; &nbsp; <span id="fun-d" class="cur-1" title="Abre janela com dados de cadastro do fundo solicitado"><i class="fa fa-building fa-1g" aria-hidden="true"></i></span>
+                                   <label>Número do Cnpj </label>
                                    <input type="text" class="form-control text-center" maxlength="18" id="cgc"
                                         name="cgc" value="<?php echo $cgc; ?>" />
                               </div>
-                              <div class="col-md-5 text-center">
-                              <label>Nome do Fundo</label>
+                              <div class="col-md-6 text-left">
+                                   <label>Nome do Fundo</label>
                                    <span>
-                                        <input type="text" class="form-control text-center" id="nom"
-                                             name="nom" value="<?php echo $_SESSION['wrknomfun']; ?>" disabled />
+                                        <input type="text" class="form-control text-left" id="nom" name="nom"
+                                             value="<?php echo $nom; ?>" />
                                    </span>
+                              </div>
+                              <div class="col-md-1 text-center">
+                                   <br />
+                                   <button type="button" id="add" name="adiciona" class="bot-2"
+                                        title="Adiciona fundo a lista para ser efetuada consulta com calculos de análise."><i
+                                             class="fa fa-indent fa-2x" aria-hidden="true"></i></button>
+                              </div>
+                              <div class="col-md-1 text-center">
+                                   <br />
+                                   <button type="button" id="del" name="limpar" class="bot-2"
+                                        title="Limpa lista de número de Cnpj informados para efetuar consultas e calculos de análise."><i
+                                             class="fa fa-trash fa-2x" aria-hidden="true"></i></button>
                               </div>
                               <div class="col-md-1 text-center">
                                    <br />
@@ -233,24 +226,24 @@ $(document).ready(function() {
                     <br />
                     <div class="row qua-3">
                          <div class="col-md-12">
-                              <br />
                               <div class="tab-1 table-responsive">
-                                   <table id="tab-0" class="table table-sm table-striped">
+                                   <table id="tab-0" class="table table-sm">
                                         <thead>
                                              <tr>
-                                                  <th width="5%">Código</th>
+                                                  <th>Nº do C.n.p.j.</th>
                                                   <th>Nome do Fundo</th>
                                                   <th>Data</th>
-                                                  <th>Total</th>
-                                                  <th>Quota</th>
+                                                  <th>Cota Diária</th>
                                                   <th>Patrimônio</th>
-                                                  <th>Capital</th>
-                                                  <th>Resgate</th>
-                                                  <th>Cotas</th>
+                                                  <th>Nº Cotistas</th>
+                                                  <th>Mediana</th>
+                                                  <th>Média</th>
+                                                  <th>Máximo</th>
+                                                  <th>% acima do CDI</th>
                                              </tr>
                                         </thead>
                                         <tbody>
-                                             <?php $ret = carrega_mov($cgc, $dti, $dtf);  ?>
+
                                         </tbody>
                                    </table>
                                    <hr />
@@ -264,66 +257,9 @@ $(document).ready(function() {
      <div id="box10">
           <img class="subir" src="img/subir.png" title="Volta a página para o seu topo." />
      </div>
-
-     <!----------------------------------------------------------------------------------->
-     <div class="modal fade" id="fun-dad" tabindex="-1" role="dialog" aria-labelledby="tel-fun" aria-hidden="true"
-          data-backdrop="true">
-          <div class="modal-dialog modal-lg" role="document"> <!-- modal-sm modal-lg modal-xl -->
-               <form id="frmMosFun" name="frmMosFun" action="con-movto.php" method="POST">
-                    <div class="modal-content">
-                         <div class="modal-header bg-primary text-white">
-                              <h5 class="modal-title" id="tel-exc">Informações Cadastrais do Fundo</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
-                                   <span aria-hidden="true">&times;</span>
-                              </button>
-                         </div>
-                         <div class="modal-body">
-                              <div class="row">
-                                   <div class="col-md-12 text-center">
-                                        <div id="dad_fun"></div>
-                                   </div>
-                              </div>
-                              <br />
-                         </div>
-                         <div class="modal-footer">
-                              <button type="button" id="clo" name="close" class="btn btn-outline-danger"
-                                   data-dismiss="modal">Fechar</button>
-                         </div>
-                    </div>
-               </form>
-          </div>
-     </div>
-     <!----------------------------------------------------------------------------------->
-
-
 </body>
 
 <?php
-function carrega_mov($cgc, $dti, $dtf) {
-     include_once "dados.php";
-     include_once "profsa.php";
-     $dti = substr($dti,6,4) . "-" . substr($dti,3,2) . "-" . substr($dti,0,2) . " 00:00:00";
-     $dtf = substr($dtf,6,4) . "-" . substr($dtf,3,2) . "-" . substr($dtf,0,2) . " 23:59:59";
-     $com = "Select M.*, F.funnome from (tb_movto_id M left join tb_fundos F on M.idfundo = F.idfundo) ";
-     $com .= " where infdata between '" . $dti . "' and '" . $dtf . "' ";
-     if ($cgc != "") { $com .= " and inffundo = '" . limpa_nro($cgc) . "'"; }
-     $com .= " order by infdata, idmovto ";          
-     $nro = leitura_reg($com, $reg);
-     foreach ($reg as $lin) {
-          $txt =  '<tr>';
-          $txt .= '<td class="text-center">' . $lin['idmovto'] . '</td>';
-          $txt .= "<td>" . $lin['funnome'] . "</td>";
-          $txt .= "<td>" . date('d/m/Y',strtotime($lin['infdata'])) . "</td>";
-          $txt .= '<td class="text-right">' . number_format($lin['inftotal'], 2, ",", ".") . '</td>';
-          $txt .= '<td class="text-right">' . number_format($lin['infquota'], 0, ",", ".") . '</td>';
-          $txt .= '<td class="text-right">' . number_format($lin['infpatrimonio'], 2, ",", ".") . '</td>';
-          $txt .= '<td class="text-right">' . number_format($lin['infcapital'], 2, ",", ".") . '</td>';
-          $txt .= '<td class="text-right">' . number_format($lin['infresgate'], 2, ",", ".") . '</td>';
-          $txt .= '<td class="text-right">' . number_format($lin['infnumcotas'], 0, ",", ".") . '</td>';
-          $txt .= "</tr>";
-          echo $txt;
-     }
-}
 
 ?>
 

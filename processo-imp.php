@@ -509,14 +509,14 @@ $(document).ready(function() {
                          $sql .= "'" . inverte_dat(1, $lin[2]) . "',";
                     }
                     $sql .= "'" . substr($lin[3], 0, 1) . "',";  // Coluna D - Condomínio
-                    $sql .= "'" . substr($lin[5], 0, 1) . "',";  // Coluna F
+                    $sql .= "'" . substr($lin[5], 0, 1) . "',";  // Coluna F - negocia mercado
                     if ($lin[8] == "INVESTIDORES PROFISSIONAIS") { $sql .= "'" . 'A' . "',"; }  // Coluna I - Publico Alvo }
                     if ($lin[8] == "INVESTIDORES QUALIFICADOS") { $sql .= "'" . 'B' . "',";  }
                     if (utf8_encode($lin[8]) == "PREVIDENCIÁRIO") { $sql .= "'" . 'C' . "',";  }
                     if (utf8_encode($lin[8]) == "PÚBLICO EM GERAL") { $sql .= "'" . 'D' . "',";  }
-                    $sql .= "'" . substr($lin[15], 0, 1) . "',";  // Coluna P
-                    $sql .= "'" . substr($lin[16], 0, 1) . "',";  // Coluna Q
-                    $sql .= "'" . substr($lin[10], 0, 1) . "',";  // Coluna K - Anbima
+                    $sql .= "'" . substr($lin[15], 0, 1) . "',";  // Coluna P - cotas
+                    $sql .= "'" . substr($lin[16], 0, 1) . "',";  // Coluna Q - espelho
+                    $sql .= "'" . substr($lin[10], 0, 1) . "',";  // Coluna K - Anbima (Estratégia) 
                     $sql .= "'" . $lin[17] . "',";  // Coluna R R$ - Aplicação Mínima
                     $sql .= "'" . substr($lin[18], 0, 1) . "',";  // Coluna S - Atualização Diária
                     $sql .= "'" . $cam . "',";  

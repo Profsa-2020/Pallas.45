@@ -89,6 +89,19 @@
     font-weight: bold;
 }
 
+.lit-5 {    /* Como fazer um círculo (circulo) em CSS */        
+    width: 30px;
+    height: 30px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: bold;
+    vertical-align: middle;
+    border-radius: 50%;
+    margin: 0px auto;
+    padding-top: 5px;
+    background-color: #ff0000;
+}
+
 .ima-1 {
     width: 90%;
 }
@@ -210,6 +223,10 @@
 .tit-2 {
     font-size: 11px;
     text-decoration: none;
+}
+
+.ui-autocomplete {
+    z-index: 1050 !important;
 }
 
 .subir {

@@ -38,12 +38,12 @@
                </a>
           </li>
           <li>
-               <a href="#">
+               <a href="analise-exp.php">
                     <div class="icon">
-                         <i class="fa fa-cloud-download" aria-hidden="true"></i>
-                         <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                         <i class="fa fa-line-chart" aria-hidden="true"></i>
+                         <i class="fa fa-line-chart" aria-hidden="true"></i>
                     </div>
-                    <div class="name"><span data-text="Exportações">Exportações</span></div>
+                    <div class="name"><span data-text="Análise">Análise</span></div>
                </a>
           </li>
           <li>

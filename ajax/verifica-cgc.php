@@ -12,7 +12,7 @@
      $nro = acessa_reg("Select idfundo, funnome from tb_fundos where funcnpj = '" . limpa_nro($cgc) . "'", $reg);            
      if ($nro == 1) {
           $tab['men'] = ""; 
-          $tab['nom'] = $reg['funnome']; 
+          $tab['nom'] = utf8_encode($reg['funnome']); 
           $_SESSION['wrknomfun'] = $reg['funnome']; 
      }
 
