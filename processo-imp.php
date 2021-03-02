@@ -545,9 +545,10 @@ $(document).ready(function() {
           $gra = 0; 
           $men = ''; $com = '';
           include_once "dados.php";
+          $lin = linhas_mov($des);
           if ($_SESSION['wrkqtdreg'] > 0) {
                $_SESSION['wrkqtdreg'] = 0;
-               $sql  = "delete from tb_movto_id where infarquivo = '" . $nom . "'" ;
+               $sql  = "delete from tb_movto_id where infarquivo = '" . $des . "'" ;
                $ret = comando_tab($sql, $nro, $cha, $men);
                if ($ret == false) {
                     print_r($sql);
@@ -569,11 +570,11 @@ $(document).ready(function() {
                     $sql .= "infcapital, ";
                     $sql .= "infresgate, ";
                     $sql .= "infnumcotas, ";
-                    $sql .= "infsequencia, ";
+                    $sql .= "infsequencia, ";     // Número de linhas gravadas
                     $sql .= "infarquivo, ";
                     $sql .= "infordem, ";
                     $sql .= "infprocesso, ";
-                    $sql .= "infnumero, ";
+                    $sql .= "infnumero, ";        // Número de linhas processadas - tem  Cnpj do fundo
                     $sql .= "keyinc, ";
                     $sql .= "datinc ";
                     $sql .= ") value ( ";
@@ -590,11 +591,11 @@ $(document).ready(function() {
                     $sql .= "'" . $lin[5] . "',";  
                     $sql .= "'" . $lin[6] . "',";
                     $sql .= "'" . $lin[7] . "',";  
-                    $sql .= "'" . $pro . "',";  
+                    $sql .= "'" . ($gra + 1) . "',";  
                     $sql .= "'" . $des . "',";  
                     $sql .= "'" . $ord . "',";
-                    $sql .= "'" . $pro . "',";
                     $sql .= "'" .  $_SESSION['wrknumusu'] . "',";  
+                    $sql .= "'" . $pro . "',";
                     $sql .= "'" . $_SESSION['wrkideusu'] . "',";
                     $sql .= "'" . date("Y-m-d H:i:s") . "')";
                     $ret = comando_tab($sql, $nro, $cha, $men);
@@ -608,6 +609,16 @@ $(document).ready(function() {
           } 
           fclose($csv);     
           return $ret; 
+     }
+
+     function linhas_mov ($des) {
+          $nro = 0; 
+          include_once "dados.php";
+          $nro = acessa_reg("Select Count(*) as movqtde from tb_movto_id where infarquivo = '" . $des . "'", $reg);            
+          if ($nro != 0) {
+               $nro = $reg['movqtde'];
+          }          
+          return $nro; 
      }
 
      function processa_sit ($cam, $des, $ord, &$pro, &$gra, &$men, &$com) {
