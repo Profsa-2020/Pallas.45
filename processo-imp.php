@@ -943,12 +943,14 @@ $(document).ready(function() {
                     $key = ler_indice($cpo, $dat);
                }
                if ($key == 0 && $dat != "Data" && $dat != "Date") {     
-                    if (count($lin) >= 2 ) {
+                    if (count($lin) >= 2 &&  date('Y', strtotime($dat)) >= 2015) {
                          $sql  = "insert into tb_indice (";
                          $sql .= "indcodigo, ";
                          $sql .= "indtipo, ";
                          $sql .= "inddata, ";
                          $sql .= "indtaxa, ";
+                         $sql .= "indmes, ";
+                         $sql .= "indano, ";
                          $sql .= "keyinc, ";
                          $sql .= "datinc ";
                          $sql .= ") value ( ";
@@ -960,6 +962,8 @@ $(document).ready(function() {
                          } else {
                               $sql .= "'" . str_replace(",", ".", $lin[4]) . "',";     
                          }
+                         $sql .= "'" . date('m', strtotime($dat)) . "',";     
+                         $sql .= "'" . date('Y', strtotime($dat)) . "',";     
                          $sql .= "'" . $_SESSION['wrkideusu'] . "',";
                          $sql .= "'" . date("Y-m-d H:i:s") . "')";
                          $ret = comando_tab($sql, $nro, $cha, $men);

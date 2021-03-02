@@ -56,6 +56,7 @@
                $tab['err'] = "Erro no envio de login e senha para o usuário, lamento !";
           }
      }
+     
      echo json_encode($tab);     
 
 ?>

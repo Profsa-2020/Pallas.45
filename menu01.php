@@ -66,7 +66,12 @@ $(document).ready(function() {
 });
 </script>
 <?php
+     if (isset($_SESSION['wrkinddat']) == false) { $_SESSION['wrkinddat'] = ""; }
+     if (isset($_SESSION['wrkindtax']) == false) { $_SESSION['wrkindtax'] = '0'; }
 
+     if ($_SESSION['wrkinddat'] == "") {
+          $ret = carrega_ind($dat, $tax);
+     }
      $tab = array(); 
      $ret = carrega_das($tab);
 
@@ -117,13 +122,16 @@ $(document).ready(function() {
                          </div>
                          <div class="col-md-1"></div>
                     </div>
-                    <br /><br />
+                    <br />
                     <div class="row">
                          <div class="col-md-3"><h4><strong>Classes dos Fundos</strong></h4></div>
                          <div class="col-md-6">
                               <?php echo $tab['cla']; ?>
                          </div>
-                         <div class="col-md-3"></div>
+                         <div class="col-md-3 text-center">
+                              <strong><span> <?php echo "iBovespa: " . date('d/m/Y', strtotime($_SESSION['wrkinddat'])) . " - " .  number_format($_SESSION['wrkindtax'], 4, ",", "."); ?> </span></strong>
+                              <br />
+                         </div>
                     </div>
                     <br /><br />
                     <div class="row">
@@ -198,6 +206,67 @@ function carrega_das(&$tab) {
           $tab['cla'] .= '</table>';
      }
      return $sta;
+}
+
+function carrega_ind(&$dta, &$tax) {      // Carrega indice Ibovespa e CDI via API
+     include_once "dados.php";
+     $ret = 0; $con = 0; $dat = ""; $ind = ""; $tax = "0";
+     $url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=IBOV.SA&outputsize=full&apikey=N9RZJIE9K8ENIYET";
+     $ibo = file_get_contents($url);
+     $tab = json_decode($ibo, true);    // Transforma a string em array (true) ou stdClass (false)
+     foreach ($tab as $cpo => $dad) {
+          if ($cpo != "Meta Data") {
+               foreach ($dad as $tip => $inf) {        
+                    $dat = $tip;  
+                    $ind = $inf["4. close"];
+                    $con = $con + 1;
+                    if ($tax == "0") { $tax = $ind; $dta = $dat; }
+                    $num = acessa_reg("Select idindice from tb_indice where inddata = '" . $dat . "'", $reg);            
+                    if ($num == 0) {
+                         $sql  = "insert into tb_indice (";
+                         $sql .= "indstatus, ";
+                         $sql .= "indcodigo, ";
+                         $sql .= "indtipo, ";
+                         $sql .= "inddata, ";
+                         $sql .= "indtaxa, ";
+                         $sql .= "indmes, ";
+                         $sql .= "indano, ";
+                         $sql .= "keyinc, ";
+                         $sql .= "datinc ";
+                         $sql .= ") value ( ";
+                         $sql .= "'" . '0' . "',";
+                         $sql .= "'" . '0' . "',";     // Codigo: iBovespa
+                         $sql .= "'" . '1' . "',";
+                         $sql .= "'" . $dat . "',";
+                         $sql .= "'" . $ind . "',";
+                         $sql .= "'" . date("m", strtotime($dat)) . "',";
+                         $sql .= "'" . date("Y", strtotime($dat)) . "',";
+                         $sql .= "'" . $_SESSION['wrkideusu'] . "',";
+                         $sql .= "'" . date("Y/m/d H:i:s") . "')";
+                         $ret = comando_tab($sql, $nro, $ult, $men);
+                         if ($ret == false) {
+                              print_r($sql);
+                              echo '<script>alert("Erro na gravação do índice solicitado !");</script>';
+                         }                    
+                    }      
+                    if ($con >= 9) { break; }         
+               }
+          }
+     }
+     $_SESSION['wrkinddat'] = $dta; $_SESSION['wrkindtax'] = $tax;
+     if ($_SESSION['wrkinddat'] == "") {
+          $nro = acessa_reg('Select idindice, inddata, indtaxa from tb_indice where indtipo = 0 order by idindice desc Limit 1', $reg);
+          if ($nro == 1) {
+               $_SESSION['wrkinddat'] = $reg['inddata'];
+               $_SESSION['wrkindtax'] = $reg['indtaxa'];
+          }             
+     }
+
+
+     $ret = 0; $con = 0; $dat = ""; $ind = ""; $tax = "0";   // Buscar CDI
+     $url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados?formato=json";
+
+     return $ret;
 }
 
 ?>

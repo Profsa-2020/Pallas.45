@@ -56,7 +56,7 @@
     $ema = $_SESSION['wrkemausu'];
     if ($nom == "") { $nom = substr(get_current_user(), 0, 99); }
     $_SESSION['wrkcodreg'] = 0; $_SESSION['wrkopereg'] = 0; $_SESSION['wrktipusu'] = 0;  $_SESSION['wrkideusu'] = 0; 
-    $_SESSION['wrknomusu'] = ""; $_SESSION['wrkemausu'] =""; $_SESSION['wrktipban'] ="";
+    $_SESSION['wrknomusu'] = ""; $_SESSION['wrkemausu'] =""; $_SESSION['wrktipban'] =""; $_SESSION['wrkinddat'] = "";
     session_destroy();  
     $sem_c = date("w");
     if ($sem_c == 0) { $hoj_c = 'Domingo '; }
