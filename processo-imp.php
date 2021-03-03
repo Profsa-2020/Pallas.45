@@ -686,7 +686,7 @@ $(document).ready(function() {
                          } 
                          if ($cha != 0) {
                               $sql  = "update tb_fundos set ";
-                              $sql .= "funstatus = '". '2' . "', ";
+                              $sql .= "funnormal = '". '0' . "', ";
                               $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
                               $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
                               $sql .= "where idfundo = " . $cha;
@@ -761,7 +761,7 @@ $(document).ready(function() {
                          } 
                          if ($cha != 0) {
                               $sql  = "update tb_fundos set ";
-                              $sql .= "funstatus = '". '3' . "', ";
+                              $sql .= "funexclusivo = '". '1' . "', ";
                               $sql .= "keyalt = '" . $_SESSION['wrkideusu'] . "', ";
                               $sql .= "datalt = '" . date("Y-m-d H:i:s") . "' ";
                               $sql .= "where idfundo = " . $cha;

@@ -343,7 +343,7 @@ function carrega_ind() {
           if ($lin['indcodigo'] == 2) {$txt .= "<td>" . "IFHA" . "</td>";}
           if ($lin['indcodigo'] == 3) {$txt .= "<td>" . "IFMM" . "</td>";}
           if ($lin['indcodigo'] == 3) {$txt .= "<td>" . "IQT" . "</td>";}
-          $txt .= '<td class="text-center">' . date('d/m/Y',strtotime($lin['inddata'])) . "</td>";
+          $txt .= '<td class="text-center">' . date('d-m-Y',strtotime($lin['inddata'])) . "</td>";
           $txt .= '<td class="text-center">' . number_format($lin['indtaxa'], 6, ",", ".") . "</td>";
           if ($lin['datinc'] == null) {
                $txt .= "<td>" . '' . "</td>";

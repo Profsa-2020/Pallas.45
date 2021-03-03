@@ -264,7 +264,26 @@ function carrega_ind(&$dta, &$tax) {      // Carrega indice Ibovespa e CDI via A
 
 
      $ret = 0; $con = 0; $dat = ""; $ind = ""; $tax = "0";   // Buscar CDI
-     $url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados?formato=json";
+     $url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados?formato=json";   // http://www.portaldefinancas.com/cdidiaria.htm
+
+     $curl = curl_init();
+     curl_setopt_array($curl, array(
+     CURLOPT_URL => "https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados?formato=json",
+     CURLOPT_RETURNTRANSFER => true,
+     CURLOPT_ENCODING => "",
+     CURLOPT_MAXREDIRS => 10,
+     CURLOPT_TIMEOUT => 30,
+     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+     CURLOPT_CUSTOMREQUEST => "GET",
+     CURLOPT_HTTPHEADER => array(
+          "cache-control: no-cache",
+          "postman-token: fe864f6f-6e49-7839-622b-3688d9dc55a2"
+          ),
+     ));
+     
+     $res = curl_exec($curl);
+     $err = curl_error($curl);     
+     curl_close($curl);
 
      return $ret;
 }

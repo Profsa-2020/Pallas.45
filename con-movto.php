@@ -169,6 +169,8 @@ $(document).ready(function() {
 
 <?php 
      include_once "dados.php"; 
+     include_once "profsa.php";
+     $_SESSION['wrknompro'] = __FILE__;
      if (isset($_SERVER['HTTP_REFERER']) == true) {
           if (limpa_pro($_SESSION['wrknompro']) != limpa_pro($_SERVER['HTTP_REFERER'])) {
                $_SESSION['wrkproant'] = limpa_pro($_SERVER['HTTP_REFERER']);
@@ -248,7 +250,7 @@ $(document).ready(function() {
                                                   <th>Nome do Fundo</th>
                                                   <th>Data</th>
                                                   <th>Total</th>
-                                                  <th>Quota</th>
+                                                  <th>Cota Diária</th>
                                                   <th>Patrimônio</th>
                                                   <th>Capital</th>
                                                   <th>Resgate</th>

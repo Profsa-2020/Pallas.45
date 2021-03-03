@@ -137,6 +137,8 @@ $(document).ready(function() {
 
 <?php 
      include_once "dados.php"; 
+     include_once "profsa.php";
+     $_SESSION['wrknompro'] = __FILE__;
      if (isset($_SERVER['HTTP_REFERER']) == true) {
           if (limpa_pro($_SESSION['wrknompro']) != limpa_pro($_SERVER['HTTP_REFERER'])) {
                $_SESSION['wrkproant'] = limpa_pro($_SERVER['HTTP_REFERER']);
@@ -394,16 +396,16 @@ function carrega_fun($cla, $pub, $esp, $con, $tem, $pat, $anb, $blo, $exc, $cot,
           if ($tem == 10) { $dtf = date('d/m/Y', strtotime('-10 year')); }
           if ($tem == 15) { $dtf = date('d/m/Y', strtotime('-15 year')); }
      }
-     $com = "Select * from tb_fundos where idfundo > 0";
+     $com = "Select idfundo, funstatus, funnome, funcnpj, funclasse, fundatainic, funpubalvo, funespelho, funcondominio, funaplminima, funclaambima, funcotas, funatuadiaria from tb_fundos where idfundo > 0";
      if ($cla != 0) { $com .= " and funclasse = " . $cla; }
      if ($esp != '') { $com .= " and funespelho = '" . $esp . "'"; }
      if ($pub != '') { $com .= " and funpubalvo = '" . $pub . "'"; }
      if ($con != '') { $com .= " and funcondominio = '" . $con . "'"; }
      if ($anb != '') { $com .= " and funclaambima = '" . $anb . "'"; }
-     if ($blo != 0 && $exc == 0) { $com .= " and funstatus = " . $blo . " "; }
-     if ($blo == 0 && $exc != 0) { $com .= " and funstatus = " . $exc . " "; }
-     if ($blo != 0 && $exc != 0) { $com .= " and (funstatus = " . $blo . " or funstatus =  " . $exc . ") "; }
-     if ($tem != 0) { $com .= " and fundatacomp between '" . inverte_dat(1, $dti) . "' and '" . inverte_dat(1, $dtf) . "' "; } // ou datainic
+     if ($blo != 0 && $exc == 0) { $com .= " and funstatus != " . $blo . " "; }
+     if ($blo == 0 && $exc != 0) { $com .= " and funstatus != " . $exc . " "; }
+     if ($blo != 0 && $exc != 0) { $com .= " and (funstatus != " . $blo . " or funstatus !=  " . $exc . ") "; }
+     if ($tem != 0) { $com .= " and fundatainic between '" . inverte_dat(1, $dti) . "' and '" . inverte_dat(1, $dtf) . "' "; } // ou datainic
      $com .= " and funcotas = '" . $cot . "'"; 
      $com .= " and funatuadiaria = '" . $atu . "'"; 
      $com .= " order by funnome, idfundo";

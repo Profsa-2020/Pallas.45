@@ -60,10 +60,34 @@
 <script>
 $(function() {
      $("#cgc").mask("00.000.000/0000-00");
+     $("#dti").mask("00/00/0000");
+     $("#dtf").mask("00/00/0000");
+     $("#dti").datepicker($.datepicker.regional["pt-BR"]);
+     $("#dtf").datepicker($.datepicker.regional["pt-BR"]);
+});
+
+$(function() {
+     $('#nom').autocomplete({
+          source: "ajax/mostrar-nom.php",
+          minLength: 7,
+          select: function(event, ui) {
+               $('#cod').val(ui.item.id);
+               $('#cgc').val(ui.item.cnpj);
+               $('#nom').val(ui.item.label);
+          }
+     });
 });
 
 $(document).ready(function() {
      $('#cgc').blur(function() {
+          $('#tab-0 tbody').empty();
+     });
+
+     $('#dti').change(function() {
+          $('#tab-0 tbody').empty();
+     });
+
+     $('#dtf').change(function() {
           $('#tab-0 tbody').empty();
      });
 
@@ -88,7 +112,6 @@ $(document).ready(function() {
           }
      });
 
-
      $("#add").click(function() {
           var cgc = $('#cgc').val();
           var nom = $('#nom').val();
@@ -109,6 +132,17 @@ $(document).ready(function() {
                          console.log('Erro: ' + JSON.stringify(data));
                          alert("Erro ocorrido no processamento de adição de cnpj");
                     });
+          }
+     });
+
+     $("#del").click(function() {
+          let res = confirm('Confirma limpar os Cnpj(s) informados até o momento ?');
+          if (res == true) {
+               $('#cgc').val('');
+               $('#nom').val('');
+               $('#qtd').html('#');
+               $('#tab-0 tbody').empty();
+               $.get("ajax/limpar-cgc.php");
           }
      });
 
@@ -160,6 +194,8 @@ $(document).ready(function() {
 
 <?php 
      include_once "dados.php"; 
+     include_once "profsa.php";
+     $_SESSION['wrknompro'] = __FILE__;
      if (isset($_SERVER['HTTP_REFERER']) == true) {
           if (limpa_pro($_SESSION['wrknompro']) != limpa_pro($_SERVER['HTTP_REFERER'])) {
                $_SESSION['wrkproant'] = limpa_pro($_SERVER['HTTP_REFERER']);
@@ -193,8 +229,8 @@ $(document).ready(function() {
                <div class="col-md-10">
                     <!-- Corpo -->
                     <p class="lit-4">Análise e Exportação de Dados</p>
-                    <form class="qua-6" id="frmTelAna" name="frmTelAna" action="con-movto.php" method="POST">
-                         <div class="form-row">
+                    <form class="qua-6" id="frmTelAna" name="frmTelAna" action="analise-exp.php" method="POST">
+                         <div class="row">
                               <div class="col-md-1 text-center">
                                    <label>Quantidade</label>
                                    <p id="qtd" class="lit-5"><?php echo $qtd; ?></p>
@@ -230,6 +266,22 @@ $(document).ready(function() {
                                              class="fa fa-search fa-2x" aria-hidden="true"></i></button>
                               </div>
                          </div>
+                         <div class="row">
+                              <div class="col-md-4"></div>
+                              <div class="col-md-2">
+                                   <label>Data Inicial</label>
+                                   <input type="text" class="form-control text-center" maxlength="10" id="dti"
+                                        name="dti" value="<?php echo $dti; ?>" required />
+                              </div>
+                              <div class="col-md-2">
+                                   <label>Data Final</label>
+                                   <input type="text" class="form-control text-center" maxlength="10" id="dtf"
+                                        name="dtf" value="<?php echo $dtf; ?>" required />
+                              </div>
+                              <div class="col-md-4"></div>
+                         </div>
+
+                         <input type="hidden" id="cod" name="cod" value="" />
                     </form>
                     <br />
                     <div class="row qua-3">
@@ -251,9 +303,11 @@ $(document).ready(function() {
                                              </tr>
                                         </thead>
                                         <tbody>
-                                        <?php
+                                             <?php
                                              if (count($_SESSION['wrklisfun']) > 0) {
-                                                  $ret = carrega_fun();
+                                                  $ret = carrega_fun(0, $cgc, $nom);
+                                             } else if ($cgc != "") {
+                                                  $ret = carrega_fun(1, $cgc, $nom);
                                              }
                                         ?>
                                         </tbody>
@@ -262,7 +316,6 @@ $(document).ready(function() {
                               </div>
                          </div>
                     </div>
-
                </div>
           </div>
      </div>
@@ -272,12 +325,41 @@ $(document).ready(function() {
 </body>
 
 <?php
-function carrega_fun() {
-     $ret = 0;
+function carrega_fun($tip, $cgc, $nom) {
      include_once "dados.php";
      include_once "profsa.php";
+     $ret = 0; $txt = ""; $sql = ""; $cha = "";
+     foreach($_SESSION['wrklisfun'] as $cpo => $dad ) {
+          $sql .= $cpo . ",";
+     }
+     if ($sql == "") {
+          $sql = limpa_nro($cgc);
+     } else {
+          $sql = substr($sql, 0, strlen($sql) - 1);
+
+     }
+     $com = "Select * from tb_fundos where funcnpj in (" . $sql . ") ";
+     $com .= " order by funnome, idfundo";
+     $nro = leitura_reg($com, $reg);
+     foreach ($reg as $cpo => $lin) {
+          $txt = ""; $ida = "0";
+          if ($lin['fundatainic'] != null) {
+               $ida = calcula_idade($lin['fundatainic']);
+          }
+
+          $txt .=  '<tr>'; 
+          $txt .= "<td>" . mascara_cpo($lin['funcnpj'],"  .   .   /    -  ") . "</td>";
+          $txt .= "<td>" . utf8_encode($lin['funnome']) . "</td>";
+          if ($lin['fundatainic'] == null) {
+               $txt .= "<td>" . "**/**/****" . "</td>"; 
+          } else {
+               $txt .= '<td class="text-center">' . date('d/m/Y',strtotime($lin['fundatainic'])) . '<br />' . $ida . ' anos' . '</td>';
+          }
 
 
+          $txt .=  '</tr>'; 
+          echo $txt;
+     }
      return $ret;
 }
 
