@@ -137,8 +137,9 @@ $(document).ready(function() {
                window.open('http://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/', '_blank');
           } else if (arq == 5 || arq == 6) {
                window.open('http://dados.cvm.gov.br/dataset/fi-cad/resource/9ff23a88-d333-4b04-8600-ee474d9e1aae?inner_span=True', '_blank');
+          } else if (arq == 7) {
+               window.open('https://www3.bcb.gov.br/sgspub/localizarseries/localizarSeries.do?method=prepararTelaLocalizarSeries', '_blank');     
           }
-
      });
 
 
@@ -170,7 +171,7 @@ $(document).ready(function() {
      if (isset($_SESSION['wrknumcol']) == false) { $_SESSION['wrknumcol'] = 0; }
      if (isset($_SESSION['wrknomcsv']) == false) { $_SESSION['wrknomcsv'] = ''; }
      if (isset($_SESSION['wrknomarq']) == false) { $_SESSION['wrknomarq'] = ''; }
-     ini_set('max_execution_time', 900);       
+     ini_set('max_execution_time', 1800);       
      $max = ini_get('upload_max_filesize');
      $arq = (isset($_REQUEST['arq']) == false ? 0 : $_REQUEST['arq']);
      if (isset($_REQUEST['subir']) == true) {
@@ -501,24 +502,24 @@ $(document).ready(function() {
                     $sql .= "keyinc, ";
                     $sql .= "datinc ";
                     $sql .= ") value ( ";
-                    $sql .= "'" . limpa_nro($lin[0]) . "',";
-                    $sql .= "'" . utf8_encode(str_replace("'", "´", substr($lin[1], 0, 75))) . "',";
+                    $sql .= "'" . limpa_nro($lin[0]) . "',";     // Cnpj
+                    $sql .= "'" . utf8_encode(str_replace("'", "´", substr($lin[1], 0, 75))) . "',";     // Nome
                     if (substr($lin[2], 4, 1) == "-" || substr($lin[2], 4, 1) == "/") {
-                         $sql .= "'" . $lin[2] . "',";
+                         $sql .= "'" . $lin[2] . "',";      //Data Cadastro
                     } else {
                          $sql .= "'" . inverte_dat(1, $lin[2]) . "',";
                     }
                     $sql .= "'" . substr($lin[3], 0, 1) . "',";  // Coluna D - Condomínio
                     $sql .= "'" . substr($lin[5], 0, 1) . "',";  // Coluna F - negocia mercado
-                    if ($lin[8] == "INVESTIDORES PROFISSIONAIS") { $sql .= "'" . 'A' . "',"; }  // Coluna I - Publico Alvo }
-                    if ($lin[8] == "INVESTIDORES QUALIFICADOS") { $sql .= "'" . 'B' . "',";  }
-                    if (utf8_encode($lin[8]) == "PREVIDENCIÁRIO") { $sql .= "'" . 'C' . "',";  }
-                    if (utf8_encode($lin[8]) == "PÚBLICO EM GERAL") { $sql .= "'" . 'D' . "',";  }
-                    $sql .= "'" . substr($lin[15], 0, 1) . "',";  // Coluna P - cotas
+                    if ($lin[8] == "INVESTIDORES PROFISSIONAIS") { $sql .= "'" . 'A' . "',"; }      // Coluna I - Publico Alvo }
+                    if ($lin[8] == "INVESTIDORES QUALIFICADOS") { $sql .= "'" . 'B' . "',";  }      // Coluna I - Publico Alvo }
+                    if (utf8_encode($lin[8]) == "PREVIDENCIÁRIO") { $sql .= "'" . 'C' . "',";  }    // Coluna I - Publico Alvo }
+                    if (utf8_encode($lin[8]) == "PÚBLICO EM GERAL") { $sql .= "'" . 'D' . "',";  } // Coluna I - Publico Alvo }
+                    $sql .= "'" . substr($lin[15], 0, 1) . "',";  // Coluna P - Fundo Cotas
                     $sql .= "'" . substr($lin[16], 0, 1) . "',";  // Coluna Q - espelho
                     $sql .= "'" . substr($lin[10], 0, 1) . "',";  // Coluna K - Anbima (Estratégia) 
                     $sql .= "'" . $lin[17] . "',";  // Coluna R R$ - Aplicação Mínima
-                    $sql .= "'" . substr($lin[18], 0, 1) . "',";  // Coluna S - Atualização Diária
+                    $sql .= "'" . substr($lin[18], 0, 1) . "',";  // Coluna S - Atualização Diária Cota
                     $sql .= "'" . $cam . "',";  
                     $sql .= "'" . $des . "',";  
                     $sql .= "'" . $ord . "',";  
@@ -958,8 +959,10 @@ $(document).ready(function() {
                          $sql .= "'" . '1' . "',";     
                          $sql .= "'" . $dat . "',";     
                          if ($_SESSION['wrknumcol'] == 2) {
+                              $ind = str_replace(",", ".", $lin[1]);
                               $sql .= "'" . str_replace(",", ".", $lin[1]) . "',";     
                          } else {
+                              $ind = str_replace(",", ".", $lin[4]);
                               $sql .= "'" . str_replace(",", ".", $lin[4]) . "',";     
                          }
                          $sql .= "'" . date('m', strtotime($dat)) . "',";     
@@ -970,7 +973,11 @@ $(document).ready(function() {
                          if ($ret == false) {
                               $com = $sql;
                               $men = "Erro na gravação do registro de data no banco de dados !";
-                         }               
+                         }      
+                         if ($_SESSION['wrknumcol'] == 2) {
+                              $_SESSION['wrkcditax'] = $ind;
+                              $_SESSION['wrkcdidat'] = $dat;
+                         }   
                          $gra = $gra + 1;
                     }
                }

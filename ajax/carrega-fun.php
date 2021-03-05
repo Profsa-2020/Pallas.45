@@ -34,14 +34,15 @@
           } else {
                $tab['txt'] .= 'Data de Início: ' . date('d/m/Y',strtotime($reg['fundatainic'])) . '<br />' ;
           }
-
-
           $tab['txt'] .= 'Espelho: ' . ($reg['funespelho'] == "N" ? 'Não' : 'Sim' ) . "<br />";
           $tab['txt'] .= 'Condomínio: ' . ($reg['funcondominio'] == "A" ? 'Aberto' : 'Fechado' ) . "<br />";
           $tab['txt'] .= 'Aplicação Mínima: ' . number_format($reg['funaplminima'], 2, ",", ".") . '<br />';
-          $tab['txt'] .= 'Fundo de Cotas: ' . ($reg['funcotas'] == "N" ? 'Não' : 'Sim' ) . "<br />";
-          $tab['txt'] .= 'Atualização Diária: ' . ($reg['funatuadiaria'] == "N" ? 'Não' : 'Sim' ) . "<br />";
-      
+          $tab['txt'] .= 'Fundo de Cotas: [ ' . $reg['funcotas'] . " ]<br />";
+          $tab['txt'] .= 'Cota Diária: [ ' . $reg['funatuadiaria'] . " ]<br />";
+          $tab['txt'] .= 'Exclusivo: ' . ($reg['funexclusivo'] == 0 ? 'Não' : 'Sim') . "<br />";
+          $tab['txt'] .= 'Funcionamento Normal: [ ' . $reg['funnormal'] . " ]<br />";
+
+   
 
      echo json_encode($tab);     
 

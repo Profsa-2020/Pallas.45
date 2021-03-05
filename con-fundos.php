@@ -59,6 +59,22 @@
 
 <script>
 $(document).ready(function() {
+     $('#exc').change(function() {
+          $('#tab-0 tbody').empty();
+     });
+
+     $('#nor').change(function() {
+          $('#tab-0 tbody').empty();
+     });
+
+     $('#cot').change(function() {
+          $('#tab-0 tbody').empty();
+     });
+
+     $('#dia').change(function() {
+          $('#tab-0 tbody').empty();
+     });
+
      $('#cla').change(function() {
           $('#tab-0 tbody').empty();
      });
@@ -92,8 +108,8 @@ $(document).ready(function() {
      $('#tab-0').DataTable({
           "pageLength": 25,
           "aaSorting": [
-               [1, 'asc'],
-               [2, 'asc']
+               [0, 'asc'],
+               [1, 'asc']
           ],
           "dom": 'Bfrtip',
           "buttons": [{
@@ -148,14 +164,14 @@ $(document).ready(function() {
      $cla = (isset($_REQUEST['cla']) == false ? 0 : $_REQUEST['cla']);
      $pub = (isset($_REQUEST['pub']) == false ? '' : $_REQUEST['pub']);
      $esp = (isset($_REQUEST['esp']) == false ? '' : $_REQUEST['esp']);
-     $con = (isset($_REQUEST['con']) == false ? '' : $_REQUEST['con']);
+     $con = (isset($_REQUEST['con']) == false ? 'A' : $_REQUEST['con']);
      $tem = (isset($_REQUEST['tem']) == false ? '' : $_REQUEST['tem']);
      $pat = (isset($_REQUEST['pat']) == false ? 0 : $_REQUEST['pat']);
      $anb = (isset($_REQUEST['anb']) == false ? '' : $_REQUEST['anb']);
-     $blo = (isset($_REQUEST['blo']) == false ? 0 : $_REQUEST['blo']);
-     $exc = (isset($_REQUEST['exc']) == false ? 0 : $_REQUEST['exc']);
-     $cot = (isset($_REQUEST['cot']) == false ? "N" : $_REQUEST['cot']);
-     $atu = (isset($_REQUEST['atu']) == false ? "S" : $_REQUEST['atu']);
+     $nor = (isset($_REQUEST['nor']) == false ? "0" : $_REQUEST['nor']);
+     $exc = (isset($_REQUEST['exc']) == false ? "0" : $_REQUEST['exc']);
+     $cot = (isset($_REQUEST['cot']) == false ? "S" : $_REQUEST['cot']);
+     $dia = (isset($_REQUEST['dia']) == false ? "S" : $_REQUEST['dia']);
 
 ?>
 
@@ -163,7 +179,7 @@ $(document).ready(function() {
      <h1 class="cab-0">Fundos - MoneyWay Investimentos - Profsa Informática</h1>
      <?php include_once "cabecalho-1.php"; ?>
      <div class="container-fluid">
-          <div class="row">
+          <div class="form-row">
                <div class="col-md-2">
                     <!-- Menu -->
                     <?php include_once "cabecalho-2.php"; ?>
@@ -286,7 +302,58 @@ $(document).ready(function() {
                               </div>
                          </div>
                          <div class="row">
-                              <div class="col-md-4"></div>
+                              <div class="col-md-2">
+                                   <label>Exclusivo</label><br />
+                                   <select id="exc" name="exc" class="form-control">
+                                        <option value="" <?php echo ($exc != '' ? '' : 'selected="selected"'); ?>>
+                                             Todos ...</option>
+                                        <option value="1" <?php echo ($exc != '1' ? '' : 'selected="selected"'); ?>>
+                                             Sim
+                                        </option>
+                                        <option value="0" <?php echo ($exc != '0' ? '' : 'selected="selected"'); ?>>
+                                             Não
+                                        </option>
+                                   </select>
+                              </div>
+                              <div class="col-md-2">
+                                   <label>Funcionamento</label><br />
+                                   <select id="nor" name="nor" class="form-control">
+                                        <option value="" <?php echo ($nor != '' ? '' : 'selected="selected"'); ?>>
+                                             Todos ...</option>
+                                        <option value="0" <?php echo ($nor != '0' ? '' : 'selected="selected"'); ?>>
+                                             Normal
+                                        </option>
+                                        <option value="1" <?php echo ($nor != '1' ? '' : 'selected="selected"'); ?>>
+                                             Não Normal
+                                        </option>
+                                   </select>
+                              </div>
+                              <div class="col-md-2">
+                                   <label>Cota Diária</label><br />
+                                   <select id="dia" name="dia" class="form-control">
+                                        <option value="" <?php echo ($dia != '' ? '' : 'selected="selected"'); ?>>
+                                             Todos ...</option>
+                                        <option value="S" <?php echo ($dia != 'S' ? '' : 'selected="selected"'); ?>>
+                                             Sim
+                                        </option>
+                                        <option value="N" <?php echo ($dia != 'N' ? '' : 'selected="selected"'); ?>>
+                                             Não 
+                                        </option>
+                                   </select>
+                              </div>
+                              <div class="col-md-2">
+                                   <label>Fundo de Cotas</label><br />
+                                   <select id="cot" name="cot" class="form-control">
+                                        <option value="" <?php echo ($cot != '' ? '' : 'selected="selected"'); ?>>
+                                             Todos ...</option>
+                                        <option value="S" <?php echo ($cot != 'S' ? '' : 'selected="selected"'); ?>>
+                                             Sim
+                                        </option>
+                                        <option value="N" <?php echo ($cot != 'N' ? '' : 'selected="selected"'); ?>>
+                                             Não 
+                                        </option>
+                                   </select>
+                              </div>
                               <div class="col-md-2">
                                    <label>Patrimônio</label><br />
                                    <select id="pat" name="pat" class="form-control">
@@ -323,24 +390,6 @@ $(document).ready(function() {
                                              Fechado</option>
                                    </select>
                               </div>
-                              <div class="col-md-2"><br />
-                                   <span>Não Fundo Exclusivo</span> &nbsp;
-                                   <input type="checkbox" id="exc" name="exc" value="3"
-                                        <?php echo ($exc == 0 ? '': 'checked' ) ?> />
-                                   <br />
-                                   <span>Funcionamento Normal</span> &nbsp;
-                                   <input type="checkbox" id="blo" name="blo" value="2"
-                                        <?php echo ($blo == 0 ? '': 'checked' ) ?> />
-                              </div>
-                              <div class="col-md-2"><br />
-                                   <span>Cota Diária</span> &nbsp;
-                                   <input type="checkbox" id="atu" name="atu" value="S"
-                                        <?php echo ($atu == 'N' ? '': 'checked' ) ?> />
-                                   <br />
-                                   <span>Não Fundo de Cotas</span> &nbsp;
-                                   <input type="checkbox" id="cot" name="cot" value="S"
-                                        <?php echo ($cot == 'N' ? '': 'checked' ) ?> />
-                              </div>
                          </div>
                     </form>
                     <br />
@@ -351,9 +400,10 @@ $(document).ready(function() {
                                    <table id="tab-0" class="table table-sm table-striped">
                                         <thead>
                                              <tr>
-                                                  <th>Sta</th>
                                                   <th>Nome do Fundo</th>
                                                   <th>C.N.P.J.</th>
+                                                  <th>Exc</th>
+                                                  <th>Nor</th>
                                                   <th>Classe</th>
                                                   <th class="text-center">Início</th>
                                                   <th class="text-center">Patrimônio Líquido</th>
@@ -362,12 +412,12 @@ $(document).ready(function() {
                                                   <th>Condomínio</th>
                                                   <th>Aplicação Mínima</th>
                                                   <th>Estratégia</th>
+                                                  <th class="text-center">Cota Diária</th>
                                                   <th class="text-center">Fundo Cotas</th>
-                                                  <th class="text-center">Atualização Diária</th>
                                              </tr>
                                         </thead>
                                         <tbody>
-                                             <?php $ret = carrega_fun($cla, $pub, $esp, $con, $tem, $pat, $anb, $blo, $exc, $cot, $atu);  ?>
+                                             <?php $ret = carrega_fun($cla, $pub, $esp, $con, $tem, $pat, $anb, $nor, $exc, $cot, $dia);  ?>
                                         </tbody>
                                    </table>
                                    <hr />
@@ -384,7 +434,7 @@ $(document).ready(function() {
 </body>
 
 <?php
-function carrega_fun($cla, $pub, $esp, $con, $tem, $pat, $anb, $blo, $exc, $cot, $atu) {
+function carrega_fun($cla, $pub, $esp, $con, $tem, $pat, $anb, $nor, $exc, $cot, $dia) {
      include_once "dados.php";
      include_once "profsa.php";
      $dti = date('01/01/2000');
@@ -396,18 +446,17 @@ function carrega_fun($cla, $pub, $esp, $con, $tem, $pat, $anb, $blo, $exc, $cot,
           if ($tem == 10) { $dtf = date('d/m/Y', strtotime('-10 year')); }
           if ($tem == 15) { $dtf = date('d/m/Y', strtotime('-15 year')); }
      }
-     $com = "Select idfundo, funstatus, funnome, funcnpj, funclasse, fundatainic, funpubalvo, funespelho, funcondominio, funaplminima, funclaambima, funcotas, funatuadiaria from tb_fundos where idfundo > 0";
+     $com = "Select idfundo, funexclusivo, funnormal, funnome, funcnpj, funclasse, fundatainic, funpubalvo, funespelho, funcondominio, funaplminima, funclaambima, funcotas, funatuadiaria from tb_fundos where idfundo > 0";
      if ($cla != 0) { $com .= " and funclasse = " . $cla; }
      if ($esp != '') { $com .= " and funespelho = '" . $esp . "'"; }
      if ($pub != '') { $com .= " and funpubalvo = '" . $pub . "'"; }
      if ($con != '') { $com .= " and funcondominio = '" . $con . "'"; }
      if ($anb != '') { $com .= " and funclaambima = '" . $anb . "'"; }
-     if ($blo != 0 && $exc == 0) { $com .= " and funstatus != " . $blo . " "; }
-     if ($blo == 0 && $exc != 0) { $com .= " and funstatus != " . $exc . " "; }
-     if ($blo != 0 && $exc != 0) { $com .= " and (funstatus != " . $blo . " or funstatus !=  " . $exc . ") "; }
+     if ($exc != '') { $com .= " and funexclusivo = '" . $exc . "'"; }
+     if ($nor != '') { $com .= " and funnormal = '" . $nor . "'"; }
+     if ($cot != '') { $com .= " and funcotas = '" . $cot . "'"; }          // Cota Diária
+     if ($dia != '') { $com .= " and funatuadiaria = '" . $dia . "'"; }     // Fundo de Cotas
      if ($tem != 0) { $com .= " and fundatainic between '" . inverte_dat(1, $dti) . "' and '" . inverte_dat(1, $dtf) . "' "; } // ou datainic
-     $com .= " and funcotas = '" . $cot . "'"; 
-     $com .= " and funatuadiaria = '" . $atu . "'"; 
      $com .= " order by funnome, idfundo";
      $nro = leitura_reg($com, $reg);
      foreach ($reg as $lin) {
@@ -424,12 +473,10 @@ function carrega_fun($cla, $pub, $esp, $con, $tem, $pat, $anb, $blo, $exc, $cot,
           }
           if ($flag == 0) {
                $txt =  '<tr>'; 
-               if ($lin['funstatus'] == 0) {$txt .= "<td>" . "" . "</td>";}            // normal
-               if ($lin['funstatus'] == 1) {$txt .= "<td>" . "Can" . "</td>";}      // em uso 
-               if ($lin['funstatus'] == 2) {$txt .= "<td>" . "Blo" . "</td>";}       // situação
-               if ($lin['funstatus'] == 3) {$txt .= "<td>" . "Exc" . "</td>";}      // exclusivo
                $txt .= "<td>" . utf8_encode($lin['funnome']) . "</td>";
                $txt .= "<td>" . mascara_cpo($lin['funcnpj'],"  .   .   /    -  ") . "</td>";
+               $txt .= '<td class="text-center">' . ($lin['funexclusivo'] == 0 ? 'Não' : 'Sim') . '</td>';
+               $txt .= '<td class="text-center">' . ($lin['funnormal'] == 1 ? 'Não' : 'Sim') . '</td>';
                $cpo = "*** " . $lin['funclasse'] . ' ***';
                if ($lin['funclasse'] == "") { $cpo = ''; }
                if ($lin['funclasse'] == "0") { $cpo = 'Indefinida'; }
@@ -454,7 +501,11 @@ function carrega_fun($cla, $pub, $esp, $con, $tem, $pat, $anb, $blo, $exc, $cot,
                if ($lin['funpubalvo'] == "C") { $cpo = 'Previdenciário'; }
                if ($lin['funpubalvo'] == "D") { $cpo = 'Geral'; }
                $txt .= "<td>" . $cpo . "</td>"; 
-               $txt .= '<td class="text-center">' . ($lin['funespelho'] == "N" ? 'Não' : 'Sim' ) . "</td>";
+               $cpo = "***";
+               if (trim($lin['funespelho']) == "") { $cpo = '***'; }
+               if ($lin['funespelho'] == "S") { $cpo = 'Sim'; }
+               if ($lin['funespelho'] == "N") { $cpo = 'Não'; }
+               $txt .= '<td class="text-center">' . $cpo . '</td>'; 
                $txt .= '<td class="text-center">' . ($lin['funcondominio'] == "A" ? 'Aberto' : 'Fechado' ) . "</td>";
                $txt .= '<td class="text-right">' . number_format($lin['funaplminima'], 2, ",", ".") . '</td>';
                $cpo = "*** " . $lin['funclaambima'] . ' ***';
@@ -466,8 +517,8 @@ function carrega_fun($cla, $pub, $esp, $con, $tem, $pat, $anb, $blo, $exc, $cot,
                if ($lin['funclaambima'] == "P") { $cpo = 'Previdência'; }
                if ($lin['funclaambima'] == "F") { $cpo = 'Fundo Cambial'; }
                $txt .= "<td>" . $cpo . "</td>"; 
-               $txt .= '<td class="text-center">' . ($lin['funcotas'] == "N" ? 'Não' : 'Sim' ) . "</td>";
                $txt .= '<td class="text-center">' . ($lin['funatuadiaria'] == "N" ? 'Não' : 'Sim' ) . "</td>";
+               $txt .= '<td class="text-center">' . ($lin['funcotas'] == "N" ? 'Não' : 'Sim' ) . "</td>";
                $txt .= "</tr>";
                echo $txt;
           }

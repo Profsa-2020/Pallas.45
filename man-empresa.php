@@ -242,7 +242,7 @@ $(document).ready(function() {
      <h1 class="cab-0">Menu Principal - MoneyWay Investimentos - Profsa Informática</h1>
      <?php include_once "cabecalho-1.php"; ?>
      <div class="container-fluid">
-          <div class="row">
+          <div class="form-row">
                <div class="col-md-2">
                     <!-- Menu -->
                     <?php include_once "cabecalho-2.php"; ?>

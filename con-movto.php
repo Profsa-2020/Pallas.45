@@ -196,7 +196,7 @@ $(document).ready(function() {
      <h1 class="cab-0">Movimento - MoneyWay Investimentos - Profsa Informática</h1>
      <?php include_once "cabecalho-1.php"; ?>
      <div class="container-fluid">
-          <div class="row">
+          <div class="form-row">
                <div class="col-md-2">
                     <!-- Menu -->
                     <?php include_once "cabecalho-2.php"; ?>
@@ -246,7 +246,7 @@ $(document).ready(function() {
                                    <table id="tab-0" class="table table-sm table-striped">
                                         <thead>
                                              <tr>
-                                                  <th width="5%">Código</th>
+                                                  <th>C.n.p.j.</th>
                                                   <th>Nome do Fundo</th>
                                                   <th>Data</th>
                                                   <th>Total</th>
@@ -319,7 +319,7 @@ function carrega_mov($cgc, $dti, $dtf) {
      $nro = leitura_reg($com, $reg);
      foreach ($reg as $lin) {
           $txt =  '<tr>';
-          $txt .= '<td class="text-center">' . $lin['idmovto'] . '</td>';
+          $txt .= "<td>" . mascara_cpo($lin['inffundo'], "  .   .   /    -  ") . "</td>";
           $txt .= "<td>" . $lin['funnome'] . "</td>";
           $txt .= "<td>" . date('d/m/Y',strtotime($lin['infdata'])) . "</td>";
           $txt .= '<td class="text-right">' . number_format($lin['inftotal'], 2, ",", ".") . '</td>';

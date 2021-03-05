@@ -68,9 +68,23 @@ $(document).ready(function() {
 <?php
      if (isset($_SESSION['wrkinddat']) == false) { $_SESSION['wrkinddat'] = ""; }
      if (isset($_SESSION['wrkindtax']) == false) { $_SESSION['wrkindtax'] = '0'; }
+     if (isset($_SESSION['wrkcdidat']) == false) { $_SESSION['wrkcdidat'] = ""; }
+     if (isset($_SESSION['wrkcditax']) == false) { $_SESSION['wrkcditax'] = '0'; }
 
+     $cdi = 0; $dat = date('Y-m-d');
      if ($_SESSION['wrkinddat'] == "") {
           $ret = carrega_ind($dat, $tax);
+     }
+     if ($_SESSION['wrkcdidat'] == "") {
+          for ($ind = 0; $ind <= 10; $ind++) {
+               $dta = date('Y-m-d', strtotime('-' . $ind . ' days'));
+               $nro = acessa_reg("Select * from tb_indice where indcodigo = 1 and inddata = '" . $dta . "'", $reg);            
+               if ($nro == 1) {
+                    $cdi = $reg['indtaxa']; break;
+               }     
+          }
+          $_SESSION['wrkcditax'] = $cdi;
+          $_SESSION['wrkcdidat'] = $dta;
      }
      $tab = array(); 
      $ret = carrega_das($tab);
@@ -81,7 +95,7 @@ $(document).ready(function() {
      <h1 class="cab-0">Menu Principal - MoneyWay Investimentos - Profsa Informática</h1>
      <?php include_once "cabecalho-1.php"; ?>
      <div class="container-fluid">
-          <div class="row">
+          <div class="form-row">
                <!---------- Menu ---------->
                <div class="col-md-2">
 
@@ -129,7 +143,8 @@ $(document).ready(function() {
                               <?php echo $tab['cla']; ?>
                          </div>
                          <div class="col-md-3 text-center">
-                              <strong><span> <?php echo "iBovespa: " . date('d/m/Y', strtotime($_SESSION['wrkinddat'])) . " - " .  number_format($_SESSION['wrkindtax'], 4, ",", "."); ?> </span></strong>
+                              <span> <?php echo "CDI: " . date('d/m/Y', strtotime($_SESSION['wrkcdidat'])) . " - " .  number_format($_SESSION['wrkcditax'], 6, ",", "."); ?> </span><br />
+                              <span> <?php echo "iBovespa: " . date('d/m/Y', strtotime($_SESSION['wrkinddat'])) . " - " .  number_format($_SESSION['wrkindtax'], 4, ",", "."); ?> </span>
                               <br />
                          </div>
                     </div>
@@ -262,28 +277,10 @@ function carrega_ind(&$dta, &$tax) {      // Carrega indice Ibovespa e CDI via A
           }             
      }
 
-
      $ret = 0; $con = 0; $dat = ""; $ind = ""; $tax = "0";   // Buscar CDI
-     $url = "https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados?formato=json";   // http://www.portaldefinancas.com/cdidiaria.htm
+     $url = "http://www.portaldefinancas.com/cdidiaria.htm";     // "https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados?formato=json";      
+     $cdi = file_get_contents($url);
 
-     $curl = curl_init();
-     curl_setopt_array($curl, array(
-     CURLOPT_URL => "https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados?formato=json",
-     CURLOPT_RETURNTRANSFER => true,
-     CURLOPT_ENCODING => "",
-     CURLOPT_MAXREDIRS => 10,
-     CURLOPT_TIMEOUT => 30,
-     CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-     CURLOPT_CUSTOMREQUEST => "GET",
-     CURLOPT_HTTPHEADER => array(
-          "cache-control: no-cache",
-          "postman-token: fe864f6f-6e49-7839-622b-3688d9dc55a2"
-          ),
-     ));
-     
-     $res = curl_exec($curl);
-     $err = curl_error($curl);     
-     curl_close($curl);
 
      return $ret;
 }

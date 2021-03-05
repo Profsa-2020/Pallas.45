@@ -325,7 +325,7 @@ $(document).ready(function() {
 </body>
 
 <?php
-function carrega_fun($tip, $cgc, $nom) {
+function carrega_fun($tip, $cgc, $nom) { 
      include_once "dados.php";
      include_once "profsa.php";
      $ret = 0; $txt = ""; $sql = ""; $cha = "";
@@ -338,8 +338,10 @@ function carrega_fun($tip, $cgc, $nom) {
           $sql = substr($sql, 0, strlen($sql) - 1);
 
      }
+     
      $com = "Select * from tb_fundos where funcnpj in (" . $sql . ") ";
      $com .= " order by funnome, idfundo";
+
      $nro = leitura_reg($com, $reg);
      foreach ($reg as $cpo => $lin) {
           $txt = ""; $ida = "0";
