@@ -587,7 +587,7 @@ $(document).ready(function() {
                          $sql .= "'" . inverte_dat(1, $lin[1]) . "',";
                     }
                     $sql .= "'" . $lin[2] . "',";  
-                    $sql .= "'" . limpa_nro($lin[3]) . "',";  
+                    $sql .= "'" . $lin[3] . "',";  // Coluna D - VL_QUOTA - infquota
                     $sql .= "'" . $lin[4] . "',";  
                     $sql .= "'" . $lin[5] . "',";  
                     $sql .= "'" . $lin[6] . "',";

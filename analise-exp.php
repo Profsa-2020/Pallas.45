@@ -54,7 +54,7 @@
      <script type="text/javascript" src="js/jquery.mask.min.js"></script>
 
      <link href="css/pallas45.css" rel="stylesheet" type="text/css" media="screen" />
-     <title>Movimento - Análise de Investimentos - Profsa Informátda Ltda</title>
+     <title>Cálculos - Análise de Investimentos - Profsa Informátda Ltda</title>
 </head>
 
 <script>
@@ -89,6 +89,12 @@ $(document).ready(function() {
 
      $('#dtf').change(function() {
           $('#tab-0 tbody').empty();
+     });
+
+     $('#dtf').blur(function() {
+          let dti = $('#dti').val();
+          let dtf = $('#dtf').val();
+          if (dtf == "") { $('#dtf').val(dti); }
      });
 
      $("#cgc").blur(function() {
@@ -193,6 +199,7 @@ $(document).ready(function() {
 </script>
 
 <?php 
+     $err = 0;
      include_once "dados.php"; 
      include_once "profsa.php";
      $_SESSION['wrknompro'] = __FILE__;
@@ -206,14 +213,24 @@ $(document).ready(function() {
      if (isset($_SESSION['wrkcodreg']) == false) { $_SESSION['wrkcodreg'] = 0; }
      if (isset($_SESSION['wrklisfun']) == false) { $_SESSION['wrklisfun'] = array(); }
 
-     $dti = date('d/m/Y', strtotime('-90 days'));
-     $dtf = date('d/m/Y');
      $cgc = (isset($_REQUEST['cgc']) == false ? '' : $_REQUEST['cgc']);
-     $dti = (isset($_REQUEST['dti']) == false ? $dti : $_REQUEST['dti']);
-     $dtf = (isset($_REQUEST['dtf']) == false ? $dtf : $_REQUEST['dtf']);
+     $dti = (isset($_REQUEST['dti']) == false ? '' : $_REQUEST['dti']);
+     $dtf = (isset($_REQUEST['dtf']) == false ? '' : $_REQUEST['dtf']);
      $nom = (isset($_REQUEST['nom']) == false ? '' : $_REQUEST['nom']);
 
      $qtd = count($_SESSION['wrklisfun']);
+
+     if (isset($_REQUEST['consulta']) == true) {
+          if ($dti == "" && $dtf == "" && $cgc == "")  { 
+               echo '<script>alert("Não se pode solicitar consulta sem nenhum campo informado !");</script>'; $err = 1;
+          }
+          if ($dti == "" && $dtf != "")  { 
+               echo '<script>alert("Não se pode solicitar consulta sem nenhum campo informado !");</script>';$err = 1;
+          }
+          if ($dti != "" && $dtf == "")  { 
+               echo '<script>alert("Não se pode solicitar consulta sem nenhum campo informado !");</script>';$err = 1;
+          }
+     }
 
 ?>
 
@@ -271,12 +288,12 @@ $(document).ready(function() {
                               <div class="col-md-2">
                                    <label>Data Inicial</label>
                                    <input type="text" class="form-control text-center" maxlength="10" id="dti"
-                                        name="dti" value="<?php echo $dti; ?>" required />
+                                        name="dti" value="<?php echo $dti; ?>" />
                               </div>
                               <div class="col-md-2">
                                    <label>Data Final</label>
                                    <input type="text" class="form-control text-center" maxlength="10" id="dtf"
-                                        name="dtf" value="<?php echo $dtf; ?>" required />
+                                        name="dtf" value="<?php echo $dtf; ?>" />
                               </div>
                               <div class="col-md-4"></div>
                          </div>
@@ -292,7 +309,7 @@ $(document).ready(function() {
                                              <tr>
                                                   <th>Nº do C.n.p.j.</th>
                                                   <th>Nome do Fundo</th>
-                                                  <th>Data</th>
+                                                  <th class="text-center">Data</th>
                                                   <th>Cota Diária</th>
                                                   <th>Patrimônio</th>
                                                   <th>Nº Cotistas</th>
@@ -304,12 +321,8 @@ $(document).ready(function() {
                                         </thead>
                                         <tbody>
                                              <?php
-                                             if (count($_SESSION['wrklisfun']) > 0) {
-                                                  $ret = carrega_fun(0, $cgc, $nom);
-                                             } else if ($cgc != "") {
-                                                  $ret = carrega_fun(1, $cgc, $nom);
-                                             }
-                                        ?>
+                                                  $ret = carrega_fun($err, $dti, $dtf, $cgc, $nom);
+                                             ?>
                                         </tbody>
                                    </table>
                                    <hr />
@@ -325,10 +338,13 @@ $(document).ready(function() {
 </body>
 
 <?php
-function carrega_fun($tip, $cgc, $nom) { 
+function carrega_fun($err, $dti, $dtf, $cgc, $nom) { 
      include_once "dados.php";
      include_once "profsa.php";
+     if ($err == 1)  { return 1; }
      $ret = 0; $txt = ""; $sql = ""; $cha = "";
+     $dti = substr($dti,6,4) . "-" . substr($dti,3,2) . "-" . substr($dti,0,2) . " 00:00:00";
+     $dtf = substr($dtf,6,4) . "-" . substr($dtf,3,2) . "-" . substr($dtf,0,2) . " 23:59:59";
      foreach($_SESSION['wrklisfun'] as $cpo => $dad ) {
           $sql .= $cpo . ",";
      }
@@ -336,27 +352,30 @@ function carrega_fun($tip, $cgc, $nom) {
           $sql = limpa_nro($cgc);
      } else {
           $sql = substr($sql, 0, strlen($sql) - 1);
-
+     }     
+     $com = "Select M.*, F.funnome, F.fundatainic from (tb_movto_id M left join tb_fundos F on M.idfundo = F.idfundo) where idmovto > 0 ";
+     if ($sql != "0") {
+          $com .= " and funcnpj in (" . $sql . ") ";
      }
-     
-     $com = "Select * from tb_fundos where funcnpj in (" . $sql . ") ";
-     $com .= " order by funnome, idfundo";
-
+     if ($dti != "" && $dtf != "") {
+          $com .= " and infdata between '" . $dti . "' and '" . $dtf . "' ";
+     }
+     $com .= " order by F.funnome, M.idmovto";
      $nro = leitura_reg($com, $reg);
      foreach ($reg as $cpo => $lin) {
-          $txt = ""; $ida = "0";
-          if ($lin['fundatainic'] != null) {
-               $ida = calcula_idade($lin['fundatainic']);
-          }
-
+          $txt = ""; 
           $txt .=  '<tr>'; 
-          $txt .= "<td>" . mascara_cpo($lin['funcnpj'],"  .   .   /    -  ") . "</td>";
-          $txt .= "<td>" . utf8_encode($lin['funnome']) . "</td>";
-          if ($lin['fundatainic'] == null) {
-               $txt .= "<td>" . "**/**/****" . "</td>"; 
+          $txt .= '<td>' . mascara_cpo($lin['inffundo'],"  .   .   /    -  ") . '</td>';
+          $txt .= '<td>' . utf8_encode($lin['funnome']) . '</td>';
+          if ($lin['infdata'] == null) {
+               $txt .= '<td class="text-center">' . "**/**/****" . '</td>'; 
           } else {
-               $txt .= '<td class="text-center">' . date('d/m/Y',strtotime($lin['fundatainic'])) . '<br />' . $ida . ' anos' . '</td>';
+               $txt .= '<td class="text-center">' . date('d/m/Y',strtotime($lin['infdata'])) . '</td>';
           }
+          $txt .= '<td>' . number_format($lin['infquota'], 0, ",", ".") . '</td>';
+          $txt .= '<td>' . number_format($lin['infpatrimonio'], 0, ",", ".") . '</td>';
+          $txt .= '<td class="text-center">' . number_format($lin['infnumcotas'], 0, ",", ".") . '</td>';
+
 
 
           $txt .=  '</tr>'; 

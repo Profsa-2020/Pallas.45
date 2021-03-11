@@ -323,7 +323,7 @@ function carrega_mov($cgc, $dti, $dtf) {
           $txt .= "<td>" . $lin['funnome'] . "</td>";
           $txt .= "<td>" . date('d/m/Y',strtotime($lin['infdata'])) . "</td>";
           $txt .= '<td class="text-right">' . number_format($lin['inftotal'], 2, ",", ".") . '</td>';
-          $txt .= '<td class="text-right">' . number_format($lin['infquota'], 0, ",", ".") . '</td>';
+          $txt .= '<td class="text-right">' . number_format($lin['infquota'], 4, ",", ".") . '</td>';
           $txt .= '<td class="text-right">' . number_format($lin['infpatrimonio'], 2, ",", ".") . '</td>';
           $txt .= '<td class="text-right">' . number_format($lin['infcapital'], 2, ",", ".") . '</td>';
           $txt .= '<td class="text-right">' . number_format($lin['infresgate'], 2, ",", ".") . '</td>';
