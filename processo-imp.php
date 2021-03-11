@@ -327,7 +327,7 @@ $(document).ready(function() {
                          <br />
                          <div class="row">
                               <div class="col-md-12 text-center">
-                                   <i id="web-1" class="cur-1 fa fa-globe fa-2x" aria-hidden="true" title="Abre nova guia com acesso ao web site do tipo de arquivo"></i>
+                                   <i id="web-1" class="cur-1 cor-4 fa fa-globe fa-2x" aria-hidden="true" title="Abre nova guia com acesso ao web site do tipo de arquivo"></i>
                               </div>
                          </div>
                          <br />

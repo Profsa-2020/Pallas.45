@@ -144,6 +144,8 @@ $(document).ready(function() {
      $("#del").click(function() {
           let res = confirm('Confirma limpar os Cnpj(s) informados até o momento ?');
           if (res == true) {
+               $('#dti').val('');
+               $('#dtf').val('');
                $('#cgc').val('');
                $('#nom').val('');
                $('#qtd').html('#');
@@ -307,9 +309,11 @@ $(document).ready(function() {
                                    <table id="tab-0" class="table table-sm">
                                         <thead>
                                              <tr>
+                                                  <th>Seq</th>
                                                   <th>Nº do C.n.p.j.</th>
                                                   <th>Nome do Fundo</th>
-                                                  <th class="text-center">Data</th>
+                                                  <th>Classe</th>
+                                                  <th>Data</th>
                                                   <th>Cota Diária</th>
                                                   <th>Patrimônio</th>
                                                   <th>Nº Cotistas</th>
@@ -339,9 +343,11 @@ $(document).ready(function() {
 
 <?php
 function carrega_fun($err, $dti, $dtf, $cgc, $nom) { 
+     $seq = 0; $ind = 0;
      include_once "dados.php";
      include_once "profsa.php";
      if ($err == 1)  { return 1; }
+     if ($dti == "" && $dtf == "" && $cgc == "")  { return 2; }
      $ret = 0; $txt = ""; $sql = ""; $cha = "";
      $dti = substr($dti,6,4) . "-" . substr($dti,3,2) . "-" . substr($dti,0,2) . " 00:00:00";
      $dtf = substr($dtf,6,4) . "-" . substr($dtf,3,2) . "-" . substr($dtf,0,2) . " 23:59:59";
@@ -353,37 +359,66 @@ function carrega_fun($err, $dti, $dtf, $cgc, $nom) {
      } else {
           $sql = substr($sql, 0, strlen($sql) - 1);
      }     
-     $com = "Select M.*, F.funnome, F.fundatainic from (tb_movto_id M left join tb_fundos F on M.idfundo = F.idfundo) where idmovto > 0 ";
+     $com = "Select M.*, F.funnome, F.fundatainic, F.funclasse from (tb_movto_id M left join tb_fundos F on M.idfundo = F.idfundo) where idmovto > 0 ";
      if ($sql != "0") {
-          $com .= " and funcnpj in (" . $sql . ") ";
+          $com .= " and inffundo in (" . $sql . ") ";
      }
-     if ($dti != "" && $dtf != "") {
+     if ($dti != "" && $dtf != "" && $dti != "-- 00:00:00" && $dtf != "-- 23:59:59") {
           $com .= " and infdata between '" . $dti . "' and '" . $dtf . "' ";
      }
-     $com .= " order by F.funnome, M.idmovto";
+     $com .= " order by M.infdata, M.idmovto";
      $nro = leitura_reg($com, $reg);
      foreach ($reg as $cpo => $lin) {
           $txt = ""; 
           $txt .=  '<tr>'; 
+          $txt .= '<td class="text-center">' . $seq . '</td>';
           $txt .= '<td>' . mascara_cpo($lin['inffundo'],"  .   .   /    -  ") . '</td>';
           $txt .= '<td>' . utf8_encode($lin['funnome']) . '</td>';
+          $cpo = "*** " . $lin['funclasse'] . ' ***';
+          if ($lin['funclasse'] == "") { $cpo = ''; }
+          if ($lin['funclasse'] == "0") { $cpo = 'Indefinida'; }
+          if ($lin['funclasse'] == "1") { $cpo = 'Cambial'; }
+          if ($lin['funclasse'] == "2") { $cpo = 'Dívida Externa'; }
+          if ($lin['funclasse'] == "3") { $cpo = 'Ações'; }
+          if ($lin['funclasse'] == "4") { $cpo = 'Curto Prazo'; }
+          if ($lin['funclasse'] == "5") { $cpo = 'Renda Fixa'; }
+          if ($lin['funclasse'] == "6") { $cpo = 'Multimercado'; }
+          if ($lin['funclasse'] == "7") { $cpo = 'Referenciado'; }
+          $txt .= "<td>" . $cpo . "</td>"; 
           if ($lin['infdata'] == null) {
-               $txt .= '<td class="text-center">' . "**/**/****" . '</td>'; 
+               $txt .= '<td>' . "**/**/****" . '</td>'; 
           } else {
-               $txt .= '<td class="text-center">' . date('d/m/Y',strtotime($lin['infdata'])) . '</td>';
+               $txt .= '<td>' . date('d/m/Y',strtotime($lin['infdata'])) . '</td>';
           }
-          $txt .= '<td>' . number_format($lin['infquota'], 0, ",", ".") . '</td>';
-          $txt .= '<td>' . number_format($lin['infpatrimonio'], 0, ",", ".") . '</td>';
+          $txt .= '<td class="text-right">' . number_format($lin['infquota'], 4, ",", ".") . '</td>';
+          $txt .= '<td class="text-right">' . number_format($lin['infpatrimonio'], 0, ",", ".") . '</td>';
           $txt .= '<td class="text-center">' . number_format($lin['infnumcotas'], 0, ",", ".") . '</td>';
 
+          $ind = ler_indice(0, $lin['inffundo'], $lin['infdata']); $cal = 0;
+          if ($ind != 0) {
+               $cal = (pow(($lin['infquota'] / $ind), 0.333333) - 1) * 100;     // função para calculo de potência (elevado a)
+          }
+          $txt .= '<td class="text-right">' . number_format($cal, 6, ",", ".") . '</td>'; 
 
 
           $txt .=  '</tr>'; 
-          echo $txt;
+          echo $txt; $seq = $seq + 1;
      }
      return $ret;
 }
 
+function ler_indice($tip, $cgc, $dat) {
+     $ind = 0; $dia = 0; $cha = 0;
+     include_once "dados.php";
+     if ($tip == 0) { $dia = 1094; }
+     $dat = date('Y-m-d', strtotime('-' . $dia . ' days', strtotime($dat)));
+     $nro = acessa_reg("Select idmovto, infquota from tb_movto_id where inffundo = '" . $cgc . "' and infdata >= '" . $dat . "' order by infdata, idmovto Limit 1", $reg);            
+     if ($nro == 1) {
+          $cha = $reg['idmovto'];
+          $ind = $reg['infquota'];
+     }
+     return $ind;
+}
 ?>
 
 </html>

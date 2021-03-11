@@ -59,7 +59,6 @@
      echo json_encode($tab);     
 
 
-
      function patrimonio_liq($cod, &$dat, &$val) {
           $ret = 0; $dat = '**/**/****'; $val = 0;
           $com = "Select infdata, infpatrimonio from tb_movto_id where idfundo = " . $cod . " order by infdata";

@@ -190,6 +190,34 @@ $(document).ready(function() {
                          <?php echo  number_format(numero_reg('tb_fundos'), 0, ",", "."); ?></p>
                     <form class="qua-6" id="frmTelCon" name="frmTelCon" action="con-fundos.php" method="POST">
                          <div class="row">
+                         <div class="col-md-2">
+                                   <label>Classes</label><br />
+                                   <select id="cla" name="cla" class="form-control">
+                                        <option value="0" <?php echo ($cla != 0 ? '' : 'selected="selected"'); ?>>
+                                             Todas ...</option>
+                                        <option value="1" <?php echo ($cla != 1 ? '' : 'selected="selected"'); ?>>
+                                             Fundo Cambial (CDI)
+                                        </option>
+                                        <option value="2" <?php echo ($cla != 2 ? '' : 'selected="selected"'); ?>>
+                                             Fundo da Dívida Externa
+                                        </option>
+                                        <option value="3" <?php echo ($cla != 3 ? '' : 'selected="selected"'); ?>>
+                                             Fundo de Açoes (iBovespa)
+                                        </option>
+                                        <option value="4" <?php echo ($cla != 4 ? '' : 'selected="selected"'); ?>>
+                                             Fundo de Curto Prazo
+                                        </option>
+                                        <option value="5" <?php echo ($cla != 5 ? '' : 'selected="selected"'); ?>>
+                                             Fundo de Renda Fixa
+                                        </option>
+                                        <option value="6" <?php echo ($cla != 6 ? '' : 'selected="selected"'); ?>>
+                                             Fundo Multimercado
+                                        </option>
+                                        <option value="7" <?php echo ($cla != 7 ? '' : 'selected="selected"'); ?>>
+                                             Fundo Referenciado
+                                        </option>
+                                   </select>
+                              </div>
                               <div class="col-md-2">
                                    <label>Tempo</label><br />
                                    <select id="tem" name="tem" class="form-control">
@@ -231,34 +259,6 @@ $(document).ready(function() {
                                         </option>
                                         <option value="R" <?php echo ($anb != 'R' ? '' : 'selected="selected"'); ?>>
                                              Renda Fixa
-                                        </option>
-                                   </select>
-                              </div>
-                              <div class="col-md-2">
-                                   <label>Classes</label><br />
-                                   <select id="cla" name="cla" class="form-control">
-                                        <option value="0" <?php echo ($cla != 0 ? '' : 'selected="selected"'); ?>>
-                                             Todas ...</option>
-                                        <option value="1" <?php echo ($cla != 1 ? '' : 'selected="selected"'); ?>>
-                                             Fundo Cambial
-                                        </option>
-                                        <option value="2" <?php echo ($cla != 2 ? '' : 'selected="selected"'); ?>>
-                                             Fundo da Dívida Externa
-                                        </option>
-                                        <option value="3" <?php echo ($cla != 3 ? '' : 'selected="selected"'); ?>>
-                                             Fundo de Açoes
-                                        </option>
-                                        <option value="4" <?php echo ($cla != 4 ? '' : 'selected="selected"'); ?>>
-                                             Fundo de Curto Prazo
-                                        </option>
-                                        <option value="5" <?php echo ($cla != 5 ? '' : 'selected="selected"'); ?>>
-                                             Fundo de Renda Fixa
-                                        </option>
-                                        <option value="6" <?php echo ($cla != 6 ? '' : 'selected="selected"'); ?>>
-                                             Fundo Multimercado
-                                        </option>
-                                        <option value="7" <?php echo ($cla != 7 ? '' : 'selected="selected"'); ?>>
-                                             Fundo Referenciado
                                         </option>
                                    </select>
                               </div>

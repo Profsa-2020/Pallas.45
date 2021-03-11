@@ -79,11 +79,17 @@ $(document).ready(function() {
           $('#tab-0 tbody').empty();
      });
 
+     $('#dtf').blur(function() {
+          let dti = $('#dti').val();
+          let dtf = $('#dtf').val();
+          if (dtf == "") { $('#dtf').val(dti); }
+     });
+
      $('#tab-0').DataTable({
           "pageLength": 25,
           "aaSorting": [
-               [1, 'asc'],
-               [2, 'asc']
+               [2, 'asc'],
+               [0, 'asc']
           ],
           "dom": 'Bfrtip',
           "buttons": [{
@@ -182,7 +188,7 @@ $(document).ready(function() {
      if (isset($_SESSION['wrkcodreg']) == false) { $_SESSION['wrkcodreg'] = 0; }
      if (isset($_REQUEST['ope']) == true) { $_SESSION['wrkopereg'] = $_SESSION['wrknomfun'] = ""; }
 
-     $dti = date('d/m/Y', strtotime('-90 days'));
+     $dti = date('d/m/Y', strtotime('-30 days'));
      $dtf = date('d/m/Y');
      $cgc = (isset($_REQUEST['cgc']) == false ? '' : $_REQUEST['cgc']);
      $nom = (isset($_REQUEST['nom']) == false ? $_SESSION['wrknomfun'] : $_REQUEST['nom']);
@@ -246,6 +252,7 @@ $(document).ready(function() {
                                    <table id="tab-0" class="table table-sm table-striped">
                                         <thead>
                                              <tr>
+                                                  <th>Seq</th>
                                                   <th>C.n.p.j.</th>
                                                   <th>Nome do Fundo</th>
                                                   <th>Data</th>
@@ -303,13 +310,14 @@ $(document).ready(function() {
      </div>
      <!----------------------------------------------------------------------------------->
 
-
 </body>
 
 <?php
 function carrega_mov($cgc, $dti, $dtf) {
+     $seq = 1;
      include_once "dados.php";
      include_once "profsa.php";
+     if ($dti == "" && $dtf == "" && $cgc == "")  { return 1; }
      $dti = substr($dti,6,4) . "-" . substr($dti,3,2) . "-" . substr($dti,0,2) . " 00:00:00";
      $dtf = substr($dtf,6,4) . "-" . substr($dtf,3,2) . "-" . substr($dtf,0,2) . " 23:59:59";
      $com = "Select M.*, F.funnome from (tb_movto_id M left join tb_fundos F on M.idfundo = F.idfundo) ";
@@ -319,6 +327,7 @@ function carrega_mov($cgc, $dti, $dtf) {
      $nro = leitura_reg($com, $reg);
      foreach ($reg as $lin) {
           $txt =  '<tr>';
+          $txt .= '<td class="text-center">' . $seq . '</td>';
           $txt .= "<td>" . mascara_cpo($lin['inffundo'], "  .   .   /    -  ") . "</td>";
           $txt .= "<td>" . $lin['funnome'] . "</td>";
           $txt .= "<td>" . date('d/m/Y',strtotime($lin['infdata'])) . "</td>";
@@ -329,7 +338,7 @@ function carrega_mov($cgc, $dti, $dtf) {
           $txt .= '<td class="text-right">' . number_format($lin['infresgate'], 2, ",", ".") . '</td>';
           $txt .= '<td class="text-right">' . number_format($lin['infnumcotas'], 0, ",", ".") . '</td>';
           $txt .= "</tr>";
-          echo $txt;
+          echo $txt; $seq += 1;
      }
 }
 
