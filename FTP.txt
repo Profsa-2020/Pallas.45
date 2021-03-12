@@ -11,3 +11,18 @@
 		"confirm": true
 	}
 ]
+
+[
+	{
+		"name": "MoneyWay",
+		"host": "ftp.moneyway.com.br",
+		"port": 21,
+		"type": "ftp",
+		"username": "u811044904.Profsa",
+		"password": "Profsa_1993",
+		"path": "/analise/",
+		"autosave": false,
+		"confirm": true
+	}
+]
+

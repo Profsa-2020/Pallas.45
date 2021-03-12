@@ -132,13 +132,19 @@ $(document).ready(function() {
           } else if (arq == 1) {
                window.open('http://dados.cvm.gov.br/dados/FI/DOC/EXTRATO/DADOS/', '_blank');
           } else if (arq == 2 || arq == 3) {
-               window.open('http://dados.cvm.gov.br/dataset/fi-cad/resource/9ff23a88-d333-4b04-8600-ee474d9e1aae?inner_span=True', '_blank');
+               window.open(
+                    'http://dados.cvm.gov.br/dataset/fi-cad/resource/9ff23a88-d333-4b04-8600-ee474d9e1aae?inner_span=True',
+                    '_blank');
           } else if (arq == 4) {
                window.open('http://dados.cvm.gov.br/dados/FI/DOC/INF_DIARIO/DADOS/', '_blank');
           } else if (arq == 5 || arq == 6) {
-               window.open('http://dados.cvm.gov.br/dataset/fi-cad/resource/9ff23a88-d333-4b04-8600-ee474d9e1aae?inner_span=True', '_blank');
+               window.open(
+                    'http://dados.cvm.gov.br/dataset/fi-cad/resource/9ff23a88-d333-4b04-8600-ee474d9e1aae?inner_span=True',
+                    '_blank');
           } else if (arq == 7) {
-               window.open('https://www3.bcb.gov.br/sgspub/localizarseries/localizarSeries.do?method=prepararTelaLocalizarSeries', '_blank');     
+               window.open(
+                    'https://www3.bcb.gov.br/sgspub/localizarseries/localizarSeries.do?method=prepararTelaLocalizarSeries',
+                    '_blank');
           }
      });
 
@@ -213,24 +219,52 @@ $(document).ready(function() {
           } else {
                if ($arq == 1) {
                     $ret = processa_fun($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
+                    if (trim($men) != "") {
+                         echo '<script>alert("' . $men . ' !");</script>';
+                         echo '<script>console.log("' . $com . ' !!");</script>';
+                    }
                }
                if ($arq == 2) {
                     $ret = processa_sit($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
+                    if (trim($men) != "") {
+                         echo '<script>alert("' . $men . ' !!");</script>';
+                         echo '<script>console.log("' . $com . ' !!");</script>';
+                    }
                }
                if ($arq == 3) {
                     $ret = processa_exc($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
+                    if (trim($men) != "") {
+                         echo '<script>alert("' . $men . ' !!");</script>';
+                         echo '<script>console.log("' . $com . ' !!");</script>';
+                    }
                }
                if ($arq == 4) {
                     $ret = processa_dia($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
+                    if (trim($men) != "") {
+                         echo '<script>alert("' . $men . ' !!");</script>';
+                         echo '<script>console.log("' . $com . ' !!");</script>';
+                    }
                }
                if ($arq == 5) {
                     $ret = processa_cla($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
+                    if (trim($men) != "") {
+                         echo '<script>alert("' . $men . ' !!");</script>';
+                         echo '<script>console.log("' . $com . ' !!");</script>';
+                    }
                }
                if ($arq == 6) {
                     $ret = processa_ren($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
+                    if (trim($men) != "") {
+                         echo '<script>alert("' . $men . ' !!");</script>';
+                         echo '<script>console.log("' . $com . ' !!");</script>';
+                    }
                }
                if ($arq == 7) {
                     $ret = processa_ind($_SESSION['wrknomarq'], $_SESSION['wrknomcsv'], $arq, $pro, $gra, $men, $com);
+                    if (trim($men) != "") {
+                         echo '<script>alert("' . $men . ' !!");</script>';
+                         echo '<script>console.log("' . $com . ' !!");</script>';
+                    }
                }
           }
           $inf = "Fase: 03/03"; $_SESSION['wrknomcsv'] = ""; $_SESSION['wrknomarq'] = "";
@@ -274,10 +308,13 @@ $(document).ready(function() {
                                         <option value="1">Informações Cadastrais dos Fundos (extrato_fi_AAAA.csv)
                                         </option>
                                         <option value="2">Opções dos Fundos - Situação (cad_fi_hist_sit.csv)</option>
-                                        <option value="3">Opções dos Fundos - Exclusivo (cad_fi_hist_exclusivo.csv)</option>
+                                        <option value="3">Opções dos Fundos - Exclusivo (cad_fi_hist_exclusivo.csv)
+                                        </option>
                                         <option value="4">INFORMAÇÕES DIÁRIAS (inf_diario_fi_AAAAMM.csv)</option>
-                                        <option value="5">Informações de Fundos - Classes (cad_fi_hist_classe.csv)</option>
-                                        <option value="6">Informações de Fundos - Rentabilidade (cad_fi_hist_rentab.csv)</option>
+                                        <option value="5">Informações de Fundos - Classes (cad_fi_hist_classe.csv)
+                                        </option>
+                                        <option value="6">Informações de Fundos - Rentabilidade (cad_fi_hist_rentab.csv)
+                                        </option>
                                         <option value="7">Índices de Correção de Ativos</option>
                                    </select>
                               </div>
@@ -327,7 +364,8 @@ $(document).ready(function() {
                          <br />
                          <div class="row">
                               <div class="col-md-12 text-center">
-                                   <i id="web-1" class="cur-1 cor-4 fa fa-globe fa-2x" aria-hidden="true" title="Abre nova guia com acesso ao web site do tipo de arquivo"></i>
+                                   <i id="web-1" class="cur-1 cor-4 fa fa-globe fa-2x" aria-hidden="true"
+                                        title="Abre nova guia com acesso ao web site do tipo de arquivo"></i>
                               </div>
                          </div>
                          <br />
@@ -479,9 +517,9 @@ $(document).ready(function() {
           include_once "dados.php";
           $csv = fopen('upload/' . $cam, "r");  
           while (!feof ($csv)) {
-               $lin = explode(";", fgets($csv));
-               $nro = acessa_reg("Select idfundo from tb_fundos where funcnpj = '" . limpa_nro($lin[0]) . "'", $reg);            
-               if ($nro == 0 &&  limpa_nro($lin[0]) != "0") {
+               $lin = explode(";", fgets($csv, 1024));
+               $nro = acessa_reg("Select idfundo from tb_fundos where funcnpj = '" . limpa_nro($lin[0]) . "'", $reg);       
+               if ($nro == 0 &&  limpa_nro($lin[0]) != "0" && count($lin) == 116) {
                     $sql  = "insert into tb_fundos (";
                     $sql .= "funcnpj, ";
                     $sql .= "funnome, ";
@@ -560,7 +598,7 @@ $(document).ready(function() {
           while (!feof ($csv)) {
                $lin = explode(";", fgets($csv));
                $cha = ler_fundo($lin[0], $sta);
-               if ($cha != 0 && $sta == 0) {
+               if ($cha != 0 && $sta == 0 && count($lin) == 8) {
                     $sql  = "insert into tb_movto_id (";
                     $sql .= "idfundo, ";
                     $sql .= "inffundo, ";

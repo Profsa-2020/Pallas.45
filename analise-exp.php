@@ -157,8 +157,8 @@ $(document).ready(function() {
      $('#tab-0').DataTable({
           "pageLength": 25,
           "aaSorting": [
-               [1, 'asc'],
-               [2, 'asc']
+               [2, 'asc'],
+               [0, 'asc']
           ],
           "dom": 'Bfrtip',
           "buttons": [{
@@ -237,7 +237,7 @@ $(document).ready(function() {
 ?>
 
 <body id="box00">
-     <h1 class="cab-0">Analise - MoneyWay Investimentos - Profsa Informática</h1>
+     <h1 class="cab-0">Analise - MoneyWay Investimentos</h1>
      <?php include_once "cabecalho-1.php"; ?>
      <div class="container-fluid">
           <div class="row">
@@ -310,17 +310,18 @@ $(document).ready(function() {
                                         <thead>
                                              <tr>
                                                   <th>Seq</th>
-                                                  <th>Nº do C.n.p.j.</th>
+                                                  <th>Nro do C.n.p.j.</th>
                                                   <th>Nome do Fundo</th>
                                                   <th>Classe</th>
                                                   <th>Data</th>
-                                                  <th>Cota Diária</th>
-                                                  <th>Patrimônio</th>
-                                                  <th>Nº Cotistas</th>
+                                                  <th>Cota Diaria</th>
+                                                  <th>Patrimonio</th>
+                                                  <th>Nro Cotistas</th>
+                                                  <th>Retorno 3 anos (a.a%)</th>
                                                   <th>Mediana</th>
-                                                  <th>Média</th>
-                                                  <th>Máximo</th>
-                                                  <th>% acima do CDI</th>
+                                                  <th>Media</th>
+                                                  <th>Maximo</th>
+                                                  <th>Minimo</th>
                                              </tr>
                                         </thead>
                                         <tbody>
@@ -343,7 +344,7 @@ $(document).ready(function() {
 
 <?php
 function carrega_fun($err, $dti, $dtf, $cgc, $nom) { 
-     $seq = 0; $ind = 0;
+     $seq = 1; $ind = 0; $mdn = 0; $som = 0; $med = 0; $max = 0; $min = 999999;
      include_once "dados.php";
      include_once "profsa.php";
      if ($err == 1)  { return 1; }
@@ -366,7 +367,7 @@ function carrega_fun($err, $dti, $dtf, $cgc, $nom) {
      if ($dti != "" && $dtf != "" && $dti != "-- 00:00:00" && $dtf != "-- 23:59:59") {
           $com .= " and infdata between '" . $dti . "' and '" . $dtf . "' ";
      }
-     $com .= " order by M.infdata, M.idmovto";
+     $com .= " order by M.infdata, M.inffundo";
      $nro = leitura_reg($com, $reg);
      foreach ($reg as $cpo => $lin) {
           $txt = ""; 
@@ -391,31 +392,42 @@ function carrega_fun($err, $dti, $dtf, $cgc, $nom) {
                $txt .= '<td>' . date('d/m/Y',strtotime($lin['infdata'])) . '</td>';
           }
           $txt .= '<td class="text-right">' . number_format($lin['infquota'], 4, ",", ".") . '</td>';
-          $txt .= '<td class="text-right">' . number_format($lin['infpatrimonio'], 0, ",", ".") . '</td>';
+          $txt .= '<td class="text-right">' . number_format($lin['infpatrimonio'], 2, ",", ".") . '</td>';
           $txt .= '<td class="text-center">' . number_format($lin['infnumcotas'], 0, ",", ".") . '</td>';
 
-          $ind = ler_indice(0, $lin['inffundo'], $lin['infdata']); $cal = 0;
+          $ind = ler_indice(0, $lin['inffundo'], $lin['infdata'], $dat); $cal = 0;
           if ($ind != 0) {
                $cal = (pow(($lin['infquota'] / $ind), 0.333333) - 1) * 100;     // função para calculo de potência (elevado a)
           }
-          $txt .= '<td class="text-right">' . number_format($cal, 6, ",", ".") . '</td>'; 
-
-
+          $txt .= '<td class="text-right">' . number_format($cal, 8, ",", ".") . '</td>'; 
+          if ($cal != 0) {
+               $som = $som + $cal; $med = $som / $seq; $seq = $seq + 1;
+               if ($cal < $min) { $min = $cal; }
+               if ($cal > $max) { $max = $cal; }                    
+          }
+          $txt .= '<td class="text-right">' . number_format($mdn, 8, ",", ".") . '</td>';
+          $txt .= '<td class="text-right">' . number_format($med, 8, ",", ".") . '</td>';
+          $txt .= '<td class="text-right">' . number_format($max, 8, ",", ".") . '</td>';
+          if ($min == 999999) {
+               $txt .= '<td class="text-right">' . '0,000000' . '</td>';
+          } else {
+               $txt .= '<td class="text-right">' . number_format($min, 8, ",", ".") . '</td>';
+          }
           $txt .=  '</tr>'; 
-          echo $txt; $seq = $seq + 1;
+          echo $txt; 
      }
      return $ret;
 }
 
-function ler_indice($tip, $cgc, $dat) {
-     $ind = 0; $dia = 0; $cha = 0;
+function ler_indice($tip, $cgc, $dat, &$dia) {
+     $ind = 0; $dia = 0; $dia = "**/**/****";
      include_once "dados.php";
      if ($tip == 0) { $dia = 1094; }
      $dat = date('Y-m-d', strtotime('-' . $dia . ' days', strtotime($dat)));
-     $nro = acessa_reg("Select idmovto, infquota from tb_movto_id where inffundo = '" . $cgc . "' and infdata >= '" . $dat . "' order by infdata, idmovto Limit 1", $reg);            
+     $nro = acessa_reg("Select idmovto, infquota, infdata from tb_movto_id where inffundo = '" . $cgc . "' and infdata >= '" . $dat . "' order by infdata, idmovto Limit 1", $reg);            
      if ($nro == 1) {
-          $cha = $reg['idmovto'];
           $ind = $reg['infquota'];
+          $dia = date('d/m/Y',strtotime($reg['infdata']));
      }
      return $ind;
 }

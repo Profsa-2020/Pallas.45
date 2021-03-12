@@ -265,7 +265,11 @@ $(document).ready(function() {
                                              </tr>
                                         </thead>
                                         <tbody>
-                                             <?php $ret = carrega_mov($cgc, $dti, $dtf);  ?>
+                                             <?php 
+                                             if (isset($_REQUEST['consulta']) == true) {
+                                                  $ret = carrega_mov($cgc, $dti, $dtf);  
+                                             }
+                                             ?>
                                         </tbody>
                                    </table>
                                    <hr />
@@ -323,7 +327,6 @@ function carrega_mov($cgc, $dti, $dtf) {
      $com = "Select M.*, F.funnome from (tb_movto_id M left join tb_fundos F on M.idfundo = F.idfundo) ";
      $com .= " where infdata between '" . $dti . "' and '" . $dtf . "' ";
      if ($cgc != "") { $com .= " and inffundo = '" . limpa_nro($cgc) . "'"; }
-     $com .= " order by infdata, idmovto ";          
      $nro = leitura_reg($com, $reg);
      foreach ($reg as $lin) {
           $txt =  '<tr>';
