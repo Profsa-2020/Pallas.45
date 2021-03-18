@@ -81,6 +81,9 @@ $(function() {
 $(document).ready(function() {
      $('#cgc').blur(function() {
           $('#tab-0 tbody').empty();
+          if ($('#cgc').val() == "") {
+               $('#nom').val('');
+          };
      });
 
      $('#dti').change(function() {
@@ -133,6 +136,7 @@ $(document).ready(function() {
                               $('#cgc').val('');
                               $('#nom').val('');
                               $('#qtd').html(data.qtd);
+                              $('#tab-0 tbody').empty();
                          }
                     }).fail(function(data) {
                          console.log('Erro: ' + JSON.stringify(data));
@@ -223,7 +227,7 @@ $(document).ready(function() {
      $qtd = count($_SESSION['wrklisfun']);
 
      if (isset($_REQUEST['consulta']) == true) {
-          if ($dti == "" && $dtf == "" && $cgc == "")  { 
+          if ($dti == "" && $dtf == "" && $cgc == "" && count($_SESSION['wrklisfun'] ) == 0)  { 
                echo '<script>alert("Não se pode solicitar consulta sem nenhum campo informado !");</script>'; $err = 1;
           }
           if ($dti == "" && $dtf != "")  { 
@@ -317,11 +321,14 @@ $(document).ready(function() {
                                                   <th>Cota Diaria</th>
                                                   <th>Patrimonio</th>
                                                   <th>Nro Cotistas</th>
-                                                  <th>Retorno 3 anos (a.a%)</th>
+                                                  <th>Índice Usado</th>
+                                                  <th class="text-center">Retorno 3 anos (a.a%)</th>
+                                                  <th class="text-center">Retorno 3 anos - CDI (a.a%)</th>
                                                   <th>Mediana</th>
                                                   <th>Media</th>
                                                   <th>Maximo</th>
                                                   <th>Minimo</th>
+                                                  <th class="text-center">% acima do CDI</th>
                                              </tr>
                                         </thead>
                                         <tbody>
@@ -344,11 +351,11 @@ $(document).ready(function() {
 
 <?php
 function carrega_fun($err, $dti, $dtf, $cgc, $nom) { 
-     $seq = 1; $ind = 0; $mdn = 0; $som = 0; $med = 0; $max = 0; $min = 999999;
+     $seq = 1; $ind = 0; $mdn = 0; $som = 0; $med = 0; $max = 0; $min = 999999; $cdi_n = 0; $cdi_t = 0; $lis_t = array();
      include_once "dados.php";
      include_once "profsa.php";
      if ($err == 1)  { return 1; }
-     if ($dti == "" && $dtf == "" && $cgc == "")  { return 2; }
+     if ($dti == "" && $dtf == "" && $cgc == "" && count($_SESSION['wrklisfun']) == 0)  { return 2; }
      $ret = 0; $txt = ""; $sql = ""; $cha = "";
      $dti = substr($dti,6,4) . "-" . substr($dti,3,2) . "-" . substr($dti,0,2) . " 00:00:00";
      $dtf = substr($dtf,6,4) . "-" . substr($dtf,3,2) . "-" . substr($dtf,0,2) . " 23:59:59";
@@ -395,12 +402,20 @@ function carrega_fun($err, $dti, $dtf, $cgc, $nom) {
           $txt .= '<td class="text-right">' . number_format($lin['infpatrimonio'], 2, ",", ".") . '</td>';
           $txt .= '<td class="text-center">' . number_format($lin['infnumcotas'], 0, ",", ".") . '</td>';
 
+          $cdi = cdi_indice($lin['inffundo'], $lin['infdata'], $dta); // Pega CDI da mesma data
+
           $ind = ler_indice(0, $lin['inffundo'], $lin['infdata'], $dat); $cal = 0;
           if ($ind != 0) {
                $cal = (pow(($lin['infquota'] / $ind), 0.333333) - 1) * 100;     // função para calculo de potência (elevado a)
           }
+          $txt .= '<td class="text-center">' . number_format($ind, 8, ",", ".") . '<br />' . date('d/m/Y',strtotime($dat)) . '</td>'; 
           $txt .= '<td class="text-right">' . number_format($cal, 8, ",", ".") . '</td>'; 
+          $txt .= '<td class="text-right">' . number_format($cal - $cdi, 8, ",", ".") . '</td>'; 
           if ($cal != 0) {
+               $lis_t[] = array(round($cal, 8), $seq);
+               $lis_c = count($lis_t);
+               $nro = round($lis_c / 2, 0) - 1;
+               $mdn = $lis_t[$nro][0];
                $som = $som + $cal; $med = $som / $seq; $seq = $seq + 1;
                if ($cal < $min) { $min = $cal; }
                if ($cal > $max) { $max = $cal; }                    
@@ -413,16 +428,20 @@ function carrega_fun($err, $dti, $dtf, $cgc, $nom) {
           } else {
                $txt .= '<td class="text-right">' . number_format($min, 8, ",", ".") . '</td>';
           }
+          $cdi_t = $cdi_t + 1; 
+          if (($cal - $cdi) > 0) { $cdi_n = $cdi_n + 1; }
+          $txt .= '<td class="text-center">' . number_format($cdi_n / $cdi_t * 100, 0, ",", ".") . '</td>';
           $txt .=  '</tr>'; 
           echo $txt; 
      }
+     $_SESSION['wrklisfun'] = array();
      return $ret;
 }
 
 function ler_indice($tip, $cgc, $dat, &$dia) {
      $ind = 0; $dia = 0; $dia = "**/**/****";
      include_once "dados.php";
-     if ($tip == 0) { $dia = 1094; }
+     if ($tip == 0) { $dia = 1095; }
      $dat = date('Y-m-d', strtotime('-' . $dia . ' days', strtotime($dat)));
      $nro = acessa_reg("Select idmovto, infquota, infdata from tb_movto_id where inffundo = '" . $cgc . "' and infdata >= '" . $dat . "' order by infdata, idmovto Limit 1", $reg);            
      if ($nro == 1) {
@@ -431,6 +450,18 @@ function ler_indice($tip, $cgc, $dat, &$dia) {
      }
      return $ind;
 }
+
+function cdi_indice($cgc, $dat, &$dia) {
+     $ind = 0; $dia = 0; $dia = "**/**/****";
+     include_once "dados.php";
+     $nro = acessa_reg("Select M.idmovto, M.infquota, M.infdata, F.funclasse from (tb_movto_id M left join tb_fundos F on M.idfundo = F.idfundo) where F.funclasse = 1 and M.inffundo = '" . $cgc . "' and M.infdata = '" . $dat . "'", $reg);
+     if ($nro == 1) {
+          $ind = $reg['infquota'];
+          $dia = date('d/m/Y',strtotime($reg['infdata']));
+     }
+     return $ind;
+}
+
 ?>
 
 </html>

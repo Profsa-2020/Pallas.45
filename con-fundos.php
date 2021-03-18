@@ -87,7 +87,7 @@ $(document).ready(function() {
           $('#tab-0 tbody').empty();
      });
 
-     $('#con').change(function() {
+     $('#cnd').change(function() {
           $('#tab-0 tbody').empty();
      });
 
@@ -133,6 +133,21 @@ $(document).ready(function() {
           }
      });
 
+     $("#limpa").click(function() {
+          $('#cla').val(1);
+          $('#tem').val(0);
+          $('#anb').val('');
+          $('#pub').val('');
+          $('#esp').val('');
+          $('#exc').val('');
+          $('#cot').val('');
+          $('#pat').val(0);
+          $('#dia').val('');
+          $('#nor').val('');
+          $('#cnd').val('');
+          $('#tab-0 tbody').empty();
+     });
+
      $(window).scroll(function() {
           if ($(this).scrollTop() > 100) {
                $(".subir").fadeIn(500);
@@ -164,7 +179,7 @@ $(document).ready(function() {
      $cla = (isset($_REQUEST['cla']) == false ? 0 : $_REQUEST['cla']);
      $pub = (isset($_REQUEST['pub']) == false ? '' : $_REQUEST['pub']);
      $esp = (isset($_REQUEST['esp']) == false ? '' : $_REQUEST['esp']);
-     $con = (isset($_REQUEST['con']) == false ? 'A' : $_REQUEST['con']);
+     $cnd = (isset($_REQUEST['cnd']) == false ? 'A' : $_REQUEST['cnd']);
      $tem = (isset($_REQUEST['tem']) == false ? '' : $_REQUEST['tem']);
      $pat = (isset($_REQUEST['pat']) == false ? 0 : $_REQUEST['pat']);
      $anb = (isset($_REQUEST['anb']) == false ? '' : $_REQUEST['anb']);
@@ -296,6 +311,8 @@ $(document).ready(function() {
                               </div>
                               <div class="col-md-2 text-center">
                                    <br />
+                                   <i id="limpa" class="cur-1 fa fa-times-circle-o fa-2x" aria-hidden="true" title="Limpa todos os filtros para pegar todos os fundos cadastrados."></i>
+                                   &nbsp; &nbsp; 
                                    <button type="submit" id="con" name="consulta" class="bot-2"
                                         title="Carrega dados do movimen to conforme parâmetros informados pelo usuário."><i
                                              class="fa fa-search fa-2x" aria-hidden="true"></i></button>
@@ -381,12 +398,12 @@ $(document).ready(function() {
                               </div>
                               <div class="col-md-2">
                                    <label>Condomínio</label><br />
-                                   <select id="con" name="con" class="form-control">
-                                        <option value="" <?php echo ($con != '' ? '' : 'selected="selected"'); ?>>
+                                   <select id="cnd" name="cnd" class="form-control">
+                                        <option value="" <?php echo ($cnd != '' ? '' : 'selected="selected"'); ?>>
                                              Todos ...</option>
-                                        <option value="A" <?php echo ($con != 'A' ? '' : 'selected="selected"'); ?>>
+                                        <option value="A" <?php echo ($cnd != 'A' ? '' : 'selected="selected"'); ?>>
                                              Aberto</option>
-                                        <option value="F" <?php echo ($con != 'F' ? '' : 'selected="selected"'); ?>>
+                                        <option value="F" <?php echo ($cnd != 'F' ? '' : 'selected="selected"'); ?>>
                                              Fechado</option>
                                    </select>
                               </div>
@@ -417,7 +434,7 @@ $(document).ready(function() {
                                              </tr>
                                         </thead>
                                         <tbody>
-                                             <?php $ret = carrega_fun($cla, $pub, $esp, $con, $tem, $pat, $anb, $nor, $exc, $cot, $dia);  ?>
+                                             <?php $ret = carrega_fun($cla, $pub, $esp, $cnd, $tem, $pat, $anb, $nor, $exc, $cot, $dia);  ?>
                                         </tbody>
                                    </table>
                                    <hr />
@@ -434,7 +451,7 @@ $(document).ready(function() {
 </body>
 
 <?php
-function carrega_fun($cla, $pub, $esp, $con, $tem, $pat, $anb, $nor, $exc, $cot, $dia) {
+function carrega_fun($cla, $pub, $esp, $cnd, $tem, $pat, $anb, $nor, $exc, $cot, $dia) {
      include_once "dados.php";
      include_once "profsa.php";
      $dti = date('01/01/2000');
@@ -450,7 +467,7 @@ function carrega_fun($cla, $pub, $esp, $con, $tem, $pat, $anb, $nor, $exc, $cot,
      if ($cla != 0) { $com .= " and funclasse = " . $cla; }
      if ($esp != '') { $com .= " and funespelho = '" . $esp . "'"; }
      if ($pub != '') { $com .= " and funpubalvo = '" . $pub . "'"; }
-     if ($con != '') { $com .= " and funcondominio = '" . $con . "'"; }
+     if ($cnd != '') { $com .= " and funcondominio = '" . $cnd . "'"; }
      if ($anb != '') { $com .= " and funclaambima = '" . $anb . "'"; }
      if ($exc != '') { $com .= " and funexclusivo = '" . $exc . "'"; }
      if ($nor != '') { $com .= " and funnormal = '" . $nor . "'"; }
