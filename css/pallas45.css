@@ -259,7 +259,7 @@ button.dt-button {
     position: relative;
     margin: 20px 0px;
     padding: 5px;
-    width: 95%; /* 210 */
+    width: 90%; /* Largura da caixa do menu - 210 */
     background-color:#effcf5;
     display: flex;
     flex-direction: column;
@@ -305,7 +305,7 @@ button.dt-button {
     width: 100%;
     height: 100%;
     line-height: 40px;
-    font-size: 34px;
+    font-size: 30px;    /* Fonte do i e opção */
     color: #333;
     transition: 0.5s;
 }
@@ -336,7 +336,7 @@ button.dt-button {
     position: relative;
     color: #333;
     font-weight: 500;
-    font-size: 16px; /* Fonte do Menu */
+    font-size: 14px;    /* Fonte do Menu */
     line-height: 20px;
     transition: 0.5s;
 }

@@ -554,8 +554,65 @@ $(document).ready(function() {
                     if (utf8_encode($lin[8]) == "PREVIDENCIÁRIO") { $sql .= "'" . 'C' . "',";  }    // Coluna I - Publico Alvo }
                     if (utf8_encode($lin[8]) == "PÚBLICO EM GERAL") { $sql .= "'" . 'D' . "',";  } // Coluna I - Publico Alvo }
                     $sql .= "'" . substr($lin[15], 0, 1) . "',";  // Coluna P - Fundo Cotas
-                    $sql .= "'" . substr($lin[16], 0, 1) . "',";  // Coluna Q - espelho
-                    $sql .= "'" . substr($lin[10], 0, 1) . "',";  // Coluna K - Anbima (Estratégia) 
+                    $sql .= "'" . substr($lin[16], 0, 1) . "',";  // Coluna Q - espelho     
+
+                    if (utf8_encode(trim($lin[10])) == "") { $sql .= "01'" . '' . "',";  }    // Coluna K - Anbima (Estratégia) 
+                    if (utf8_encode($lin[10]) == "AÇÕES - ATIVO - DIVIDENDOS") { $sql .= "'" . '02' . "',";  }
+                    if (utf8_encode($lin[10]) == "AÇÕES - ATIVO - ÍNDICE ATIVO") { $sql .= "'" . '03' . "',";  }
+                    if (utf8_encode($lin[10]) == "AÇÕES - ATIVO - LIVRE") { $sql .= "'" . '04' . "',";  }
+                    if (utf8_encode($lin[10]) == "AÇÕES - ATIVO - SETORIAIS") { $sql .= "'" . '05' . "',";  }
+                    if (utf8_encode($lin[10]) == "AÇÕES - ATIVO - SMALL CAPS") { $sql .= "'" . '06' . "',";  }
+                    if (utf8_encode($lin[10]) == "AÇÕES - ATIVO - SUSTENTABILIDADE / GOVERNANÇA") { $sql .= "'" . '07' . "',";  }
+                    if (utf8_encode($lin[10]) == "AÇÕES - ATIVO - VALOR / CRESCIMENTO") { $sql .= "'" . '08' . "',";  }
+                    if (utf8_encode($lin[10]) == "AÇÕES - FUNDOS FECHADOS") { $sql .= "'" . '09' . "',";  }
+                    if (utf8_encode($lin[10]) == "AÇÕES - INDEXADO - ÍNDICE PASSIVO") { $sql .= "'" . '10' . "',";  }
+                    if (utf8_encode($lin[10]) == "AÇÕES - INVESTIMENTO NO EXTERIOR") { $sql .= "'" . '11' . "',";  }
+                    if (utf8_encode($lin[10]) == "AÇÕES - MONO AÇÃO") { $sql .= "'" . '12' . "',";  }
+                    if (utf8_encode($lin[10]) == "FUNDO CAMBIAL") { $sql .= "'" . '13' . "',";  }
+                    if (utf8_encode($lin[10]) == "MULTIMERCADO - ALOCAÇÃO - BALANCEADOS") { $sql .= "'" . '14' . "',";  }
+                    if (utf8_encode($lin[10]) == "MULTIMERCADO - ALOCAÇÃO - DINÂMICOS") { $sql .= "'" . '15' . "',";  }
+                    if (utf8_encode($lin[10]) == "MULTIMERCADO - ESTRATÉGIA - CAPITAL PROTEGIDO") { $sql .= "'" . '16' . "',";  }
+                    if (utf8_encode($lin[10]) == "MULTIMERCADO - ESTRATÉGIA - ESTRATÉGIA ESPECÍFICA") { $sql .= "'" . '17' . "',";  }
+                    if (utf8_encode($lin[10]) == "MULTIMERCADO - ESTRATÉGIA - JUROS E MOEDAS") { $sql .= "'" . '18' . "',";  }
+                    if (utf8_encode($lin[10]) == "MULTIMERCADO - ESTRATÉGIA - LIVRE") { $sql .= "'" . '19' . "',";  }
+                    if (utf8_encode($lin[10]) == "MULTIMERCADO - ESTRATÉGIA - LONG & SHORT DIRECIONAL") { $sql .= "'" . '20' . "',";  }
+                    if (utf8_encode($lin[10]) == "MULTIMERCADO - ESTRATÉGIA - LONG & SHORT NEUTRO") { $sql .= "'" . '21' . "',";  }
+                    if (utf8_encode($lin[10]) == "MULTIMERCADO - ESTRATÉGIA - MACRO") { $sql .= "'" . '22' . "',";  }
+                    if (utf8_encode($lin[10]) == "MULTIMERCADO - ESTRATÉGIA - TRADING") { $sql .= "'" . '23' . "',";  }
+                    if (utf8_encode($lin[10]) == "MULTIMERCADO - INVESTIMENTO NO EXTERIOR") { $sql .= "'" . '24' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA - AÇÕES ATIVO") { $sql .= "'" . '25' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA - BALANCEADOS - ACIMA DE 49") { $sql .= "'" . '26' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA - BALANCEADOS - DE 30-49") { $sql .= "'" . '27' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA - MULTIMERCADOS LIVRE") { $sql .= "'" . '28' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA - RF DURAÇÃO BAIXA - GRAU DE INVESTIMENTO") { $sql .= "'" . '29' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA - RF DURAÇÃO LIVRE - GRAU DE INVESTIMENTO") { $sql .= "'" . '30' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA - RF DURAÇÃO LIVRE - SOBERANO") { $sql .= "'" . '31' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA - RF DURAÇÃO MÉDIA - GRAU DE INVESTIMENTO") { $sql .= "'" . '32' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA - RF INDEXADOS") { $sql .= "'" . '33' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA AÇÕES") { $sql .= "'" . '34' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA BALANCEADOS - ACIMA DE 30") { $sql .= "'" . '35' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA BALANCEADOS - ATÉ 15") { $sql .= "'" . '36' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA BALANCEADOS - DE 15 A 30") { $sql .= "'" . '37' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA DATA ALVO (FIQ)") { $sql .= "'" . '38' . "',";  }
+                    if (utf8_encode($lin[10]) == "PREVIDÊNCIA MULTIMERCADO") { $sql .= "'" . '39' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA") { $sql .= "'" . '40' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA - INV. NO EXTERIOR") { $sql .= "'" . '41' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA - INV. NO EXTERIOR - DÍVIDA EXTERNA") { $sql .= "'" . '42' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA - PASSIVO - ÍNDICES") { $sql .= "'" . '43' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA ALTA DURAÇÃO - CRÉDITO LIVRE") { $sql .= "'" . '44' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA ALTA DURAÇÃO - GRAU DE INVESTIMENTO") { $sql .= "'" . '45' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA ALTA DURAÇÃO - SOBERANO") { $sql .= "'" . '46' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA BAIXA DURAÇÃO - CRÉDITO LIVRE") { $sql .= "'" . '47' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA BAIXA DURAÇÃO - GRAU DE INVESTIMENTO") { $sql .= "'" . '48' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA BAIXA DURAÇÃO - SOBERANO") { $sql .= "'" . '49' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA LIVRE DURAÇÃO - CRÉDITO LIVRE") { $sql .= "'" . '50' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA LIVRE DURAÇÃO - GRAU DE INVESTIMENTO") { $sql .= "'" . '51' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA LIVRE DURAÇÃO - SOBERANO") { $sql .= "'" . '52' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA MÉDIA DURAÇÃO - CRÉDITO LIVRE") { $sql .= "'" . '53' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA MÉDIA DURAÇÃO - GRAU DE INVESTIMENTO") { $sql .= "'" . '54' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA MÉDIA DURAÇÃO - SOBERANO") { $sql .= "'" . '55' . "',";  }
+                    if (utf8_encode($lin[10]) == "RENDA FIXA SIMPLES") { $sql .= "'" . '56' . "',";  }
+
                     $sql .= "'" . $lin[17] . "',";  // Coluna R R$ - Aplicação Mínima
                     $sql .= "'" . substr($lin[18], 0, 1) . "',";  // Coluna S - Atualização Diária Cota
                     $sql .= "'" . $cam . "',";  

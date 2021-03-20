@@ -38,7 +38,7 @@
                </a>
           </li>
           <li>
-               <a href="analise-exp.php">
+               <a href="analise-exp.php?ope=8&cod=0">
                     <div class="icon">
                          <i class="fa fa-line-chart" aria-hidden="true"></i>
                          <i class="fa fa-line-chart" aria-hidden="true"></i>
@@ -70,7 +70,7 @@
                          <i class="fa fa-id-card" aria-hidden="true"></i>
                          <i class="fa fa-id-card" aria-hidden="true"></i>
                     </div>
-                    <div class="name"><span data-text="Log de Acesso">Log de Acesso</span></div>
+                    <div class="name"><span data-text="Log de Uso">Log de Uso</span></div>
                </a>
           </li>
           <li>

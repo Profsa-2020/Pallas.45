@@ -112,29 +112,27 @@ $(document).ready(function() {
                          </div>
                     </div>
                     <br />
-                    <div class="row">
-                         <div class="col-md-1"></div>
+                    <div class="form-row">
                          <div class="qua-5 col-md-2 text-center">
                               <p>Usuários</p>
                               <span><?php echo number_format($tab['usu'], 0, ",", "."); ?></span>
                          </div>
-                         <div class="qua-5 col-md-2 text-center">
+                         <div class="qua-5 col-2 text-center">
                               <p>Fundos</p>
                               <span><?php echo number_format($tab['fun'], 0, ",", "."); ?></span>
                          </div>
-                         <div class="qua-5 col-md-2 text-center">
+                         <div class="qua-5 col-2 text-center">
                               <p>Movimento</p>
                               <span><?php echo number_format($tab['mv0'], 0, ",", "."); ?></span>
                          </div>
-                         <div class="qua-5 col-md-2 text-center">
+                         <div class="qua-5 col-2 text-center">
                               <p>Opções</p>
                               <span><?php echo number_format($tab['opc'], 0, ",", "."); ?></span>
                          </div>
-                         <div class="qua-5 col-md-2 text-center">
+                         <div class="qua-5 col-2 text-center">
                               <p>Índices</p>
                               <span><?php echo number_format($tab['ind'], 0, ",", "."); ?></span>
                          </div>
-                         <div class="col-md-1"></div>
                     </div>
                     <br />
                     <div class="row">

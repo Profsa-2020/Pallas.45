@@ -176,6 +176,7 @@ $(document).ready(function() {
                $ret = gravar_log(8, "Entrada na página de consulta de fundos do sistema Pallas.45 - MoneyWay");  
           }
      }
+     if (isset($_SESSION['wrklisfun']) == false) { $_SESSION['wrklisfun'] = array(); }
      $cla = (isset($_REQUEST['cla']) == false ? 0 : $_REQUEST['cla']);
      $pub = (isset($_REQUEST['pub']) == false ? '' : $_REQUEST['pub']);
      $esp = (isset($_REQUEST['esp']) == false ? '' : $_REQUEST['esp']);
@@ -205,7 +206,7 @@ $(document).ready(function() {
                          <?php echo  number_format(numero_reg('tb_fundos'), 0, ",", "."); ?></p>
                     <form class="qua-6" id="frmTelCon" name="frmTelCon" action="con-fundos.php" method="POST">
                          <div class="row">
-                         <div class="col-md-2">
+                              <div class="col-md-2">
                                    <label>Classes</label><br />
                                    <select id="cla" name="cla" class="form-control">
                                         <option value="0" <?php echo ($cla != 0 ? '' : 'selected="selected"'); ?>>
@@ -260,21 +261,118 @@ $(document).ready(function() {
                                    <select id="anb" name="anb" class="form-control">
                                         <option value="" <?php echo ($anb != '' ? '' : 'selected="selected"'); ?>>
                                              Todas ...</option>
-                                        <option value="A" <?php echo ($anb != 'A' ? '' : 'selected="selected"'); ?>>
-                                             Ações
-                                        </option>
-                                        <option value="F" <?php echo ($anb != 'F' ? '' : 'selected="selected"'); ?>>
-                                             Fundo Cambial
-                                        </option>
-                                        <option value="M" <?php echo ($anb != 'M' ? '' : 'selected="selected"'); ?>>
-                                             Multimercado
-                                        </option>
-                                        <option value="P" <?php echo ($anb != 'P' ? '' : 'selected="selected"'); ?>>
-                                             Previdenciária
-                                        </option>
-                                        <option value="R" <?php echo ($anb != 'R' ? '' : 'selected="selected"'); ?>>
-                                             Renda Fixa
-                                        </option>
+                                        <option value="01" <?php echo ($anb != '01' ? '' : 'selected="selected"'); ?>>
+                                             EM BRANCO (Não Informado ...)</option>
+                                        <option value="02" <?php echo ($anb != '02' ? '' : 'selected="selected"'); ?>>
+                                             AÇÕES - ATIVO - DIVIDENDOS</option>
+                                        <option value="03" <?php echo ($anb != '03' ? '' : 'selected="selected"'); ?>>
+                                             AÇÕES - ATIVO - ÍNDICE ATIVO</option>
+                                        <option value="04" <?php echo ($anb != '04' ? '' : 'selected="selected"'); ?>>
+                                             AÇÕES - ATIVO - LIVRE</option>
+                                        <option value="05" <?php echo ($anb != '05' ? '' : 'selected="selected"'); ?>>
+                                             AÇÕES - ATIVO - SETORIAIS</option>
+                                        <option value="06" <?php echo ($anb != '06' ? '' : 'selected="selected"'); ?>>
+                                             AÇÕES - ATIVO - SMALL CAPS</option>
+                                        <option value="07" <?php echo ($anb != '07' ? '' : 'selected="selected"'); ?>>
+                                             AÇÕES - ATIVO - SUSTENTABILIDADE </option> GOVERNANÇA</option>
+                                        <option value="08" <?php echo ($anb != '08' ? '' : 'selected="selected"'); ?>>
+                                             AÇÕES - ATIVO - VALOR </option> CRESCIMENTO</option>
+                                        <option value="09" <?php echo ($anb != '09' ? '' : 'selected="selected"'); ?>>
+                                             AÇÕES - FUNDOS FECHADOS</option>
+                                        <option value="10" <?php echo ($anb != '10' ? '' : 'selected="selected"'); ?>>
+                                             AÇÕES - INDEXADO - ÍNDICE PASSIVO</option>
+                                        <option value="11" <?php echo ($anb != '11' ? '' : 'selected="selected"'); ?>>
+                                             AÇÕES - INVESTIMENTO NO EXTERIOR</option>
+                                        <option value="12" <?php echo ($anb != '12' ? '' : 'selected="selected"'); ?>>
+                                             AÇÕES - MONO AÇÃO</option>
+                                        <option value="13" <?php echo ($anb != '13' ? '' : 'selected="selected"'); ?>>
+                                             FUNDO CAMBIAL</option>
+                                        <option value="14" <?php echo ($anb != '14' ? '' : 'selected="selected"'); ?>>
+                                             MULTIMERCADO - ALOCAÇÃO - BALANCEADOS</option>
+                                        <option value="15" <?php echo ($anb != '15' ? '' : 'selected="selected"'); ?>>
+                                             MULTIMERCADO - ALOCAÇÃO - DINÂMICOS</option>
+                                        <option value="16" <?php echo ($anb != '16' ? '' : 'selected="selected"'); ?>>
+                                             MULTIMERCADO - ESTRATÉGIA - CAPITAL PROTEGIDO</option>
+                                        <option value="17" <?php echo ($anb != '17' ? '' : 'selected="selected"'); ?>>
+                                             MULTIMERCADO - ESTRATÉGIA - ESTRATÉGIA ESPECÍFICA</option>
+                                        <option value="18" <?php echo ($anb != '18' ? '' : 'selected="selected"'); ?>>
+                                             MULTIMERCADO - ESTRATÉGIA - JUROS E MOEDAS</option>
+                                        <option value="19" <?php echo ($anb != '19' ? '' : 'selected="selected"'); ?>>
+                                             MULTIMERCADO - ESTRATÉGIA - LIVRE</option>
+                                        <option value="20" <?php echo ($anb != '20' ? '' : 'selected="selected"'); ?>>
+                                             MULTIMERCADO - ESTRATÉGIA - LONG & SHORT DIRECIONAL</option>
+                                        <option value="21" <?php echo ($anb != '21' ? '' : 'selected="selected"'); ?>>
+                                             MULTIMERCADO - ESTRATÉGIA - LONG & SHORT NEUTRO</option>
+                                        <option value="22" <?php echo ($anb != '22' ? '' : 'selected="selected"'); ?>>
+                                             MULTIMERCADO - ESTRATÉGIA - MACRO</option>
+                                        <option value="23" <?php echo ($anb != '23' ? '' : 'selected="selected"'); ?>>
+                                             MULTIMERCADO - ESTRATÉGIA - TRADING</option>
+                                        <option value="24" <?php echo ($anb != '24' ? '' : 'selected="selected"'); ?>>
+                                             MULTIMERCADO - INVESTIMENTO NO EXTERIOR</option>
+                                        <option value="25" <?php echo ($anb != '25' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA - AÇÕES ATIVO</option>
+                                        <option value="26" <?php echo ($anb != '26' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA - BALANCEADOS - ACIMA DE 49</option>
+                                        <option value="27" <?php echo ($anb != '27' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA - BALANCEADOS - DE 30-49</option>
+                                        <option value="28" <?php echo ($anb != '28' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA - MULTIMERCADOS LIVRE</option>
+                                        <option value="29" <?php echo ($anb != '29' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA - RF DURAÇÃO BAIXA - GRAU DE INVESTIMENTO</option>
+                                        <option value="30" <?php echo ($anb != '30' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA - RF DURAÇÃO LIVRE - GRAU DE INVESTIMENTO</option>
+                                        <option value="31" <?php echo ($anb != '31' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA - RF DURAÇÃO LIVRE - SOBERANO</option>
+                                        <option value="32" <?php echo ($anb != '32' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA - RF DURAÇÃO MÉDIA - GRAU DE INVESTIMENTO</option>
+                                        <option value="33" <?php echo ($anb != '33' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA - RF INDEXADOS</option>
+                                        <option value="34" <?php echo ($anb != '34' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA AÇÕES</option>
+                                        <option value="35" <?php echo ($anb != '35' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA BALANCEADOS - ACIMA DE 30</option>
+                                        <option value="36" <?php echo ($anb != '36' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA BALANCEADOS - ATÉ 15</option>
+                                        <option value="37" <?php echo ($anb != '37' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA BALANCEADOS - DE 15 A 30</option>
+                                        <option value="38" <?php echo ($anb != '38' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA DATA ALVO (FIQ)</option>
+                                        <option value="39" <?php echo ($anb != '39' ? '' : 'selected="selected"'); ?>>
+                                             PREVIDÊNCIA MULTIMERCADO</option>
+                                        <option value="40" <?php echo ($anb != '40' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA</option>
+                                        <option value="41" <?php echo ($anb != '41' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA - INV. NO EXTERIOR</option>
+                                        <option value="42" <?php echo ($anb != '42' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA - INV. NO EXTERIOR - DÍVIDA EXTERNA</option>
+                                        <option value="43" <?php echo ($anb != '43' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA - PASSIVO - ÍNDICES</option>
+                                        <option value="44" <?php echo ($anb != '44' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA ALTA DURAÇÃO - CRÉDITO LIVRE</option>
+                                        <option value="45" <?php echo ($anb != '45' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA ALTA DURAÇÃO - GRAU DE INVESTIMENTO</option>
+                                        <option value="46" <?php echo ($anb != '46' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA ALTA DURAÇÃO - SOBERANO</option>
+                                        <option value="47" <?php echo ($anb != '47' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA BAIXA DURAÇÃO - CRÉDITO LIVRE</option>
+                                        <option value="48" <?php echo ($anb != '48' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA BAIXA DURAÇÃO - GRAU DE INVESTIMENTO</option>
+                                        <option value="49" <?php echo ($anb != '49' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA BAIXA DURAÇÃO - SOBERANO</option>
+                                        <option value="50" <?php echo ($anb != '50' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA LIVRE DURAÇÃO - CRÉDITO LIVRE</option>
+                                        <option value="51" <?php echo ($anb != '51' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA LIVRE DURAÇÃO - GRAU DE INVESTIMENTO</option>
+                                        <option value="52" <?php echo ($anb != '52' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA LIVRE DURAÇÃO - SOBERANO</option>
+                                        <option value="53" <?php echo ($anb != '53' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA MÉDIA DURAÇÃO - CRÉDITO LIVRE</option>
+                                        <option value="54" <?php echo ($anb != '54' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA MÉDIA DURAÇÃO - GRAU DE INVESTIMENTO</option>
+                                        <option value="55" <?php echo ($anb != '55' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA MÉDIA DURAÇÃO - SOBERANO</option>
+                                        <option value="56" <?php echo ($anb != '56' ? '' : 'selected="selected"'); ?>>
+                                             RENDA FIXA SIMPLES</option>
                                    </select>
                               </div>
                               <div class="col-md-2">
@@ -311,8 +409,9 @@ $(document).ready(function() {
                               </div>
                               <div class="col-md-2 text-center">
                                    <br />
-                                   <i id="limpa" class="cur-1 fa fa-times-circle-o fa-2x" aria-hidden="true" title="Limpa todos os filtros para pegar todos os fundos cadastrados."></i>
-                                   &nbsp; &nbsp; 
+                                   <i id="limpa" class="cur-1 fa fa-times-circle-o fa-2x" aria-hidden="true"
+                                        title="Limpa todos os filtros para pegar todos os fundos cadastrados."></i>
+                                   &nbsp; &nbsp;
                                    <button type="submit" id="con" name="consulta" class="bot-2"
                                         title="Carrega dados do movimen to conforme parâmetros informados pelo usuário."><i
                                              class="fa fa-search fa-2x" aria-hidden="true"></i></button>
@@ -354,7 +453,7 @@ $(document).ready(function() {
                                              Sim
                                         </option>
                                         <option value="N" <?php echo ($dia != 'N' ? '' : 'selected="selected"'); ?>>
-                                             Não 
+                                             Não
                                         </option>
                                    </select>
                               </div>
@@ -367,7 +466,7 @@ $(document).ready(function() {
                                              Sim
                                         </option>
                                         <option value="N" <?php echo ($cot != 'N' ? '' : 'selected="selected"'); ?>>
-                                             Não 
+                                             Não
                                         </option>
                                    </select>
                               </div>
@@ -452,10 +551,12 @@ $(document).ready(function() {
 
 <?php
 function carrega_fun($cla, $pub, $esp, $cnd, $tem, $pat, $anb, $nor, $exc, $cot, $dia) {
+     $qtd = 0;
      include_once "dados.php";
      include_once "profsa.php";
      $dti = date('01/01/2000');
      $dtf = date('d/m/Y');
+     $_SESSION['wrklisfun'] = array();     
      if ($tem != 0) {
           if ($tem == 2) { $dtf = date('d/m/Y', strtotime('-2 year')); }
           if ($tem == 5) { $dtf= date('d/m/Y', strtotime('-5 year')); }
@@ -489,6 +590,8 @@ function carrega_fun($cla, $pub, $esp, $cnd, $tem, $pat, $anb, $nor, $exc, $cot,
                if (limpa_vlo($val) < $pat) { $flag = 1; }
           }
           if ($flag == 0) {
+               $_SESSION['wrklisfun'][$lin['funcnpj']]['cha'] = $lin['idfundo']; 
+               $_SESSION['wrklisfun'][$lin['funcnpj']]['cgc'] = $lin['funcnpj']; 
                $txt =  '<tr>'; 
                $txt .= "<td>" . utf8_encode($lin['funnome']) . "</td>";
                $txt .= "<td>" . mascara_cpo($lin['funcnpj'],"  .   .   /    -  ") . "</td>";
@@ -527,19 +630,72 @@ function carrega_fun($cla, $pub, $esp, $cnd, $tem, $pat, $anb, $nor, $exc, $cot,
                $txt .= '<td class="text-right">' . number_format($lin['funaplminima'], 2, ",", ".") . '</td>';
                $cpo = "*** " . $lin['funclaambima'] . ' ***';
                if ($lin['funclaambima'] == "") { $cpo = ''; }
-               if ($lin['funclaambima'] == "A") { $cpo = 'Açoes'; }
-               if ($lin['funclaambima'] == "C") { $cpo = 'Cambial'; }
-               if ($lin['funclaambima'] == "M") { $cpo = 'Multimercado'; }
-               if ($lin['funclaambima'] == "R") { $cpo = 'Renda Fixa'; }
-               if ($lin['funclaambima'] == "P") { $cpo = 'Previdência'; }
-               if ($lin['funclaambima'] == "F") { $cpo = 'Fundo Cambial'; }
+
+               if ($lin['funclaambima'] == "01") { $cpo = 'EM BRANCO (Não Informado ...)'; }
+               if ($lin['funclaambima'] == "02") { $cpo = 'AÇÕES - ATIVO - DIVIDENDOS'; }
+               if ($lin['funclaambima'] == "03") { $cpo = 'AÇÕES - ATIVO - ÍNDICE ATIVO'; }
+               if ($lin['funclaambima'] == "04") { $cpo = 'AÇÕES - ATIVO - LIVRE'; }
+               if ($lin['funclaambima'] == "05") { $cpo = 'AÇÕES - ATIVO - SETORIAIS'; }
+               if ($lin['funclaambima'] == "06") { $cpo = 'AÇÕES - ATIVO - SMALL CAPS'; }
+               if ($lin['funclaambima'] == "07") { $cpo = 'AÇÕES - ATIVO - SUSTENTABILIDADE GOVERNANÇA'; }
+               if ($lin['funclaambima'] == "08") { $cpo = 'AÇÕES - ATIVO - VALOR CRESCIMENTO'; }
+               if ($lin['funclaambima'] == "09") { $cpo = 'AÇÕES - FUNDOS FECHADOS'; }
+               if ($lin['funclaambima'] == "10") { $cpo = 'AÇÕES - INDEXADO - ÍNDICE PASSIVO'; }
+               if ($lin['funclaambima'] == "11") { $cpo = 'AÇÕES - INVESTIMENTO NO EXTERIOR'; }
+               if ($lin['funclaambima'] == "12") { $cpo = 'AÇÕES - MONO AÇÃO'; }
+               if ($lin['funclaambima'] == "13") { $cpo = 'FUNDO CAMBIAL'; }
+               if ($lin['funclaambima'] == "14") { $cpo = 'MULTIMERCADO - ALOCAÇÃO - BALANCEADOS'; }
+               if ($lin['funclaambima'] == "15") { $cpo = 'MULTIMERCADO - ALOCAÇÃO - DINÂMICOS'; }
+               if ($lin['funclaambima'] == "16") { $cpo = 'MULTIMERCADO - ESTRATÉGIA - CAPITAL PROTEGIDO'; }
+               if ($lin['funclaambima'] == "17") { $cpo = 'MULTIMERCADO - ESTRATÉGIA - ESTRATÉGIA ESPECÍFICA'; }
+               if ($lin['funclaambima'] == "18") { $cpo = 'MULTIMERCADO - ESTRATÉGIA - JUROS E MOEDAS'; }
+               if ($lin['funclaambima'] == "19") { $cpo = 'MULTIMERCADO - ESTRATÉGIA - LIVRE'; }
+               if ($lin['funclaambima'] == "20") { $cpo = 'MULTIMERCADO - ESTRATÉGIA - LONG & SHORT DIRECIONAL'; }
+               if ($lin['funclaambima'] == "21") { $cpo = 'MULTIMERCADO - ESTRATÉGIA - LONG & SHORT NEUTRO'; }
+               if ($lin['funclaambima'] == "22") { $cpo = 'MULTIMERCADO - ESTRATÉGIA - MACRO'; }
+               if ($lin['funclaambima'] == "23") { $cpo = 'MULTIMERCADO - ESTRATÉGIA - TRADING'; }
+               if ($lin['funclaambima'] == "24") { $cpo = 'MULTIMERCADO - INVESTIMENTO NO EXTERIOR'; }
+               if ($lin['funclaambima'] == "25") { $cpo = 'PREVIDÊNCIA - AÇÕES ATIVO'; }
+               if ($lin['funclaambima'] == "26") { $cpo = 'PREVIDÊNCIA - BALANCEADOS - ACIMA DE 49'; }
+               if ($lin['funclaambima'] == "27") { $cpo = 'PREVIDÊNCIA - BALANCEADOS - DE 30-49'; }
+               if ($lin['funclaambima'] == "28") { $cpo = 'PREVIDÊNCIA - MULTIMERCADOS LIVRE'; }
+               if ($lin['funclaambima'] == "29") { $cpo = 'PREVIDÊNCIA - RF DURAÇÃO BAIXA - GRAU DE INVESTIMENTO'; }
+               if ($lin['funclaambima'] == "30") { $cpo = 'PREVIDÊNCIA - RF DURAÇÃO LIVRE - GRAU DE INVESTIMENTO'; }
+               if ($lin['funclaambima'] == "31") { $cpo = 'PREVIDÊNCIA - RF DURAÇÃO LIVRE - SOBERANO'; }
+               if ($lin['funclaambima'] == "32") { $cpo = 'PREVIDÊNCIA - RF DURAÇÃO MÉDIA - GRAU DE INVESTIMENTO'; }
+               if ($lin['funclaambima'] == "33") { $cpo = 'PREVIDÊNCIA - RF INDEXADOS'; }
+               if ($lin['funclaambima'] == "34") { $cpo = 'PREVIDÊNCIA AÇÕES'; }
+               if ($lin['funclaambima'] == "35") { $cpo = 'PREVIDÊNCIA BALANCEADOS - ACIMA DE 30'; }
+               if ($lin['funclaambima'] == "36") { $cpo = 'PREVIDÊNCIA BALANCEADOS - ATÉ 15'; }
+               if ($lin['funclaambima'] == "37") { $cpo = 'PREVIDÊNCIA BALANCEADOS - DE 15 A 30'; }
+               if ($lin['funclaambima'] == "38") { $cpo = 'PREVIDÊNCIA DATA ALVO (FIQ)'; }
+               if ($lin['funclaambima'] == "39") { $cpo = 'PREVIDÊNCIA MULTIMERCADO'; }
+               if ($lin['funclaambima'] == "40") { $cpo = 'RENDA FIXA'; }
+               if ($lin['funclaambima'] == "41") { $cpo = 'RENDA FIXA - INV. NO EXTERIOR'; }
+               if ($lin['funclaambima'] == "42") { $cpo = 'RENDA FIXA - INV. NO EXTERIOR - DÍVIDA EXTERNA'; }
+               if ($lin['funclaambima'] == "43") { $cpo = 'RENDA FIXA - PASSIVO - ÍNDICES'; }
+               if ($lin['funclaambima'] == "44") { $cpo = 'RENDA FIXA ALTA DURAÇÃO - CRÉDITO LIVRE'; }
+               if ($lin['funclaambima'] == "45") { $cpo = 'RENDA FIXA ALTA DURAÇÃO - GRAU DE INVESTIMENTO'; }
+               if ($lin['funclaambima'] == "46") { $cpo = 'RENDA FIXA ALTA DURAÇÃO - SOBERANO'; }
+               if ($lin['funclaambima'] == "47") { $cpo = 'RENDA FIXA BAIXA DURAÇÃO - CRÉDITO LIVRE'; }
+               if ($lin['funclaambima'] == "48") { $cpo = 'RENDA FIXA BAIXA DURAÇÃO - GRAU DE INVESTIMENTO'; }
+               if ($lin['funclaambima'] == "49") { $cpo = 'RENDA FIXA BAIXA DURAÇÃO - SOBERANO'; }
+               if ($lin['funclaambima'] == "50") { $cpo = 'RENDA FIXA LIVRE DURAÇÃO - CRÉDITO LIVRE'; }
+               if ($lin['funclaambima'] == "51") { $cpo = 'RENDA FIXA LIVRE DURAÇÃO - GRAU DE INVESTIMENTO'; }
+               if ($lin['funclaambima'] == "52") { $cpo = 'RENDA FIXA LIVRE DURAÇÃO - SOBERANO'; }
+               if ($lin['funclaambima'] == "53") { $cpo = 'RENDA FIXA MÉDIA DURAÇÃO - CRÉDITO LIVRE'; }
+               if ($lin['funclaambima'] == "54") { $cpo = 'RENDA FIXA MÉDIA DURAÇÃO - GRAU DE INVESTIMENTO'; }
+               if ($lin['funclaambima'] == "55") { $cpo = 'RENDA FIXA MÉDIA DURAÇÃO - SOBERANO'; }
+               if ($lin['funclaambima'] == "56") { $cpo = 'RENDA FIXA SIMPLES'; }
+                              
                $txt .= "<td>" . $cpo . "</td>"; 
                $txt .= '<td class="text-center">' . ($lin['funatuadiaria'] == "N" ? 'Não' : 'Sim' ) . "</td>";
                $txt .= '<td class="text-center">' . ($lin['funcotas'] == "N" ? 'Não' : 'Sim' ) . "</td>";
                $txt .= "</tr>";
-               echo $txt;
+               echo $txt; $qtd += 1;
           }
      }
+     return $qtd;
 }
 
 function patrimonio_liq($cod, &$dat, &$val) {

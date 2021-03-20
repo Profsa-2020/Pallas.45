@@ -198,6 +198,12 @@ $(document).ready(function() {
      $dti = (isset($_REQUEST['dti']) == false ? $dti : $_REQUEST['dti']);
      $dtf = (isset($_REQUEST['dtf']) == false ? $dtf : $_REQUEST['dtf']);
      if ($_SESSION['wrknomfun'] == "") { $_SESSION['wrknomfun'] = $nom; }
+     if ($dti == "" && $dtf == "" && $cgc == "")  { 
+          if (isset($_REQUEST['consulta']) == true) {
+               echo '<script>alert("Não se pode efetuar consulta sem Cnpj e Periodo informado !");</script>';
+               $dti = "01" . "/" . substr(date('d/m/Y'), 3, 7); $dtf = date('d/m/Y');          
+          }
+     }
 
 ?>
 
@@ -220,12 +226,12 @@ $(document).ready(function() {
                               <div class="col-md-2">
                                    <label>Data Inicial</label>
                                    <input type="text" class="form-control text-center" maxlength="10" id="dti"
-                                        name="dti" value="<?php echo $dti; ?>" required />
+                                        name="dti" value="<?php echo $dti; ?>" />
                               </div>
                               <div class="col-md-2">
                                    <label>Data Final</label>
                                    <input type="text" class="form-control text-center" maxlength="10" id="dtf"
-                                        name="dtf" value="<?php echo $dtf; ?>" required />
+                                        name="dtf" value="<?php echo $dtf; ?>"  />
                               </div>
                               <div class="col-md-2">
                                    <label>Número do Cnpj </label> &nbsp; &nbsp; <span id="fun-d" class="cur-1" title="Abre janela com dados de cadastro do fundo solicitado"><i class="fa fa-building fa-1g" aria-hidden="true"></i></span>
@@ -328,7 +334,7 @@ function carrega_mov($cgc, $dti, $dtf) {
      $dti = substr($dti,6,4) . "-" . substr($dti,3,2) . "-" . substr($dti,0,2) . " 00:00:00";
      $dtf = substr($dtf,6,4) . "-" . substr($dtf,3,2) . "-" . substr($dtf,0,2) . " 23:59:59";
      $com = "Select M.*, F.funnome from (tb_movto_id M left join tb_fundos F on M.idfundo = F.idfundo) ";
-     $com .= " where infdata between '" . $dti . "' and '" . $dtf . "' ";
+     if ($dti != "" && $dtf != "") { $com .= " where infdata between '" . $dti . "' and '" . $dtf . "' "; }
      if ($cgc != "") { $com .= " and inffundo = '" . limpa_nro($cgc) . "'"; }
      $nro = leitura_reg($com, $reg);
      foreach ($reg as $lin) {

@@ -218,6 +218,10 @@ $(document).ready(function() {
      if (isset($_SESSION['wrkopereg']) == false) { $_SESSION['wrkopereg'] = 0; }
      if (isset($_SESSION['wrkcodreg']) == false) { $_SESSION['wrkcodreg'] = 0; }
      if (isset($_SESSION['wrklisfun']) == false) { $_SESSION['wrklisfun'] = array(); }
+     if (isset($_REQUEST['ope']) == true) { $_SESSION['wrkopereg'] = $_REQUEST['ope']; }
+     if (isset($_REQUEST['cod']) == true) { $_SESSION['wrkcodreg'] = $_REQUEST['cod']; }
+
+     if ($_SESSION['wrkopereg'] == 8) {$_SESSION['wrklisfun'] = array(); }
 
      $cgc = (isset($_REQUEST['cgc']) == false ? '' : $_REQUEST['cgc']);
      $dti = (isset($_REQUEST['dti']) == false ? '' : $_REQUEST['dti']);
@@ -402,7 +406,7 @@ function carrega_fun($err, $dti, $dtf, $cgc, $nom) {
           $txt .= '<td class="text-right">' . number_format($lin['infpatrimonio'], 2, ",", ".") . '</td>';
           $txt .= '<td class="text-center">' . number_format($lin['infnumcotas'], 0, ",", ".") . '</td>';
 
-          $cdi = cdi_indice($lin['inffundo'], $lin['infdata'], $dta); // Pega CDI da mesma data
+          $cdi = cdi_indice($lin['infdata'], $dta); // Pega CDI da mesma data
 
           $ind = ler_indice(0, $lin['inffundo'], $lin['infdata'], $dat); $cal = 0;
           if ($ind != 0) {
@@ -451,13 +455,13 @@ function ler_indice($tip, $cgc, $dat, &$dia) {
      return $ind;
 }
 
-function cdi_indice($cgc, $dat, &$dia) {
-     $ind = 0; $dia = 0; $dia = "**/**/****";
+function cdi_indice($dat, &$dia) {
      include_once "dados.php";
-     $nro = acessa_reg("Select M.idmovto, M.infquota, M.infdata, F.funclasse from (tb_movto_id M left join tb_fundos F on M.idfundo = F.idfundo) where F.funclasse = 1 and M.inffundo = '" . $cgc . "' and M.infdata = '" . $dat . "'", $reg);
+     $ind = 0; $dia = 0; $dia = "**/**/****";
+     $nro = acessa_reg("Select idindice, inddata, indtaxa from tb_indice where indcodigo = 1 and inddata = '" . $dat . "'", $reg);            
      if ($nro == 1) {
-          $ind = $reg['infquota'];
-          $dia = date('d/m/Y',strtotime($reg['infdata']));
+          $ind = $reg['indtaxa'];
+          $dia = date('d/m/Y',strtotime($reg['inddata']));
      }
      return $ind;
 }
