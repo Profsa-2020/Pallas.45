@@ -54,7 +54,7 @@
      <script type="text/javascript" src="js/jquery.mask.min.js"></script>
 
      <link href="css/pallas45.css" rel="stylesheet" type="text/css" media="screen" />
-     <title>Movimento - Análise de Investimentos - Profsa Informátda Ltda</title>
+     <title>Movimento - Análise de Investimentos - MoneyWay</title>
 </head>
 
 <script>
@@ -331,10 +331,14 @@ function carrega_mov($cgc, $dti, $dtf) {
      include_once "dados.php";
      include_once "profsa.php";
      if ($dti == "" && $dtf == "" && $cgc == "")  { return 1; }
-     $dti = substr($dti,6,4) . "-" . substr($dti,3,2) . "-" . substr($dti,0,2) . " 00:00:00";
-     $dtf = substr($dtf,6,4) . "-" . substr($dtf,3,2) . "-" . substr($dtf,0,2) . " 23:59:59";
-     $com = "Select M.*, F.funnome from (tb_movto_id M left join tb_fundos F on M.idfundo = F.idfundo) ";
-     if ($dti != "" && $dtf != "") { $com .= " where infdata between '" . $dti . "' and '" . $dtf . "' "; }
+     if ($dti != "") {
+          $dti = substr($dti,6,4) . "-" . substr($dti,3,2) . "-" . substr($dti,0,2) . " 00:00:00";
+     }
+     if ($dtf != "") {
+          $dtf = substr($dtf,6,4) . "-" . substr($dtf,3,2) . "-" . substr($dtf,0,2) . " 23:59:59";
+     }
+     $com = "Select M.*, F.funnome from (tb_movto_id M left join tb_fundos F on M.idfundo = F.idfundo) where idmovto > 0 ";
+     if ($dti != "" && $dtf != "") { $com .= " and infdata between '" . $dti . "' and '" . $dtf . "' "; }
      if ($cgc != "") { $com .= " and inffundo = '" . limpa_nro($cgc) . "'"; }
      $nro = leitura_reg($com, $reg);
      foreach ($reg as $lin) {

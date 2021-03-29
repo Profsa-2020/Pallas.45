@@ -54,7 +54,7 @@
      <script type="text/javascript" src="js/jquery.mask.min.js"></script>
 
      <link href="css/pallas45.css" rel="stylesheet" type="text/css" media="screen" />
-     <title>Cálculos - Análise de Investimentos - Profsa Informátda Ltda</title>
+     <title>Cálculos - Análise de Investimentos - MoneyWay</title>
 </head>
 
 <script>
@@ -97,7 +97,9 @@ $(document).ready(function() {
      $('#dtf').blur(function() {
           let dti = $('#dti').val();
           let dtf = $('#dtf').val();
-          if (dtf == "") { $('#dtf').val(dti); }
+          if (dtf == "") {
+               $('#dtf').val(dti);
+          }
      });
 
      $("#cgc").blur(function() {
@@ -156,6 +158,10 @@ $(document).ready(function() {
                $('#tab-0 tbody').empty();
                $.get("ajax/limpar-cgc.php");
           }
+     });
+
+     $("#res").click(function() {
+          window.open('resumo-ana.php?ope=8&cod=0', '_blank');
      });
 
      $('#tab-0').DataTable({
@@ -217,6 +223,7 @@ $(document).ready(function() {
      }
      if (isset($_SESSION['wrkopereg']) == false) { $_SESSION['wrkopereg'] = 0; }
      if (isset($_SESSION['wrkcodreg']) == false) { $_SESSION['wrkcodreg'] = 0; }
+     if (isset($_SESSION['wrknumcgc']) == false) { $_SESSION['wrknumcgc'] = ''; }
      if (isset($_SESSION['wrklisfun']) == false) { $_SESSION['wrklisfun'] = array(); }
      if (isset($_REQUEST['ope']) == true) { $_SESSION['wrkopereg'] = $_REQUEST['ope']; }
      if (isset($_REQUEST['cod']) == true) { $_SESSION['wrkcodreg'] = $_REQUEST['cod']; }
@@ -256,7 +263,8 @@ $(document).ready(function() {
                <div class="col-md-10">
                     <!-- Corpo -->
                     <p class="lit-4">Análise e Exportação de Dados</p>
-                    <form class="qua-6" id="frmTelAna" name="frmTelAna" action="analise-exp.php" method="POST">
+                    <form class="qua-6" id="frmTelAna" name="frmTelAna" action="analise-exp.php?ope=1&cod=0"
+                         method="POST">
                          <div class="row">
                               <div class="col-md-1 text-center">
                                    <label>Quantidade</label>
@@ -274,20 +282,20 @@ $(document).ready(function() {
                                              value="<?php echo $nom; ?>" />
                                    </span>
                               </div>
-                              <div class="col-md-1 text-center">
+                              <div class="col-md-3 text-center">
                                    <br />
                                    <button type="button" id="add" name="adiciona" class="bot-2"
                                         title="Adiciona fundo a lista para ser efetuada consulta com calculos de análise."><i
                                              class="fa fa-indent fa-2x" aria-hidden="true"></i></button>
-                              </div>
-                              <div class="col-md-1 text-center">
-                                   <br />
+                                   &nbsp; &nbsp;
                                    <button type="button" id="del" name="limpar" class="bot-2"
                                         title="Limpa lista de número de Cnpj informados para efetuar consultas e calculos de análise."><i
                                              class="fa fa-trash fa-2x" aria-hidden="true"></i></button>
-                              </div>
-                              <div class="col-md-1 text-center">
-                                   <br />
+                                             &nbsp; &nbsp;
+                                   <button type="button" id="res" name="resumo" class="bot-2"
+                                        title="Mostra janela com dados de movimento resumido ou detalhado dos Cnpjs selecionados."><i
+                                             class="fa fa-line-chart fa-2x" aria-hidden="true"></i></button>
+                                   &nbsp; &nbsp;
                                    <button type="submit" id="con" name="consulta" class="bot-2"
                                         title="Carrega dados do movimen to conforme parâmetros informados pelo usuário."><i
                                              class="fa fa-search fa-2x" aria-hidden="true"></i></button>
@@ -333,6 +341,8 @@ $(document).ready(function() {
                                                   <th>Maximo</th>
                                                   <th>Minimo</th>
                                                   <th class="text-center">% acima do CDI</th>
+                                                  <th class="text-center">Delta Diario</th>
+                                                  <th class="text-center">Maxima Perda</th>
                                              </tr>
                                         </thead>
                                         <tbody>
@@ -355,7 +365,7 @@ $(document).ready(function() {
 
 <?php
 function carrega_fun($err, $dti, $dtf, $cgc, $nom) { 
-     $seq = 1; $ind = 0; $mdn = 0; $som = 0; $med = 0; $max = 0; $min = 999999; $cdi_n = 0; $cdi_t = 0; $lis_t = array();
+     $sta = 0; $seq = 1; $ind = 0; $mdn = 0; $som = 0; $med = 0; $max = 0; $min = 999999; $cdi_n = 0; $cdi_t = 0; $cot_a = 0; $max_c = 0; $lis_t = array();
      include_once "dados.php";
      include_once "profsa.php";
      if ($err == 1)  { return 1; }
@@ -367,9 +377,13 @@ function carrega_fun($err, $dti, $dtf, $cgc, $nom) {
           $sql .= $cpo . ",";
      }
      if ($sql == "") {
-          $sql = limpa_nro($cgc);
+          $sql = limpa_nro($cgc); $cgc = limpa_nro($cgc); 
+          $_SESSION['wrknumcgc'] = limpa_nro($cgc); $sta = 1;
+          $_SESSION['wrklisfun'][$cgc]['cgc'] = limpa_nro($cgc); 
+          $_SESSION['wrklisfun'][$cgc]['cha'] = retorna_dad('idfundo', 'tb_fundos', 'funcnpj', $cgc);
+          $_SESSION['wrklisfun'][$cgc]['nom'] = retorna_dad('funnome', 'tb_fundos', 'funcnpj', $cgc);
      } else {
-          $sql = substr($sql, 0, strlen($sql) - 1);
+          $sql = substr($sql, 0, strlen($sql) - 1); $sta = 2;
      }     
      $com = "Select M.*, F.funnome, F.fundatainic, F.funclasse from (tb_movto_id M left join tb_fundos F on M.idfundo = F.idfundo) where idmovto > 0 ";
      if ($sql != "0") {
@@ -412,7 +426,7 @@ function carrega_fun($err, $dti, $dtf, $cgc, $nom) {
           if ($ind != 0) {
                $cal = (pow(($lin['infquota'] / $ind), 0.333333) - 1) * 100;     // função para calculo de potência (elevado a)
           }
-          $txt .= '<td class="text-center">' . number_format($ind, 8, ",", ".") . '<br />' . date('d/m/Y',strtotime($dat)) . '</td>'; 
+          $txt .= '<td class="text-center">' . number_format($ind, 8, ",", ".") . '<br /> ' . date('d/m/Y',strtotime($dat)) . '</td>'; 
           $txt .= '<td class="text-right">' . number_format($cal, 8, ",", ".") . '</td>'; 
           $txt .= '<td class="text-right">' . number_format($cal - $cdi, 8, ",", ".") . '</td>'; 
           if ($cal != 0) {
@@ -428,17 +442,29 @@ function carrega_fun($err, $dti, $dtf, $cgc, $nom) {
           $txt .= '<td class="text-right">' . number_format($med, 8, ",", ".") . '</td>';
           $txt .= '<td class="text-right">' . number_format($max, 8, ",", ".") . '</td>';
           if ($min == 999999) {
-               $txt .= '<td class="text-right">' . '0,000000' . '</td>';
+               $txt .= '<td class="text-right">' . '0,00000000' . '</td>';
           } else {
                $txt .= '<td class="text-right">' . number_format($min, 8, ",", ".") . '</td>';
           }
           $cdi_t = $cdi_t + 1; 
           if (($cal - $cdi) > 0) { $cdi_n = $cdi_n + 1; }
           $txt .= '<td class="text-center">' . number_format($cdi_n / $cdi_t * 100, 0, ",", ".") . '</td>';
+          if ($cot_a == 0) {
+               $txt .= "<td>" . "***" . "</td>"; 
+          } else {
+               $txt .= '<td>' .  number_format(($lin['infquota'] / $cot_a - 1) * 100, 4, ",", ".") . '</td>';
+          }
+          if ($lin['infquota'] > $max_c) { $max_c = $lin['infquota']; }
+          if ($max_c == 0) {
+               $txt .= "<td>" . "***" . "</td>"; 
+          } else {
+               $txt .= '<td>' .  number_format(($lin['infquota'] / $max_c - 1) * 100, 4, ",", ".") . '</td>';
+          }
+          $cot_a = $lin['infquota'];
           $txt .=  '</tr>'; 
           echo $txt; 
      }
-     $_SESSION['wrklisfun'] = array();
+     if ($sta == 2) { $_SESSION['wrklisfun'] = array(); }
      return $ret;
 }
 

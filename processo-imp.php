@@ -625,7 +625,7 @@ $(document).ready(function() {
                     $ret = comando_tab($sql, $nro, $cha, $men);
                     if ($ret == false) {
                          $com = $sql;
-                         $men = "Erro na gravação do registro solicitado no banco de dados !";
+                         $men = "Erro na gravação do registro de fundos no banco de dados !";
                     }               
                     $gra = $gra + 1;
                } 
@@ -697,7 +697,7 @@ $(document).ready(function() {
                     $ret = comando_tab($sql, $nro, $cha, $men);
                     if ($ret == false) {
                          $com = $sql;
-                         $men = "Erro na gravação do registro solicitado no banco de dados !";
+                         $men = "Erro na gravação do registro de movto no banco de dados !";
                     }               
                     $gra = $gra + 1;
                }
@@ -762,7 +762,7 @@ $(document).ready(function() {
                               $ret = comando_tab($sql, $nro, $cha, $men);
                               if ($ret == false) {
                                    $com = $sql;
-                                   $men = "Erro na gravação do registro solicitado no banco de dados !";
+                                   $men = "Erro na gravação do registro de opção no banco de dados !";
                               }               
                               $gra = $gra + 1;
                          }
@@ -776,7 +776,7 @@ $(document).ready(function() {
                               $ret = comando_tab($sql, $nro, $ind, $men);
                               if ($ret == false) {
                                    $com = $sql;
-                                   $men = "Erro na regravação do ativo solicitado no banco de dados !!!";
+                                   $men = "Erro na regravação da opção solicitada no banco de dados !!!";
                               }               
                               $atu = $atu + 1;
                          } 
@@ -789,7 +789,7 @@ $(document).ready(function() {
                               $ret = comando_tab($sql, $nro, $ind, $men);
                               if ($ret == false) {
                                    $com = $sql;
-                                   $men = "Erro na regravação do registro solicitado no banco de dados !";
+                                   $men = "Erro na regravação do registro de fundo no banco de dados !";
                               }               
                               $upd = $upd + 1;
                          } 
@@ -838,7 +838,7 @@ $(document).ready(function() {
                               $ret = comando_tab($sql, $nro, $cha, $men);
                               if ($ret == false) {
                                    $com = $sql;
-                                   $men = "Erro na gravação do registro solicitado no banco de dados !";
+                                   $men = "Erro na gravação do registro de opção no banco de dados !";
                               }               
                               $gra = $gra + 1;
                          }
@@ -864,7 +864,7 @@ $(document).ready(function() {
                               $ret = comando_tab($sql, $nro, $ind, $men);
                               if ($ret == false) {
                                    $com = $sql;
-                                   $men = "Erro na regravação do registro solicitado no banco de dados !!";
+                                   $men = "Erro na regravação do registro de fundos no banco de dados !";
                               }               
                               $upd = $upd + 1;
                          } 
@@ -1067,7 +1067,7 @@ $(document).ready(function() {
                          $ret = comando_tab($sql, $nro, $cha, $men);
                          if ($ret == false) {
                               $com = $sql;
-                              $men = "Erro na gravação do registro de data no banco de dados !";
+                              $men = "Erro na gravação do registro de índice no banco de dados !";
                          }      
                          if ($_SESSION['wrknumcol'] == 2) {
                               $_SESSION['wrkcditax'] = $ind;

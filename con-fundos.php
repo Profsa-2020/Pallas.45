@@ -630,7 +630,6 @@ function carrega_fun($cla, $pub, $esp, $cnd, $tem, $pat, $anb, $nor, $exc, $cot,
                $txt .= '<td class="text-right">' . number_format($lin['funaplminima'], 2, ",", ".") . '</td>';
                $cpo = "*** " . $lin['funclaambima'] . ' ***';
                if ($lin['funclaambima'] == "") { $cpo = ''; }
-
                if ($lin['funclaambima'] == "01") { $cpo = 'EM BRANCO (Não Informado ...)'; }
                if ($lin['funclaambima'] == "02") { $cpo = 'AÇÕES - ATIVO - DIVIDENDOS'; }
                if ($lin['funclaambima'] == "03") { $cpo = 'AÇÕES - ATIVO - ÍNDICE ATIVO'; }
@@ -686,8 +685,7 @@ function carrega_fun($cla, $pub, $esp, $cnd, $tem, $pat, $anb, $nor, $exc, $cot,
                if ($lin['funclaambima'] == "53") { $cpo = 'RENDA FIXA MÉDIA DURAÇÃO - CRÉDITO LIVRE'; }
                if ($lin['funclaambima'] == "54") { $cpo = 'RENDA FIXA MÉDIA DURAÇÃO - GRAU DE INVESTIMENTO'; }
                if ($lin['funclaambima'] == "55") { $cpo = 'RENDA FIXA MÉDIA DURAÇÃO - SOBERANO'; }
-               if ($lin['funclaambima'] == "56") { $cpo = 'RENDA FIXA SIMPLES'; }
-                              
+               if ($lin['funclaambima'] == "56") { $cpo = 'RENDA FIXA SIMPLES'; }                              
                $txt .= "<td>" . $cpo . "</td>"; 
                $txt .= '<td class="text-center">' . ($lin['funatuadiaria'] == "N" ? 'Não' : 'Sim' ) . "</td>";
                $txt .= '<td class="text-center">' . ($lin['funcotas'] == "N" ? 'Não' : 'Sim' ) . "</td>";

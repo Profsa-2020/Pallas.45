@@ -65,6 +65,7 @@ $(document).ready(function() {
 
 });
 </script>
+
 <?php
      if (isset($_SESSION['wrkinddat']) == false) { $_SESSION['wrkinddat'] = ""; }
      if (isset($_SESSION['wrkindtax']) == false) { $_SESSION['wrkindtax'] = '0'; }
